@@ -1,5 +1,15 @@
 {{#> layout}}
   {{#*inline "header"}}
   {{/inline}}
-test
+<div>
+  {{#if user}}
+    <a href="/logout">Logout</a>
+  {{else}}
+    <a href="/login">Login</a>
+  {{/if}}
+
+  {{#each projects}}
+    {{> project}}
+  {{/each}}
+</div>
 {{/layout}}

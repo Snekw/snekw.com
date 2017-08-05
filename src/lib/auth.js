@@ -23,7 +23,6 @@ const passport = require('passport');
 const Auth0Strategy = require('passport-auth0');
 const router = require('express').Router();
 const config = require('../helpers/configStub')('main');
-const HbsViews = require('../srv/HbsViews');
 
 const env = {
   AUTH0_CLIENT_ID: config.auth.id,
@@ -57,6 +56,8 @@ const auth0CallbackOpts = {
   failureRedirect: '/'
 };
 
+let errorPageHtml = 'Error';
+
 function setupPassport () {
   passport.use(strategy);
 
@@ -82,7 +83,7 @@ function getRoutes () {
       if (err) {
         console.error(err);
         res.status(500);
-        res.send(HbsViews.index({}));
+        res.send(errorPageHtml);
       }
       res.redirect('/');
     });
@@ -97,7 +98,12 @@ function getRoutes () {
   return router;
 }
 
+function setErrorPageHtml (html) {
+  errorPageHtml = html;
+}
+
 module.exports = {
   setupPassport: setupPassport,
-  getRoutes: getRoutes
+  getRoutes: getRoutes,
+  setErrorPageHtml: setErrorPageHtml
 };

@@ -18,23 +18,10 @@
  *  along with snekw.com.  If not, see <http://www.gnu.org/licenses/>.
  */
 'use strict';
-const hbs = require('hbs');
-const fs = require('fs');
+const mongoose = require('mongoose');
 
-function getHbs (path) {
-  return fs.readFileSync('./views/' + path).toString();
-}
-
-hbs.registerPartial({
-  layout: getHbs('layout.hbs'),
-  project: getHbs('project.hbs')
-});
-
-const hbsViews = {
-  index: hbs.compile(getHbs('index.hbs')),
-  user: hbs.compile(getHbs('user.hbs'))
-};
+require('./models/project');
 
 module.exports = {
-  views: hbsViews
+  project: mongoose.model('project')
 };

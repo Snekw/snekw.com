@@ -14,7 +14,8 @@
     "mongoose": "^4.11.5",
     "morgan": "^1.8.1",
     "passport": "^0.3.2",
-    "passport-auth0": "^0.6.0"
+    "passport-auth0": "^0.6.0",
+    "redis": "^2.7.1"
   },
   "devDependencies": {
     "eslint": "^3.19.0",

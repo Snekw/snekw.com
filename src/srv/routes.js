@@ -15,13 +15,20 @@
 'use strict';
 const ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn();
 const HbsViews = require('./HbsViews');
+const auth = require('../lib/auth');
+const cache = require('./CachedData');
+auth.setErrorPageHtml(HbsViews.views.index({}));
 
 module.exports = function (app) {
   app.get('/', function (req, res, next) {
-    res.send(HbsViews.index({}));
+    cache.getProjects().then(data => {
+      res.send(HbsViews.views.index({user: req.user, projects: data}));
+    }).catch(err => {
+      res.send(HbsViews.views.index({}));
+    });
   });
 
   app.get('/user', ensureLoggedIn, function (req, res, next) {
-    res.send(HbsViews.user({user: req.user}));
+    res.send(HbsViews.views.user({user: req.user}));
   });
 };
