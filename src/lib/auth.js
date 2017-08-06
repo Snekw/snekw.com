@@ -57,7 +57,7 @@ const strategy = new Auth0Strategy(
         app_metadata: temp[namespace + 'app_metadata'],
         user_metadata: temp[namespace + 'user_metadata'],
         username: temp[namespace + 'app_metadata'].username,
-        picture: temp.picture,
+        picture: temp[namespace + 'user_metadata'].picture || temp.picture,
         locale: temp.locale
       };
 

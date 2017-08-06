@@ -104,6 +104,7 @@ debug('Routing');
 require('./routes')(app);
 app.use('', auth.getRoutes());
 app.use('/project', require('./project'));
+app.use('/user', require('./user').routes);
 
 // Error handler
 function errorHandler (err, req, res, next) {

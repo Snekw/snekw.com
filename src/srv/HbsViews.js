@@ -54,7 +54,8 @@ const hbsViews = {
   user: hbs.compile(getHbs('user.hbs')),
   error: hbs.compile(getHbs('error.hbs')),
   project: hbs.compile(getHbs('project.hbs')),
-  newProject: hbs.compile(getHbs('newProject.hbs'))
+  newProject: hbs.compile(getHbs('newProject.hbs')),
+  manageUser: hbs.compile(getHbs('manageUser.hbs'))
 };
 
 module.exports = {
