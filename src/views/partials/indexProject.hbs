@@ -19,7 +19,12 @@
  *  along with snekw.com.  If not, see <http://www.gnu.org/licenses/>.
  */
 }}
-<a href="/project/id/{{_id}}">{{title}}</a>
-{{title}}<br/>
-{{body}}<br/>
-{{indexImageUrl}}
+<div class="indexProject">
+  <br/>
+  <img src="{{indexImageUrl}}" width="550" height="250"/><br/>
+  <div class="indexProjectClickArea">
+    <h1>{{title}}</h1>
+    {{short_project_body}}<br/>
+    <a href="/project/id/{{_id}}">Read more...</a>
+  </div>
+</div>

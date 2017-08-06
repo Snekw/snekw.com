@@ -74,11 +74,6 @@ router.get('/id/:project', function (req, res, next) {
     err.message = req.originalUrl;
     return res.send(HbsViews.views.error404(normalizeError(err)));
   }
-  if (req.user) {
-    res.set('Cache-Control', 'private, max-age=36000');
-  } else {
-    res.set('Cache-Control', 'public, max-age=36000');
-  }
   res.send(HbsViews.views.project({user: req.user, project: req.project}));
 });
 

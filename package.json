@@ -1,6 +1,10 @@
 {
   "name": "snekw.com",
   "version": "0.0.1",
+  "scripts": {
+    "bsync": "browser-sync start --proxy \"localhost:3000\" --files \"src/static/*.css\"",
+    "scss": "scss --watch src/scss:src/static --style compressed"
+  },
   "dependencies": {
     "auth0-js": "^8.8.0",
     "body-parser": "^1.17.1",

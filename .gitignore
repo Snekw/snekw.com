@@ -49,3 +49,5 @@ nogit
 /src/GENERATED/
 .idea
 **/*ConfigDev.js
+.sass-cache
+*.map

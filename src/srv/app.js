@@ -30,11 +30,14 @@ const normalizeError = require('./Error').normalizeError;
 const HbsViews = require('./HbsViews');
 const helmet = require('helmet');
 const csrf = require('csurf');
+const redis = require('redis');
+const cacheClient = redis.createClient();
 
 // Application start
 debug('App start');
 let app = express();
 app.use(helmet());
+app.use(helmet.noCache());
 
 // Database setup - TODO
 debug('Db setup started');
@@ -88,13 +91,21 @@ if (config.DEV === true) {
 }
 
 // Recompile handlebars on each request on developer mode if enabled on devSettings
-if (config.DEV === true && config.devSettings && config.devSettings.recompileHBS === true) {
-  app.use(function (req, res, next) {
-    let views = Object.keys(HbsViews.views);
-    HbsViews.reloadPartials();
-    HbsViews.recompile(views);
-    next();
-  });
+if (config.DEV === true && config.devSettings) {
+  if (config.devSettings.recompileHBS === true) {
+    app.use(function (req, res, next) {
+      let views = Object.keys(HbsViews.views);
+      HbsViews.reloadPartials();
+      HbsViews.recompile(views);
+      next();
+    });
+  }
+  if (config.devSettings.invalidateCache) {
+    app.use(function (req, res, next) {
+      cacheClient.flushall();
+      next();
+    });
+  }
 }
 
 app.use(express.static('./static'));

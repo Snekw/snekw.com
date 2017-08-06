@@ -20,18 +20,11 @@
  */
 }}
 {{#> layout}}
-  {{#*inline "header"}}
-  {{/inline}}
-<div>
-  {{#if user}}
-    {{user.nickname}}
-    <a href="/logout">Logout</a>
-  {{else}}
-    <a href="/login">Login</a>
-  {{/if}}
-
-  {{#each projects}}
-    <li>{{> indexProject}}</li>
-  {{/each}}
+<div class="indexBody">
+  <ul>
+    {{#each projects}}
+      <li>{{> indexProject}}</li>
+    {{/each}}
+  </ul>
 </div>
 {{/layout}}

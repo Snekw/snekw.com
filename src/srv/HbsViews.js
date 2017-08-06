@@ -47,6 +47,16 @@ function reloadPartials () {
   });
 }
 
+function shorten (str, maxLen, separator = ' ') {
+  if (str.length <= maxLen) return str;
+  return str.substr(0, str.lastIndexOf(separator, maxLen));
+}
+
+hbs.registerHelper('short_project_body', function () {
+  let temp = this.body;
+  return shorten(temp, 240) + '...';
+});
+
 hbs.registerPartial(partials);
 
 const hbsViews = {
