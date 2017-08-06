@@ -33,6 +33,10 @@ router.param('project', function (req, res, next, project) {
       return res.send(HbsViews.views.error(normalizeError(err)));
     }
 
+    if (!data) {
+      return next();
+    }
+
     req.project = data;
 
     const opts = {
@@ -59,7 +63,6 @@ router.param('project', function (req, res, next, project) {
       };
       next();
     });
-
   });
 });
 
@@ -68,8 +71,8 @@ router.get('/id/:project', function (req, res, next) {
     res.status(404);
     let err = new Error(404);
     err.status = 404;
-    // TODO separate page for 404
-    return res.send(HbsViews.views.error(normalizeError(err)));
+    err.message = req.originalUrl;
+    return res.send(HbsViews.views.error404(normalizeError(err)));
   }
   if (req.user) {
     res.set('Cache-Control', 'private, max-age=36000');
