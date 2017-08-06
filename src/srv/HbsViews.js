@@ -25,6 +25,10 @@ function getHbs (path) {
   return fs.readFileSync('./views/' + path).toString();
 }
 
+function getPartialHbs (partial) {
+  return getHbs('partials/' + partial);
+}
+
 function recompile (views) {
   views.forEach((view) => {
     hbsViews[view] = hbs.compile(getHbs(view + '.hbs'));
@@ -32,13 +36,14 @@ function recompile (views) {
 }
 
 const partials = {
-  layout: getHbs('layout.hbs'),
-  project: getHbs('project.hbs')
+  layout: getPartialHbs('layout.hbs'),
+  project: getPartialHbs('project.hbs'),
+  indexProject: getPartialHbs('indexProject.hbs')
 };
 
 function reloadPartials () {
   Object.keys(partials).forEach(partial => {
-    hbs.registerPartial(partial, getHbs(partial + '.hbs'));
+    hbs.registerPartial(partial, getPartialHbs(partial + '.hbs'));
   });
 }
 
@@ -47,7 +52,9 @@ hbs.registerPartial(partials);
 const hbsViews = {
   index: hbs.compile(getHbs('index.hbs')),
   user: hbs.compile(getHbs('user.hbs')),
-  error: hbs.compile(getHbs('error.hbs'))
+  error: hbs.compile(getHbs('error.hbs')),
+  project: hbs.compile(getHbs('project.hbs')),
+  newProject: hbs.compile(getHbs('newProject.hbs'))
 };
 
 module.exports = {

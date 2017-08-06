@@ -24,6 +24,11 @@ auth.setErrorPageFunc(HbsViews.views.error);
 module.exports = function (app) {
   app.get('/', function (req, res, next) {
     cache.getProjects().then(data => {
+      if (req.user) {
+        res.set('Cache-Control', 'private, max-age=36000');
+      } else {
+        res.set('Cache-Control', 'public, max-age=36000');
+      }
       res.send(HbsViews.views.index({user: req.user, projects: data}));
     }).catch(err => {
       res.send(HbsViews.views.error(normalizeError(err)));
@@ -34,7 +39,7 @@ module.exports = function (app) {
     res.send(HbsViews.views.user({user: req.user}));
   });
 
-  // Used to test the Error page, only enabled in developer mode
+// Used to test the Error page, only enabled in developer mode
   if (config.DEV === true) {
     app.get('/err', function (req, res, next) {
       HbsViews.recompile(['error']);

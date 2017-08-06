@@ -19,6 +19,12 @@
  *  along with snekw.com.  If not, see <http://www.gnu.org/licenses/>.
  */
 }}
-{{#> layout}}
-  {{>project}}
-{{/layout}}
+<!DOCTYPE html>
+<head>
+  <title>Test</title>
+  <!--<script type="text/javascript" src="auth0.js"></script>-->
+  {{#>header}}{{/header}}
+</head>
+<body>
+  {{> @partial-block}}
+</body>

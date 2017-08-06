@@ -19,11 +19,13 @@
  */
 'use strict';
 const mongoose = require('mongoose');
+const shortId = require('shortid');
 
 const projectSchema = new mongoose.Schema({
-  name: {type: String, required: true},
+  _id: {type: String, default: shortId.generate},
+  title: {type: String, required: true},
   body: {type: String, required: true},
-  postedAt: {type: Date, required: true},
+  postedAt: {type: Date, default: Date.now, required: true},
   updatedAt: {type: Date, default: Date.now},
   indexImageUrl: {type: String, default: '/defaultProjectImage.png'}
 });

@@ -34,7 +34,11 @@ function getProjects () {
         return reject(err);
       }
       if (!data) {
-        return getProjectsFromMongoose();
+        return getProjectsFromMongoose().then(data => {
+          return resolve(data);
+        }).catch(err => {
+          return reject(err);
+        });
       } else {
         return resolve(JSON.parse(data));
       }
@@ -56,5 +60,6 @@ function getProjectsFromMongoose () {
 }
 
 module.exports = {
-  getProjects: getProjects
+  getProjects: getProjects,
+  getProjectsFromMongoose: getProjectsFromMongoose
 };

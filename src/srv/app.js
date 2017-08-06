@@ -25,20 +25,13 @@ const mongoose = require('mongoose');
 const auth = require('../lib/auth');
 const normalizeError = require('./Error').normalizeError;
 const HbsViews = require('./HbsViews');
+const helmet = require('helmet');
+const csrf = require('csurf');
 
 // Application start
 debug('App start');
 let app = express();
-
-// Recompile handlebars on each request on developer mode if enabled on devSettings
-if (config.DEV === true && config.devSettings && config.devSettings.recompileHBS === true) {
-  app.use(function (req, res, next) {
-    let views = Object.keys(HbsViews.views);
-    HbsViews.reloadPartials();
-    HbsViews.recompile(views);
-    next();
-  });
-}
+app.use(helmet());
 
 // Database setup - TODO
 debug('Db setup started');
@@ -46,7 +39,9 @@ require('../db/controller');
 
 // Express middleware - TODO
 debug('Express middleware');
-app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({
+  extended: true
+}));
 
 // Max age of 7 days
 const sessionCookieTTL = 1000 * 60 * 60 * 24 * 7;
@@ -69,6 +64,7 @@ if (config.DEV === true) {
 }
 
 app.use(session(sessionOpts));
+app.use(csrf());
 
 // Auth
 auth.setupPassport();
@@ -82,12 +78,23 @@ if (config.DEV === true) {
   app.use(logger('combined'));
 }
 
+// Recompile handlebars on each request on developer mode if enabled on devSettings
+if (config.DEV === true && config.devSettings && config.devSettings.recompileHBS === true) {
+  app.use(function (req, res, next) {
+    let views = Object.keys(HbsViews.views);
+    HbsViews.reloadPartials();
+    HbsViews.recompile(views);
+    next();
+  });
+}
+
 app.use(express.static('./static'));
 
 // Routing
 debug('Routing');
 require('./routes')(app);
 app.use('', auth.getRoutes());
+app.use('/project', require('./project'));
 
 // Error handler
 function errorHandler (err, req, res, next) {
