@@ -46,11 +46,16 @@ router.get('/id/:project', function (req, res, next) {
     // TODO separate page for 404
     return res.send(HbsViews.views.error(normalizeError(err)));
   }
-
-  res.send(HbsViews.views.project(req.project));
+  if (req.user) {
+    res.set('Cache-Control', 'private, max-age=36000');
+  } else {
+    res.set('Cache-Control', 'public, max-age=36000');
+  }
+  res.send(HbsViews.views.project({user: req.user, project:req.project}));
 });
 
 router.get('/new', function (req, res, next) {
+  res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
   res.send(HbsViews.views.newProject({csrfToken: req.csrfToken()}));
 });
 

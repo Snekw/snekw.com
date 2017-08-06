@@ -16,6 +16,9 @@
 const express = require('express');
 const debug = require('debug')('App');
 const logger = require('morgan');
+const rfs = require('rotating-file-stream');
+const path = require('path');
+const fs = require('fs');
 const bodyParser = require('body-parser');
 const config = require('../helpers/configStub')('main');
 const session = require('express-session');
@@ -74,8 +77,14 @@ app.use(passport.session());
 // Logger
 if (config.DEV === true) {
   app.use(logger('dev'));
-} else {
-  app.use(logger('combined'));
+} else if (config.server.logsEnabled === true) {
+  let logDir = path.join(__dirname, '../', config.server.logDir);
+  fs.existsSync(logDir) || fs.mkdirSync(logDir);
+  const logStream = rfs('accessLog.log', {
+    interval: '1d',
+    path: logDir
+  });
+  app.use(logger('combined', {stream: logStream}));
 }
 
 // Recompile handlebars on each request on developer mode if enabled on devSettings
