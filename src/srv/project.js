@@ -25,6 +25,7 @@ const models = require('../db/models.js');
 const ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn();
 const validator = require('validator');
 const cachedData = require('./CachedData');
+const auth0Api = require('../lib/auth0Api');
 
 router.param('project', function (req, res, next, project) {
   models.project.findById(project).lean().exec((err, data) => {
@@ -34,7 +35,25 @@ router.param('project', function (req, res, next, project) {
     }
 
     req.project = data;
-    next();
+
+    const opts = {
+      method: 'GET',
+      url: 'users',
+      qs: {
+        q: 'user_id:"' + data.author + '"'
+      }
+    };
+
+    auth0Api.queryApi(opts, function (err, body) {
+      if (err) {
+        res.status(500);
+        res.send(HbsViews.views.error(normalizeError(err)));
+        return;
+      }
+      req.project.author = body[0];
+      next();
+    });
+
   });
 });
 
@@ -51,7 +70,7 @@ router.get('/id/:project', function (req, res, next) {
   } else {
     res.set('Cache-Control', 'public, max-age=36000');
   }
-  res.send(HbsViews.views.project({user: req.user, project:req.project}));
+  res.send(HbsViews.views.project({user: req.user, project: req.project}));
 });
 
 router.get('/new', function (req, res, next) {

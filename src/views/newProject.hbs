@@ -23,6 +23,7 @@
   {{bad}}
   <form action="/project/new" method="post">
     <input type="hidden" name="_csrf" value="{{csrfToken}}">
+    <input type="hidden" name="postedBy" value="{{user.id}}">
     <label for="title">Title:</label>
     <input type="text" id="title" name="title">
     <label for="body">Body:</label>

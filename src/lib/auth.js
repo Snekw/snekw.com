@@ -24,6 +24,7 @@ const Auth0Strategy = require('passport-auth0');
 const router = require('express').Router();
 const config = require('../helpers/configStub')('main');
 const normalizeError = require('../srv/Error').normalizeError;
+const request = require('request');
 
 const env = {
   AUTH0_CLIENT_ID: config.auth.id,
@@ -40,7 +41,29 @@ const strategy = new Auth0Strategy(
     callbackURL: env.AUTH0_CALLBACK_URL
   },
   (accessToken, refreshToken, extraParams, profile, done) => {
-    return done(null, profile);
+    let p = profile;
+    request.get('https://' + env.AUTH0_DOMAIN + '/userinfo', {
+      headers: {
+        Authorization: 'Bearer ' + accessToken
+      }
+    }, (err, response, body) => {
+      if (err) {
+        return (err);
+      }
+      const namespace = 'http://snekw.com/';
+      let temp = JSON.parse(body);
+      let user = {
+        id: temp.sub,
+        app_metadata: temp[namespace + 'app_metadata'],
+        user_metadata: temp[namespace + 'user_metadata'],
+        username: temp[namespace + 'app_metadata'].username,
+        picture: temp.picture,
+        locale: temp.locale
+      };
+
+      return done(null, user);
+    });
+
   }
 );
 
