@@ -23,10 +23,22 @@ const MongoSessionStore = require('connect-mongo')(session);
 const passport = require('passport');
 const mongoose = require('mongoose');
 const auth = require('../lib/auth');
+const normalizeError = require('./Error').normalizeError;
+const HbsViews = require('./HbsViews');
 
 // Application start
 debug('App start');
 let app = express();
+
+// Recompile handlebars on each request on developer mode if enabled on devSettings
+if (config.DEV === true && config.devSettings && config.devSettings.recompileHBS === true) {
+  app.use(function (req, res, next) {
+    let views = Object.keys(HbsViews.views);
+    HbsViews.reloadPartials();
+    HbsViews.recompile(views);
+    next();
+  });
+}
 
 // Database setup - TODO
 debug('Db setup started');
@@ -71,7 +83,6 @@ if (config.DEV === true) {
 }
 
 app.use(express.static('./static'));
-// app.use(express.static('./GENERATED'));
 
 // Routing
 debug('Routing');
@@ -82,14 +93,7 @@ app.use('', auth.getRoutes());
 function errorHandler (err, req, res, next) {
   let status = err.status || 500;
   res.status(status);
-  res.json({
-    message: {
-      error: {
-        status: status,
-        stack: err.stack
-      }
-    }
-  });
+  res.send(HbsViews.views.error(normalizeError(err)));
 }
 
 app.use(errorHandler);

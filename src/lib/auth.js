@@ -23,6 +23,7 @@ const passport = require('passport');
 const Auth0Strategy = require('passport-auth0');
 const router = require('express').Router();
 const config = require('../helpers/configStub')('main');
+const normalizeError = require('../srv/Error').normalizeError;
 
 const env = {
   AUTH0_CLIENT_ID: config.auth.id,
@@ -56,7 +57,9 @@ const auth0CallbackOpts = {
   failureRedirect: '/'
 };
 
-let errorPageHtml = 'Error';
+let errorPageFunc = function () {
+  throw new Error('Error page func not set');
+};
 
 function setupPassport () {
   passport.use(strategy);
@@ -83,7 +86,7 @@ function getRoutes () {
       if (err) {
         console.error(err);
         res.status(500);
-        res.send(errorPageHtml);
+        return res.send(errorPageFunc(normalizeError(err)));
       }
       res.redirect('/');
     });
@@ -98,12 +101,12 @@ function getRoutes () {
   return router;
 }
 
-function setErrorPageHtml (html) {
-  errorPageHtml = html;
+function setErrorPageFunc (func) {
+  errorPageFunc = func;
 }
 
 module.exports = {
   setupPassport: setupPassport,
   getRoutes: getRoutes,
-  setErrorPageHtml: setErrorPageHtml
+  setErrorPageFunc: setErrorPageFunc
 };

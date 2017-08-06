@@ -18,40 +18,22 @@
  *  along with snekw.com.  If not, see <http://www.gnu.org/licenses/>.
  */
 'use strict';
-const hbs = require('hbs');
-const fs = require('fs');
+const config = require('../helpers/configStub')('main');
 
-function getHbs (path) {
-  return fs.readFileSync('./views/' + path).toString();
+function normalizeError (err) {
+  let ret = {
+    status: err.status || 500,
+    message: err.message
+  };
+  // Return stack and full error object if in developer mode
+  if (config.DEV === true) {
+    ret.stack = err.stack;
+    ret.full = err;
+  }
+
+  return ret;
 }
-
-function recompile (views) {
-  views.forEach((view) => {
-    hbsViews[view] = hbs.compile(getHbs(view + '.hbs'));
-  });
-}
-
-const partials = {
-  layout: getHbs('layout.hbs'),
-  project: getHbs('project.hbs')
-};
-
-function reloadPartials () {
-  Object.keys(partials).forEach(partial => {
-    hbs.registerPartial(partial, getHbs(partial + '.hbs'));
-  });
-}
-
-hbs.registerPartial(partials);
-
-const hbsViews = {
-  index: hbs.compile(getHbs('index.hbs')),
-  user: hbs.compile(getHbs('user.hbs')),
-  error: hbs.compile(getHbs('error.hbs'))
-};
 
 module.exports = {
-  views: hbsViews,
-  recompile: recompile,
-  reloadPartials: reloadPartials
+  normalizeError: normalizeError
 };

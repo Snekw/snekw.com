@@ -17,18 +17,28 @@ const ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn();
 const HbsViews = require('./HbsViews');
 const auth = require('../lib/auth');
 const cache = require('./CachedData');
-auth.setErrorPageHtml(HbsViews.views.index({}));
+const normalizeError = require('./Error').normalizeError;
+const config = require('../helpers/configStub')('main');
+auth.setErrorPageFunc(HbsViews.views.error);
 
 module.exports = function (app) {
   app.get('/', function (req, res, next) {
     cache.getProjects().then(data => {
       res.send(HbsViews.views.index({user: req.user, projects: data}));
     }).catch(err => {
-      res.send(HbsViews.views.index({}));
+      res.send(HbsViews.views.error(normalizeError(err)));
     });
   });
 
   app.get('/user', ensureLoggedIn, function (req, res, next) {
     res.send(HbsViews.views.user({user: req.user}));
   });
+
+  // Used to test the Error page, only enabled in developer mode
+  if (config.DEV === true) {
+    app.get('/err', function (req, res, next) {
+      HbsViews.recompile(['error']);
+      res.send(HbsViews.views.error(normalizeError(new Error('Test'))));
+    });
+  }
 };

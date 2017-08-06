@@ -14,7 +14,7 @@
  */
 'use strict';
 module.exports = function (conf) {
-  if (process.env.SNW_DEV) {
+  if (process.env.SNW_DEV === true) {
     return require('../config/' + conf + 'ConfigDev');
   } else {
     return require('../config/' + conf + 'Config');
