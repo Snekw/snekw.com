@@ -106,6 +106,13 @@ app.use('', auth.getRoutes());
 app.use('/project', require('./project'));
 app.use('/user', require('./user').routes);
 
+function error404 (req, res, next) {
+  let err = new Error('Not found');
+  err.status = 404;
+  err.message = req.originalUrl;
+  res.send(HbsViews.views.error404(normalizeError(err)));
+}
+
 // Error handler
 function errorHandler (err, req, res, next) {
   let status = err.status || 500;
@@ -113,6 +120,7 @@ function errorHandler (err, req, res, next) {
   res.send(HbsViews.views.error(normalizeError(err)));
 }
 
+app.use(error404);
 app.use(errorHandler);
 
 module.exports = app;
