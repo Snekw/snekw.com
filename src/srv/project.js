@@ -50,7 +50,14 @@ router.param('project', function (req, res, next, project) {
         res.send(HbsViews.views.error(normalizeError(err)));
         return;
       }
-      req.project.author = body[0];
+      req.project.author = {
+        username: body[0].app_metadata.username,
+        id: body[0].user_id,
+        picture: body[0].picture,
+        app_metadata: body[0].app_metadata || {},
+        user_metadata: body[0].user_metadata || {},
+        locale: body[0].locale
+      };
       next();
     });
 
