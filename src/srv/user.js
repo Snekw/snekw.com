@@ -28,7 +28,7 @@ router.get('/update', ensureLoggedIn, function (req, res, next) {
   res.send(HbsViews.views.manageUser({csrfToken: req.csrfToken(), user: req.user}));
 });
 
-router.post('/update/username', function (req, res, next) {
+router.post('/update/username', ensureLoggedIn, function (req, res, next) {
   if (validator.isAlphanumeric(req.body.username)) {
     const opts = {
       method: 'PATCH',
@@ -59,7 +59,7 @@ router.post('/update/username', function (req, res, next) {
   }
 });
 
-router.post('/update/picture', function (req, res, next) {
+router.post('/update/picture', ensureLoggedIn, function (req, res, next) {
   if (validator.isURL(req.body.imgUrl) || validator.isDataURI(req.body.imgUrl)) {
     const opts = {
       method: 'PATCH',

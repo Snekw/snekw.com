@@ -23,7 +23,6 @@ const HbsViews = require('./HbsViews');
 const normalizeError = require('./Error').normalizeError;
 const models = require('../db/models.js');
 const ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn();
-const validator = require('validator');
 const cachedData = require('./CachedData');
 const auth0Api = require('../lib/auth0Api');
 
