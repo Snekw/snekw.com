@@ -1,8 +1,4 @@
-{{!
 /**
- *  snekw.com,
- *  Copyright (C) 2017 Ilkka Kuosmanen
- *
  *  This file is part of snekw.com.
  *
  *  snekw.com is free software: you can redistribute it and/or modify
@@ -18,20 +14,10 @@
  *  You should have received a copy of the GNU General Public License
  *  along with snekw.com.  If not, see <http://www.gnu.org/licenses/>.
  */
-}}
-{{#>layout}}
-  {{bad}}
-  <form action="/project/new" method="post">
-    <input type="hidden" name="_csrf" value="{{csrfToken}}">
-    <input type="hidden" name="postedBy" value="{{user.id}}">
-    <label for="title">Title:</label>
-    <input type="text" id="title" name="title" value="t">
-    <label for="body">Body:</label>
-    <textarea type="text" id="body" name="body"></textarea>
-    <label for="indexImg">Index img url:</label>
-    <input type="text" id="indexImg" name="indexImg">
-    <label for="brief">Brief:</label>
-    <input type="text" id="brief" name="brief" value="t">
-    <input type="submit">
-  </form>
-{{/layout}}
+$primary-color: #909090;
+$background-color: #3d3d3d;
+$accent-color: #ab3b10;
+$text-color-primary: #000000;
+$text-color-secondary: #c2bfc0;
+$secondary-color: #707070;
+$link-color: #222222;

@@ -19,7 +19,10 @@
  *  along with snekw.com.  If not, see <http://www.gnu.org/licenses/>.
  */
 }}
-{{project.title}}<br/>
-{{project.body}}<br/>
-{{project.indexImageUrl}}<br/>
-{{project.author.username}}
+<div class="projectContainer">
+  <img id="titleImg" src="{{project.indexImageUrl}}"/>
+  <h1 id="projectTitle">{{project.title}}</h1>
+  <hr/>
+  <div class="projectTextArea">{{{project.body}}}</div>
+  {{project.author.username}}
+</div>

@@ -25,7 +25,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Test</title>
-  <link rel="stylesheet" href="/main.css">
+  <link rel="stylesheet" href="/main.css"/>
+  <link rel="stylesheet" href="/prism-okaidia.css"/>
   {{#>header}}{{/header}}
 </head>
 <body>
@@ -36,7 +37,6 @@
     {{else}}
       <a href="/login">Login</a>
     {{/if}}
-  </nav>
-  {{> @partial-block}}
+  </nav>{{> @partial-block}}
 </body>
 </html>

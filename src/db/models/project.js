@@ -25,6 +25,8 @@ const projectSchema = new mongoose.Schema({
   _id: {type: String, default: shortId.generate},
   title: {type: String, required: true},
   body: {type: String, required: true},
+  rawBody: {type: String, required: true},
+  brief: {type: String, required: true},
   postedAt: {type: Date, default: Date.now, required: true},
   updatedAt: {type: Date, default: Date.now},
   indexImageUrl: {type: String, default: '/defaultProjectImage.png'},

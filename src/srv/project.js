@@ -25,6 +25,20 @@ const models = require('../db/models.js');
 const ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn();
 const cachedData = require('./CachedData');
 const auth0Api = require('../lib/auth0Api');
+const commonmark = require('commonmark');
+const cmReader = new commonmark.Parser();
+const cmRenderer = new commonmark.HtmlRenderer({softbreak: ' ', safe: false});
+const Prism = require('prismjs');
+require('prismjs/components/prism-javascript');
+require('prismjs/components/prism-markdown');
+require('prismjs/components/prism-c');
+require('prismjs/components/prism-cpp');
+require('prismjs/components/prism-csharp');
+require('prismjs/components/prism-bash');
+require('prismjs/components/prism-handlebars');
+require('prismjs/components/prism-scss');
+require('prismjs/components/prism-css');
+require('prismjs/components/prism-http');
 
 router.param('project', function (req, res, next, project) {
   models.project.findById(project).lean().exec((err, data) => {
@@ -79,7 +93,7 @@ router.get('/id/:project', function (req, res, next) {
 
 router.get('/new', function (req, res, next) {
   res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
-  res.send(HbsViews.views.newProject({csrfToken: req.csrfToken()}));
+  res.send(HbsViews.views.newProject({csrfToken: req.csrfToken(), user: req.user}));
 });
 
 router.post('/new', ensureLoggedIn, function (req, res, next) {
@@ -87,11 +101,39 @@ router.post('/new', ensureLoggedIn, function (req, res, next) {
     res.status(400);
     res.send(HbsViews.views.newProject({bad: 'Missing data', csrfToken: req.csrfToken()}));
   }
+  let parsed = cmReader.parse(req.body.body);
+
+  let walker = parsed.walker();
+  let event, node;
+
+  while ((event = walker.next())) {
+    node = event.node;
+    if (event.entering && node.type === 'code_block') {
+      let lang = Prism.languages[node.info];
+      let langName = node.info;
+      if (!lang) {
+        langName = 'bash';
+        lang = Prism.languages.bash;
+      }
+      let newNode = new commonmark.Node('html_block');
+      let className = 'language-' + langName;
+      newNode.literal = '<pre class="' + className + '"><code class="' +
+        className + '">' +
+        Prism.highlight(node.literal, lang) + '</code></pre>';
+      node.insertBefore(newNode);
+      node.unlink();
+    }
+  }
+
+  let rendered = cmRenderer.render(parsed);
   // eslint-disable-next-line
   let newProject = new models.project({
     title: req.body.title,
-    body: req.body.body,
-    indexImageUrl: req.body.indexImg
+    body: rendered,
+    rawBody: req.body.body,
+    indexImageUrl: req.body.indexImg,
+    author: req.body.postedBy,
+    brief: req.body.brief
   });
 
   newProject.save((err, data) => {

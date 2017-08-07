@@ -1,0 +1,71 @@
+/**
+ *  This file is part of snekw.com.
+ *
+ *  snekw.com is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  snekw.com is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with snekw.com.  If not, see <http://www.gnu.org/licenses/>.
+ */
+@import "vars";
+
+.indexProject {
+  margin: 2vh 2vw 2vh 2vw;
+  background-color: #909090;
+  border-radius: 5px;
+
+  h1 {
+    display: block;
+    margin: auto;
+
+    a {
+      display: block;
+      margin: auto;
+      min-width: 50%;
+      width: 60%;
+      text-align: center;
+      text-decoration: none;
+      color: #c25d00;
+    }
+  }
+}
+
+.indexProjectClickArea {
+  display: block;
+  width: 70%;
+  margin: auto;
+  h1{
+    text-align: center;
+  }
+  a {
+    text-align: center;
+    display: block;
+    padding-top: 3vh;
+    padding-bottom: 2vh;
+    text-decoration: underline;
+    text-decoration-color: $accent-color;
+    font-size: larger;
+    color: $text-color-primary;
+    transition: background-color 0.25s ease,
+    color 0.25s ease;
+    &:hover {
+      background-color: #606060;
+      color: $text-color-secondary;
+    }
+  }
+}
+
+.indexBody {
+  ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+  }
+}

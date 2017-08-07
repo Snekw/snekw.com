@@ -46,7 +46,8 @@ require('../db/controller');
 // Express middleware - TODO
 debug('Express middleware');
 app.use(bodyParser.urlencoded({
-  extended: true
+  extended: true,
+  limit: '5mb'
 }));
 
 // Max age of 7 days

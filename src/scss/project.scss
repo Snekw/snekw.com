@@ -15,34 +15,50 @@
  *  along with snekw.com.  If not, see <http://www.gnu.org/licenses/>.
  */
 @import "vars";
-@import "index";
-@import "project";
 
-html, body {
-  margin: 0;
-  padding: 0;
-  background-color: $background-color;
+#titleImg{
+  display: block;
+  padding: 5vh 0 0 0 ;
 }
 
-nav {
-  display: block;
-  top: 0;
-  left: 0;
-  width: 100%;
-  min-height: 5vh;
+#projectTitle{
+  text-align: center ;
+}
+
+.projectContainer {
   background-color: $primary-color;
-  border-bottom: inset;
-  border-bottom-color: $accent-color;
+  color: $text-color-primary;
+  text-align: left;
+  width: 70%;
+  margin: 5vh auto 5vh auto;
+
+  img{
+    display: inline-block;
+  }
+
+  code{
+    padding: 1px 2px 1px 2px;
+    border-radius: 2px;
+    border-style: hidden;
+    //background-color: $secondary-color;
+    word-wrap: normal;
+  }
+
+  p{
+    margin: auto;
+    text-align: left;
+    width: 100%;
+    word-wrap: normal;
+  }
+
+  pre{
+    padding: 1px 2px 1px 2px;
+    border-radius: 2px;
+    border-style: hidden;
+    //background-color: $secondary-color;
+  }
 }
 
-a{
-  color: $link-color;
-}
-
-img {
-  display: block;
-  margin: auto;
-  max-width: 100%;
-  height: auto;
-  border-radius: 5px;
+.projectTextArea{
+  padding: 5vh 5vw 5vh 5vw;
 }

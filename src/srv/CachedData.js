@@ -48,14 +48,19 @@ function getProjects () {
 
 function getProjectsFromMongoose () {
   return new Promise(function (resolve, reject) {
-    models.project.find().sort('-postedAt').limit(10).lean().exec((err, data) => {
-      if (err) {
-        return reject(err);
-      } else {
-        client.set('projects', JSON.stringify(data), 'EX', expireCacheTime);
-        return resolve(data);
-      }
-    });
+    models.project.find()
+      .select('author brief title indexImageUrl updatedAt postedAt')
+      .sort('-postedAt')
+      .limit(10)
+      .lean()
+      .exec((err, data) => {
+        if (err) {
+          return reject(err);
+        } else {
+          client.set('projects', JSON.stringify(data), 'EX', expireCacheTime);
+          return resolve(data);
+        }
+      });
   });
 }
 
