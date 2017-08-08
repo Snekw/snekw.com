@@ -51,3 +51,4 @@ nogit
 **/*ConfigDev.js
 .sass-cache
 *.map
+/dist
