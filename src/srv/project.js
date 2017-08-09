@@ -91,7 +91,7 @@ router.get('/id/:project', function (req, res, next) {
   res.send(HbsViews.views.project({user: req.user, project: req.project}));
 });
 
-router.get('/new', function (req, res, next) {
+router.get('/new', ensureLoggedIn, function (req, res, next) {
   res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
   res.send(HbsViews.views.newProject({csrfToken: req.csrfToken(), user: req.user}));
 });

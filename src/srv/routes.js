@@ -34,7 +34,7 @@ module.exports = function (app) {
     res.send(HbsViews.views.user({user: req.user}));
   });
 
-// Used to test the Error page, only enabled in developer mode
+  // Used to test the Error page, only enabled in developer mode
   if (config.DEV === true) {
     app.get('/err', function (req, res, next) {
       HbsViews.recompile(['error']);
