@@ -20,9 +20,11 @@
  */
 }}
 <nav>
-  {{#if user}}
-    <a class="btn" href="/logout">Logout</a>
-  {{else}}
-    <a class="btn" href="/login">Login</a>
-  {{/if}}
+  <div class="right nav">
+    {{#if user}}
+      <a class="btn" href="/logout">Logout</a>
+    {{else}}
+      <a class="btn" href="/login">Login</a>
+    {{/if}}
+  </div>
 </nav>
