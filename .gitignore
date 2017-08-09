@@ -52,3 +52,5 @@ nogit
 .sass-cache
 *.map
 /dist
+/src/static/*.css
+/src/static/*.js
