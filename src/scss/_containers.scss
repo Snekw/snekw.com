@@ -1,8 +1,4 @@
-{{!
 /**
- *  snekw.com,
- *  Copyright (C) 2017 Ilkka Kuosmanen
- *
  *  This file is part of snekw.com.
  *
  *  snekw.com is free software: you can redistribute it and/or modify
@@ -18,13 +14,15 @@
  *  You should have received a copy of the GNU General Public License
  *  along with snekw.com.  If not, see <http://www.gnu.org/licenses/>.
  */
-}}
-<div class="indexProject">
-  <br/>
-  <img src="{{indexImageUrl}}" width="550" height="250"/><br/>
-  <div class="projectContainer indexProjectClickArea">
-    <h1>{{title}}</h1>
-    {{brief}}<br/>
-    <a href="/project/id/{{_id}}">Read more...</a>
-  </div>
-</div>
+@import "vars";
+
+.container {
+  background-color: $primary-color;
+  color: $text-color-primary;
+  text-align: left;
+  width: 70%;
+  margin: 5vh auto 5vh auto;
+  padding: 5vh 5vw 5vh 5vw;
+  border-radius: 2px;
+  border-style: hidden;
+}

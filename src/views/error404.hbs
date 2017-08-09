@@ -19,5 +19,11 @@
  *  along with snekw.com.  If not, see <http://www.gnu.org/licenses/>.
  */
 }}
-404 - not found<br/>
-{{message}}
+{{#> layout}}
+  <div class="container">
+    <h1>404 - Not found</h1>
+    <h2>{{message}}</h2>
+    {{status}}<br/>
+    {{stack}}<br/>
+  </div>
+{{/layout}}

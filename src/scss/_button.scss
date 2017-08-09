@@ -1,8 +1,4 @@
-{{!
 /**
- *  snekw.com,
- *  Copyright (C) 2017 Ilkka Kuosmanen
- *
  *  This file is part of snekw.com.
  *
  *  snekw.com is free software: you can redistribute it and/or modify
@@ -18,23 +14,17 @@
  *  You should have received a copy of the GNU General Public License
  *  along with snekw.com.  If not, see <http://www.gnu.org/licenses/>.
  */
-}}
-{{#> layout}}
-  <div class="indexBody">
-    <ul>
-      {{#each projects}}
-        <li>
-          <div class="container">
-            <br/>
-            <img src="{{indexImageUrl}}" width="550" height="250"/><br/>
-            <div class="projectContainer indexProjectClickArea">
-              <h1>{{title}}</h1>
-              {{brief}}<br/>
-              <a href="/project/id/{{_id}}">Read more...</a>
-            </div>
-          </div>
-        </li>
-      {{/each}}
-    </ul>
-  </div>
-{{/layout}}
+@import "vars";
+
+.btn {
+  display: inline-block;
+  text-align: center;
+  padding: 1em;
+  font-size: large;
+  text-decoration: none;
+  transition: background-color 0.25s ease;
+
+  &:hover{
+    background-color: $accent-color;
+  }
+}

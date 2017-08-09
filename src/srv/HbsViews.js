@@ -37,8 +37,7 @@ function recompile (views) {
 
 const partials = {
   layout: getPartialHbs('layout.hbs'),
-  project: getPartialHbs('project.hbs'),
-  indexProject: getPartialHbs('indexProject.hbs')
+  nav: getPartialHbs('nav.hbs')
 };
 
 function reloadPartials () {

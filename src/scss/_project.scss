@@ -16,49 +16,17 @@
  */
 @import "vars";
 
-#titleImg{
+#titleImg {
   display: block;
-  padding: 5vh 0 0 0 ;
+  padding: 5vh 0 0 0;
 }
 
-#projectTitle{
-  text-align: center ;
+#projectTitle {
+  text-align: center;
 }
 
-.projectContainer {
-  background-color: $primary-color;
-  color: $text-color-primary;
-  text-align: left;
-  width: 70%;
-  margin: 5vh auto 5vh auto;
-
-  img{
+.project {
+  img {
     display: inline-block;
   }
-
-  code{
-    padding: 1px 2px 1px 2px;
-    border-radius: 2px;
-    border-style: hidden;
-    //background-color: $secondary-color;
-    word-wrap: normal;
-  }
-
-  p{
-    margin: auto;
-    text-align: left;
-    width: 100%;
-    word-wrap: normal;
-  }
-
-  pre{
-    padding: 1px 2px 1px 2px;
-    border-radius: 2px;
-    border-style: hidden;
-    //background-color: $secondary-color;
-  }
-}
-
-.projectTextArea{
-  padding: 5vh 5vw 5vh 5vw;
 }

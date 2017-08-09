@@ -17,6 +17,8 @@
 @import "vars";
 @import "index";
 @import "project";
+@import "containers";
+@import "button";
 
 html, body {
   margin: 0;
@@ -35,7 +37,7 @@ nav {
   border-bottom-color: $accent-color;
 }
 
-a{
+a {
   color: $link-color;
 }
 
@@ -45,4 +47,37 @@ img {
   max-width: 100%;
   height: auto;
   border-radius: 5px;
+}
+
+hr {
+  border-color: $accent-color;
+}
+
+p {
+  line-height: 1.5em;
+  margin: auto;
+  text-align: left;
+  width: 100%;
+  word-wrap: normal;
+  font-size: large;
+}
+
+code {
+  padding: 0.3em 0.4em 0.3em 0.4em;
+  border-radius: 2px;
+  border-style: hidden;
+  background-color: $prism-code-background-color;
+  color: $text-color-secondary;
+  word-wrap: normal;
+}
+
+pre {
+  padding: 1px 2px 1px 2px;
+  border-radius: 2px;
+  border-style: hidden;
+}
+
+li {
+  font-size: medium;
+  line-height: 1.5em;
 }
