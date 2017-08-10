@@ -20,6 +20,7 @@
 'use strict';
 const hbs = require('hbs');
 const fs = require('fs');
+const moment = require('moment');
 
 function getHbs (path) {
   return fs.readFileSync('./views/' + path).toString();
@@ -45,6 +46,31 @@ function reloadPartials () {
     hbs.registerPartial(partial, getPartialHbs(partial + '.hbs'));
   });
 }
+
+hbs.registerHelper('formatTime', function (date, format) {
+  let mmnt = moment(date);
+  return mmnt.format(format);
+});
+
+hbs.registerHelper('if_eq', function (a, b, opts) {
+  if (a === b) {
+    opts.fn(this);
+  } else {
+    opts.inverse(this);
+  }
+});
+
+hbs.registerHelper('if_neq', function (a, b, opts) {
+  if (a !== b) {
+    return opts.fn(this);
+  } else {
+    return opts.inverse(this);
+  }
+});
+
+hbs.registerHelper('timeFromNow', function (time) {
+  return moment(time).fromNow();
+});
 
 hbs.registerPartial(partials);
 
