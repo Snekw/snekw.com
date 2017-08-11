@@ -39,56 +39,72 @@ function getArchive (req, res, next) {
     req.params.count = parseInt(req.params.count);
   }
   // Pagination
-  models.project.count((err, count) => {
-    if (err) {
-      console.error(err);
-    }
-    // Determine needed page numbers
-    let page = req.params.page;
-    let dcount = req.params.count;
-    let pages = [page - 2, page - 1, page, page + 1, page + 2];
-    let actualPages = [];
-    for (let i = 0; i < pages.length; i++) {
-      // If the page is larger than -1 and the count of
-      // items is not larger than display count for that page
-      if (pages[i] > -1 && pages[i] * dcount <= count) {
-        actualPages.push(pages[i]);
+  models.project.count(
+    (err, count) => {
+      if (err) {
+        console.error(err);
       }
-    }
-    req.context.pagination = [];
-    // Determine if we need the 'First' or 'Previous' buttons
-    if (actualPages[0] !== page) {
+      // Determine needed page numbers
+      let page = req.params.page;
+      let dcount = req.params.count;
+      let pages = [page - 2, page - 1, page, page + 1, page + 2];
+      let actualPages = [];
+      for (let i = 0; i < pages.length; i++) {
+        // If the page is larger than -1 and the count of
+        // items is not larger than display count for that page
+        if (pages[i] > -1 && pages[i] * dcount <= count) {
+          actualPages.push(pages[i]);
+        }
+      }
+      req.context.pagination = [];
+      // Determine if we need the 'First' or 'Previous' buttons
+      let disabled = actualPages[0] === page;
+      let firstHref = '0-' + dcount.toString();
+      let previousHref = (page - 1).toString() + '-' + dcount.toString();
+      if (disabled) {
+        firstHref = '';
+        previousHref = '';
+      }
       req.context.pagination = [
         {
           page: 'First',
-          href: '0-' + dcount.toString()
+          href: firstHref,
+          disabled: disabled
         }, {
           page: 'Previous',
-          href: (page - 1).toString() + '-' + dcount.toString()
+          href: previousHref,
+          disabled: disabled
         }];
-    }
-    for (let i = 0; i < actualPages.length; i++) {
-      let href = actualPages[i].toString() + '-' + dcount.toString();
-      let active = false;
-      if (page === actualPages[i]) {
-        active = true;
+      for (let i = 0; i < actualPages.length; i++) {
+        let href = actualPages[i].toString() + '-' + dcount.toString();
+        let active = false;
+        if (page === actualPages[i]) {
+          active = true;
+        }
+        req.context.pagination.push({page: actualPages[i], href: href, active: active});
       }
-      req.context.pagination.push({page: actualPages[i], href: href, active: active});
-    }
 
-    // Determine if we need the 'Next' or 'Last' buttons
-    if (actualPages[actualPages.length - 1] !== page) {
+      // Determine if we need the 'Next' or 'Last' buttons
+      disabled = actualPages[actualPages.length - 1] === page;
+      firstHref = (page + 1).toString() + '-' + dcount.toString();
+      previousHref = Math.trunc(count / dcount).toString() + '-' + dcount.toString();
+      if (disabled) {
+        firstHref = '';
+        previousHref = '';
+      }
       let temp = [
         {
           page: 'Next',
-          href: (page + 1).toString() + '-' + dcount.toString()
+          href: firstHref,
+          disabled: disabled
         }, {
           page: 'Last',
-          href: Math.trunc(count / dcount).toString() + '-' + dcount.toString()
+          href: previousHref,
+          disabled: disabled
         }];
       req.context.pagination = req.context.pagination.concat(temp);
     }
-  });
+  );
 
   models.project.find()
     .skip(req.params.page * req.params.count)

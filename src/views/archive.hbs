@@ -26,7 +26,7 @@
 <div class="container">
   <div class="pagination">
     {{#each pagination}}
-      <a class="{{#if this.active}}active{{/if}}" href="/archive/{{this.href}}">{{this.page}}</a>
+      <a class="{{#if this.active}}active{{/if}} {{#if this.disabled}}disabled{{/if}}" href="/archive/{{this.href}}">{{this.page}}</a>
     {{/each}}
   </div>
 </div>

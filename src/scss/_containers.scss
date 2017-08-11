@@ -56,5 +56,9 @@
     &:hover:not(.active) {
       background-color: $accent-color;
     }
+
+    &.disabled{
+      pointer-events: none;
+    }
   }
 }
