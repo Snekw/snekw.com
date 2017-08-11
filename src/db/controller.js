@@ -19,7 +19,7 @@ const debug = require('debug')('App:DB');
 
 mongoose.Promise = global.Promise;
 
-mongoose.connect(config.db.connectionString).then(() => {
+mongoose.connect(config.db.connectionString, {useMongoClient: true}).then(() => {
   console.log('Connected to database: ' + mongoose.connection.name);
   debug('Connected to database');
 }).catch((err) => {

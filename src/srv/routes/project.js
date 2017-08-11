@@ -69,6 +69,9 @@ router.param('project', function (req, res, next, project) {
         res.send(HbsViews.views.error(req.context));
         return;
       }
+      if (body.length < 1) {
+        return next();
+      }
       req.context.project.author = {
         username: body[0].app_metadata.username,
         id: body[0].user_id,

@@ -21,8 +21,7 @@
 const request = require('request');
 const config = require('../helpers/configStub')('main');
 
-let AuthToken = undefined;
-let AuthTokenExpiryTime = undefined;
+let AuthToken, AuthTokenExpiryTime;
 
 function hasAuthTokenExpired () {
   return Date.now() > AuthTokenExpiryTime;
@@ -77,6 +76,19 @@ function queryApi (opts, cb) {
   }
 }
 
+function queryApiPromise (opts) {
+  return new Promise((resolve, reject) => {
+    queryApi(opts, (err, data) => {
+      if (err) {
+        return reject(err);
+      } else {
+        return resolve(data);
+      }
+    });
+  });
+}
+
 module.exports = {
-  queryApi: queryApi
+  queryApi: queryApi,
+  queryApiPromise: queryApiPromise
 };

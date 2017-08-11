@@ -1,4 +1,8 @@
+{{!
 /**
+ *  snekw.com,
+ *  Copyright (C) 2017 Ilkka Kuosmanen
+ *
  *  This file is part of snekw.com.
  *
  *  snekw.com is free software: you can redistribute it and/or modify
@@ -14,42 +18,16 @@
  *  You should have received a copy of the GNU General Public License
  *  along with snekw.com.  If not, see <http://www.gnu.org/licenses/>.
  */
-@import "vars";
-
-.container {
-  background-color: $primary-color;
-  color: $text-color-primary;
-  text-align: left;
-  width: 70%;
-  margin: 5vh auto 5vh auto;
-  padding: 5vh 5vw 5vh 5vw;
-  border-radius: 2px;
-  border-style: hidden;
-}
-
-.right {
-  float: right;
-}
-
-.nav {
-  display: block;
-}
-
-.pagination {
-  width: 50%;
-  margin: auto;
-  a {
-    color: $text-color-primary;
-    padding: 8px 16px;
-    text-decoration: none;
-    transition: background-color .3s;
-    &.active {
-      background-color: $secondary-color;
-      color: $accent-color;
-    }
-
-    &:hover:not(.active) {
-      background-color: $accent-color;
-    }
-  }
-}
+}}
+{{#>layout}}
+{{#each projects}}
+  {{>projectBrief}}
+{{/each}}
+<div class="container">
+  <div class="pagination">
+    {{#each pagination}}
+      <a class="{{#if this.active}}active{{/if}}" href="/archive/{{this.href}}">{{this.page}}</a>
+    {{/each}}
+  </div>
+</div>
+{{/layout}}

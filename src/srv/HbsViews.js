@@ -38,7 +38,8 @@ function recompile (views) {
 
 const partials = {
   layout: getPartialHbs('layout.hbs'),
-  nav: getPartialHbs('nav.hbs')
+  nav: getPartialHbs('nav.hbs'),
+  projectBrief: getPartialHbs('projectBrief.hbs')
 };
 
 function reloadPartials () {
@@ -81,7 +82,8 @@ const hbsViews = {
   project: hbs.compile(getHbs('project.hbs')),
   newProject: hbs.compile(getHbs('newProject.hbs')),
   manageUser: hbs.compile(getHbs('manageUser.hbs')),
-  error404: hbs.compile(getHbs('error404.hbs'))
+  error404: hbs.compile(getHbs('error404.hbs')),
+  archive: hbs.compile(getHbs('archive.hbs'))
 };
 
 function middleware (req, res, next) {
