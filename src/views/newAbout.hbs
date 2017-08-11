@@ -1,3 +1,4 @@
+{{!
 /**
  *  snekw.com,
  *  Copyright (C) 2017 Ilkka Kuosmanen
@@ -17,13 +18,14 @@
  *  You should have received a copy of the GNU General Public License
  *  along with snekw.com.  If not, see <http://www.gnu.org/licenses/>.
  */
-'use strict';
-const mongoose = require('mongoose');
-
-require('./models/project');
-require('./models/about');
-
-module.exports = {
-  project: mongoose.model('project'),
-  about: mongoose.model('about')
-};
+}}
+{{#>layout}}
+  <form action="/about/new" method="post">
+    {{>markdownEditor}}
+    <input type="hidden" name="_csrf" value="{{csrfToken}}">
+    <input type="hidden" name="author" value="{{user.id}}">
+    <div class="container">
+      <input type="submit">
+    </div>
+  </form>
+{{/layout}}

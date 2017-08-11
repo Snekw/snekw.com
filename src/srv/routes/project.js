@@ -25,10 +25,7 @@ const models = require('../../db/models.js');
 const ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn();
 const cachedData = require('../CachedData');
 const auth0Api = require('../../lib/auth0Api');
-const commonmark = require('commonmark');
-const cmReader = new commonmark.Parser();
-const cmRenderer = new commonmark.HtmlRenderer({softbreak: ' ', safe: false});
-const Prism = require('prismjs');
+const processMarkdown = require('../processMarkdown');
 require('prismjs/components/prism-javascript');
 require('prismjs/components/prism-markdown');
 require('prismjs/components/prism-c');
@@ -109,31 +106,7 @@ router.post('/new', ensureLoggedIn, function (req, res, next) {
     // TODO
     res.send(HbsViews.views.newProject({bad: 'Missing data', csrfToken: req.csrfToken()}));
   }
-  let parsed = cmReader.parse(req.body.body);
-
-  let walker = parsed.walker();
-  let event, node;
-
-  while ((event = walker.next())) {
-    node = event.node;
-    if (event.entering && node.type === 'code_block') {
-      let lang = Prism.languages[node.info];
-      let langName = node.info;
-      if (!lang) {
-        langName = 'bash';
-        lang = Prism.languages.bash;
-      }
-      let newNode = new commonmark.Node('html_block');
-      let className = 'language-' + langName;
-      newNode.literal = '<pre class="' + className + '"><code class="' +
-        className + '">' +
-        Prism.highlight(node.literal, lang) + '</code></pre>';
-      node.insertBefore(newNode);
-      node.unlink();
-    }
-  }
-
-  let rendered = cmRenderer.render(parsed);
+  let rendered = processMarkdown(req.body.body);
   // eslint-disable-next-line
   let newProject = new models.project({
     title: req.body.title,

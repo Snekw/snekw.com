@@ -120,6 +120,7 @@ app.use('', auth.getRoutes());
 app.use('/project', require('./routes/project'));
 app.use('/user', require('./routes/user'));
 app.use('/archive', require('./routes/archive'));
+app.use('/about', require('./routes/about'));
 
 function error404 (req, res, next) {
   let err = new Error('Not found');

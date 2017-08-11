@@ -20,10 +20,31 @@
 'use strict';
 const mongoose = require('mongoose');
 
-require('./models/project');
-require('./models/about');
+const aboutSchema = new mongoose.Schema({
+  rawBody: {type: String, required: true},
+  body: {type: String, required: true},
+  author: {type: String, required: true},
+  postedAt: {type: Date, default: Date.now},
+  active: {type: Boolean, default: false}
+});
 
-module.exports = {
-  project: mongoose.model('project'),
-  about: mongoose.model('about')
+aboutSchema.statics.setActive = function (id) {
+  return new Promise((resolve, reject) => {
+    this.model('about')
+      .findOneAndUpdate({active: true}, {$set: {active: false}})
+      .lean()
+      .exec((err) => {
+        if (err) {
+          return reject(err);
+        }
+        this.model('about').findByIdAndUpdate(id, {$set: {active: true}}).lean().exec((err) => {
+          if (err) {
+            return reject(err);
+          }
+          return resolve();
+        });
+      });
+  });
 };
+
+mongoose.model('about', aboutSchema);

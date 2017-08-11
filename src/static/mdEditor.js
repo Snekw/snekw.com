@@ -18,12 +18,18 @@
  *  along with snekw.com.  If not, see <http://www.gnu.org/licenses/>.
  */
 'use strict';
-const mongoose = require('mongoose');
+let editor = document.getElementById('editor');
+let editorOut = document.getElementById('editorOut');
+const reader = new commonmark.Parser();
+const renderer = new commonmark.HtmlRenderer();
 
-require('./models/project');
-require('./models/about');
+editor.addEventListener('keyup', onEdit);
 
-module.exports = {
-  project: mongoose.model('project'),
-  about: mongoose.model('about')
-};
+function onEdit () {
+  let parsed = reader.parse(editor.value);
+  let rendered = renderer.render(parsed);
+
+  editorOut.innerHTML = rendered;
+
+  Prism.highlightAll();
+}

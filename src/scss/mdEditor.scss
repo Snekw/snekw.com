@@ -1,0 +1,66 @@
+/**
+ *  This file is part of snekw.com.
+ *
+ *  snekw.com is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  snekw.com is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with snekw.com.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+.md {
+  width: 50%;
+  height: 90vh;
+  padding: 0;
+
+  .left {
+    float: left;
+    background-color: #66d9ef;
+  }
+  .right {
+    float: right;
+    background-color: #999999;
+  }
+
+  textarea {
+    width: calc(100% - 1em);
+    height: calc(100% - 1em);
+    padding: 0.5em;
+    overflow-y: scroll;
+  }
+}
+
+.controls {
+  height: 2em;
+  width: 100%;
+}
+
+.mdOut {
+  width: calc(100% - 1em);
+  height: calc(100% - 1em);
+  padding: 0.5em;
+  overflow-y: scroll;
+  margin: 0;
+}
+
+.mdEditor {
+  width: calc(100% - 1em);
+  height: calc(100% - 1em);
+  padding: 0.5em;
+  overflow-y: scroll;
+  background-color: whitesmoke;
+  direction: ltr;
+}
+
+.mdContainer {
+  width: calc(100% - 1em);
+  height: 90vh;
+  margin: 2em;
+}
