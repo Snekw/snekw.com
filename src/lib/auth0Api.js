@@ -30,7 +30,7 @@ function hasAuthTokenExpired () {
 function getAuthToken (cb) {
   const options = {
     method: 'POST',
-    url: 'https://snekw.eu.auth0.com/oauth/token',
+    url: config.auth.domain + '/oauth/token',
     headers: {'content-type': 'application/json'},
     body: {
       grant_type: 'client_credentials',
