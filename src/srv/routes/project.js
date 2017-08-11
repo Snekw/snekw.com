@@ -19,12 +19,12 @@
  */
 'use strict';
 const router = require('express').Router();
-const HbsViews = require('./HbsViews');
-const normalizeError = require('./Error').normalizeError;
-const models = require('../db/models.js');
+const HbsViews = require('../HbsViews');
+const normalizeError = require('../Error').normalizeError;
+const models = require('../../db/models.js');
 const ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn();
-const cachedData = require('./CachedData');
-const auth0Api = require('../lib/auth0Api');
+const cachedData = require('../CachedData');
+const auth0Api = require('../../lib/auth0Api');
 const commonmark = require('commonmark');
 const cmReader = new commonmark.Parser();
 const cmRenderer = new commonmark.HtmlRenderer({softbreak: ' ', safe: false});
@@ -44,14 +44,15 @@ router.param('project', function (req, res, next, project) {
   models.project.findById(project).lean().exec((err, data) => {
     if (err) {
       res.status(500);
-      return res.send(HbsViews.views.error(normalizeError(err)));
+      req.context.error = normalizeError(err);
+      return res.send(HbsViews.views.error(req.context));
     }
 
     if (!data) {
       return next();
     }
 
-    req.project = data;
+    req.context.project = data;
 
     const opts = {
       method: 'GET',
@@ -64,10 +65,11 @@ router.param('project', function (req, res, next, project) {
     auth0Api.queryApi(opts, function (err, body) {
       if (err) {
         res.status(500);
-        res.send(HbsViews.views.error(normalizeError(err)));
+        req.context.error = normalizeError(err);
+        res.send(HbsViews.views.error(req.context));
         return;
       }
-      req.project.author = {
+      req.context.project.author = {
         username: body[0].app_metadata.username,
         id: body[0].user_id,
         picture: body[0].picture,
@@ -81,24 +83,27 @@ router.param('project', function (req, res, next, project) {
 });
 
 router.get('/id/:project', function (req, res, next) {
-  if (!req.project) {
+  if (!req.context.project) {
     res.status(404);
     let err = new Error(404);
     err.status = 404;
     err.message = req.originalUrl;
-    return res.send(HbsViews.views.error404(normalizeError(err)));
+    req.context.error = normalizeError(err);
+    return res.send(HbsViews.views.error404(req.context));
   }
-  res.send(HbsViews.views.project({user: req.user, project: req.project}));
+  res.send(HbsViews.views.project(req.context));
 });
 
 router.get('/new', ensureLoggedIn, function (req, res, next) {
   res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
-  res.send(HbsViews.views.newProject({csrfToken: req.csrfToken(), user: req.user}));
+  req.context.csrfToken = req.csrfToken();
+  res.send(HbsViews.views.newProject(req.context));
 });
 
 router.post('/new', ensureLoggedIn, function (req, res, next) {
   if (!req.body.title || !req.body.body) {
     res.status(400);
+    // TODO
     res.send(HbsViews.views.newProject({bad: 'Missing data', csrfToken: req.csrfToken()}));
   }
   let parsed = cmReader.parse(req.body.body);

@@ -111,12 +111,15 @@ if (config.DEV === true && config.devSettings) {
 
 app.use(express.static('./static'));
 
+app.use(HbsViews.middleware);
+
 // Routing
 debug('Routing');
-require('./routes')(app);
+app.use('', require('./routes/base'));
 app.use('', auth.getRoutes());
-app.use('/project', require('./project'));
-app.use('/user', require('./user').routes);
+app.use('/project', require('./routes/project'));
+app.use('/user', require('./routes/user'));
+app.use('/archive', require('./routes/archive'));
 
 function error404 (req, res, next) {
   let err = new Error('Not found');

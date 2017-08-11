@@ -13,32 +13,36 @@
  * THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 'use strict';
+const router = require('express').Router();
 const ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn();
-const HbsViews = require('./HbsViews');
-const auth = require('../lib/auth');
-const cache = require('./CachedData');
-const normalizeError = require('./Error').normalizeError;
-const config = require('../helpers/configStub')('main');
+const HbsViews = require('../HbsViews');
+const auth = require('../../lib/auth');
+const cache = require('../CachedData');
+const normalizeError = require('../Error').normalizeError;
+const config = require('../../helpers/configStub')('main');
 auth.setErrorPageFunc(HbsViews.views.error);
 
-module.exports = function (app) {
-  app.get('/', function (req, res, next) {
-    cache.getProjects().then(data => {
-      res.send(HbsViews.views.index({user: req.user, projects: data}));
-    }).catch(err => {
-      res.send(HbsViews.views.error(normalizeError(err)));
-    });
+router.get('/', function (req, res, next) {
+  cache.getProjects().then(data => {
+    req.context.projects = data;
+    res.send(HbsViews.views.index(req.context));
+  }).catch(err => {
+    req.context.error = normalizeError(err);
+    res.send(HbsViews.views.error(req.context));
   });
+});
 
-  app.get('/user', ensureLoggedIn, function (req, res, next) {
-    res.send(HbsViews.views.user({user: req.user}));
+router.get('/user', ensureLoggedIn, function (req, res, next) {
+  res.send(HbsViews.views.user(req.context));
+});
+
+// Used to test the Error page, only enabled in developer mode
+if (config.DEV === true) {
+  router.get('/err', function (req, res, next) {
+    HbsViews.recompile(['error']);
+    req.context.error = normalizeError(new Error('Test'));
+    res.send(HbsViews.views.error(req.context));
   });
+}
 
-  // Used to test the Error page, only enabled in developer mode
-  if (config.DEV === true) {
-    app.get('/err', function (req, res, next) {
-      HbsViews.recompile(['error']);
-      res.send(HbsViews.views.error(normalizeError(new Error('Test'))));
-    });
-  }
-};
+module.exports = router;

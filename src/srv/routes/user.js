@@ -18,14 +18,16 @@
  *  along with snekw.com.  If not, see <http://www.gnu.org/licenses/>.
  */
 'use strict';
-const auth0Api = require('../lib/auth0Api');
+const auth0Api = require('../../lib/auth0Api');
 const ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn();
-const HbsViews = require('./HbsViews');
+const HbsViews = require('../HbsViews');
 const router = require('express').Router();
 const validator = require('validator');
+const normalizeError = require('../Error').normalizeError;
 
 router.get('/update', ensureLoggedIn, function (req, res, next) {
-  res.send(HbsViews.views.manageUser({csrfToken: req.csrfToken(), user: req.user}));
+  req.context.csrfToken = req.csrfToken();
+  res.send(HbsViews.views.manageUser(req.context));
 });
 
 router.post('/update/username', ensureLoggedIn, function (req, res, next) {
@@ -49,13 +51,9 @@ router.post('/update/username', ensureLoggedIn, function (req, res, next) {
     });
   } else {
     res.status(400);
-    res.send(HbsViews.views.manageUser({
-      csrfToken: req.csrfToken(),
-      user: req.user,
-      error: {
-        message: 'Bad username'
-      }
-    }));
+    req.context.csrfToken = req.csrfToken();
+    req.context.error = normalizeError(new Error('Bad username'));
+    res.send(HbsViews.views.manageUser(req.context));
   }
 });
 
@@ -80,16 +78,10 @@ router.post('/update/picture', ensureLoggedIn, function (req, res, next) {
     });
   } else {
     res.status(400);
-    res.send(HbsViews.views.manageUser({
-      csrfToken: req.csrfToken(),
-      user: req.user,
-      error: {
-        message: 'Bad url'
-      }
-    }));
+    req.context.csrfToken = req.csrfToken();
+    req.context.error = normalizeError(new Error('Bad url'));
+    res.send(HbsViews.views.manageUser(req.context));
   }
 });
 
-module.exports = {
-  routes: router
-};
+module.exports = router;

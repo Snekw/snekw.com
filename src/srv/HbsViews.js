@@ -84,8 +84,16 @@ const hbsViews = {
   error404: hbs.compile(getHbs('error404.hbs'))
 };
 
+function middleware (req, res, next) {
+  req.context = {
+    user: req.user
+  };
+  next();
+}
+
 module.exports = {
   views: hbsViews,
   recompile: recompile,
-  reloadPartials: reloadPartials
+  reloadPartials: reloadPartials,
+  middleware: middleware
 };
