@@ -24,7 +24,11 @@
   text-decoration: none;
   transition: background-color 0.25s ease;
 
-  &:hover{
+  &:hover {
     background-color: $accent-color;
+  }
+
+  .btn-nav {
+    margin-left: 3em;
   }
 }

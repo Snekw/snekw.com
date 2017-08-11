@@ -20,12 +20,15 @@
  */
 }}
 <nav>
+  <div class="left nav">
+    <a class="btn" href="/">Snekw.com</a>
+  </div>
   <div class="right nav">
+    <a class="btn btn-nav" href="/archive">Archive</a>
     {{#if user}}
-      <a class="btn" href="/logout">Logout</a>
+      <a class="btn btn-nav" href="/logout">Logout</a>
     {{else}}
-      <a class="btn" href="/login">Login</a>
+      <a class="btn btn-nav" href="/login">Login</a>
     {{/if}}
-    <a class="btn" href="/archive">Archive</a>
   </div>
 </nav>
