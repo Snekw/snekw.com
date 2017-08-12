@@ -27,40 +27,54 @@ const fsExt = require('fs-extra');
 const path = require('path');
 const rimraf = require('rimraf');
 
-function compileScss (style) {
+function compileScss (file, style) {
   return new Promise((resolve, reject) => {
     sass.render({
       style: style || 'expanded',
-      file: './src/scss/main.scss'
+      file: './src/scss/' + file + '.scss'
     }, (err, out) => {
       if (err) {
         reject(err);
       } else {
-        resolve(out);
+        resolve({file: file, out: out});
       }
     });
   });
 }
 
-function prefixCss (css) {
-  return postcss([autoprefixer]).process(css.css);
+function prefixCss (input) {
+  return new Promise((resolve, reject) => {
+    postcss([autoprefixer]).process(input.out.css).then((out) => {
+      input.out = out;
+      return resolve(input);
+    }).catch(err => {
+      return reject(err);
+    });
+  });
 }
 
-function cleanCss (css) {
-  return new CleanCss({returnPromise: true}).minify(css.css);
+function cleanCss (input) {
+  return new Promise((resolve, reject) => {
+    new CleanCss({returnPromise: true}).minify(input.out.css).then(out => {
+      input.out = out;
+      return resolve(input);
+    }).catch(err => {
+      return reject(err);
+    });
+  });
 }
 
-function saveCssMin (css) {
+function saveCssMin (input) {
   return new Promise((resolve, reject) => {
     fsExt.ensureDir('./dist/static', err => {
       if (err) {
         return reject(err);
       }
-      fs.writeFile('./dist/static/main.min.css', css.styles, err => {
+      fs.writeFile('./dist/static/' + input.file + '.min.css', input.out.styles, err => {
         if (err) {
           return reject(err);
         } else {
-          return resolve('./dist/static/main.min.css written.');
+          return resolve('./dist/static/' + input.file + '.min.css written.');
         }
       });
     });
@@ -70,7 +84,7 @@ function saveCssMin (css) {
 function copyFile (source, target) {
   return new Promise((resolve, reject) => {
     fsExt.ensureDir(path.dirname(target), err => {
-      if (err) {
+      if (err && err.code !== 'EEXIST') {
         return reject(err);
       }
 
@@ -98,38 +112,34 @@ function copyDir (source, target) {
         return reject(err);
       }
       for (let i = 0; i < items.length; i++) {
-        fs.stat(path.join(source, items[i]), (err, stat) => {
-          if (err) {
-            return reject(err);
-          }
-          if (stat.isFile()) {
-            promises.push(copyFile(path.join(source, items[i]), path.join(target, items[i])));
-          } else if (stat.isDirectory()) {
-            promises.push(copyDir(path.join(source, items[i]), path.join(target, items[i])));
-          }
-        });
+        let stat = fs.statSync(path.join(source, items[i]));
+        if (stat.isFile()) {
+          promises.push(copyFile(path.join(source, items[i]), path.join(target, items[i])));
+        } else if (stat.isDirectory()) {
+          promises.push(copyDir(path.join(source, items[i]), path.join(target, items[i])));
+        }
       }
-      return Promise.all(promises);
+      Promise.all(promises).then(() => {
+        return resolve();
+      }).catch(err => {
+        return reject(err);
+      });
     });
   });
 }
 
 function clean () {
-  return new Promise((resolve, reject) => {
-    rimraf('./dist', err => {
-      if (err) {
-        return reject(err);
-      }
-      return resolve();
-    });
-  });
+  rimraf.sync('./dist');
 }
+
+clean();
 
 const files = [
   copyFile('./src/config/mainConfig.js', './dist/config/mainConfig.js'),
   copyFile('./src/static/favicon.ico', './dist/static/favicon.ico'),
   copyFile('./node_modules/prismjs/prism.js', './dist/static/prism.js'),
-  copyFile('./node_modules/prismjs/themes/prism-okaidia.css', './dist/static/prism-okaidia.css')
+  copyFile('./node_modules/prismjs/themes/prism-okaidia.css', './dist/static/prism-okaidia.css'),
+  copyFile('./src/static/mdEditor.js', './dist/static/mdEditor.js')
 ];
 
 const dirs = [
@@ -141,23 +151,32 @@ const dirs = [
   copyDir('./src/views', './dist/views')
 ];
 
-clean().then(() => {
-  compileScss()
-    .then(prefixCss)
-    .then(cleanCss)
-    .then(saveCssMin)
-    .then(out => {
-      console.log(out);
-    }).catch(err => {
-      console.log(err);
-    }
-  );
-
-  Promise.all(files.concat(dirs)).then(() => {
-    console.log('');
-  }).catch(err => {
+compileScss('main')
+  .then(prefixCss)
+  .then(cleanCss)
+  .then(saveCssMin)
+  .then(out => {
+    console.log(out);
+  })
+  .catch(err => {
     console.log(err);
   });
-}).catch(err => {
-  console.log(err);
-});
+compileScss('mdEditor')
+  .then(prefixCss)
+  .then(cleanCss)
+  .then(saveCssMin)
+  .then(out => {
+    console.log(out);
+  })
+  .catch(err => {
+    console.log(err);
+  });
+
+let all = files.concat(dirs);
+Promise.all(all)
+  .then(() => {
+    console.log('Files copied');
+  })
+  .catch(err => {
+    console.log(err);
+  });
