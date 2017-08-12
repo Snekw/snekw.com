@@ -21,17 +21,18 @@
 const router = require('express').Router();
 const HbsViews = require('../HbsViews');
 const models = require('../../db/models.js');
+const querys = require('../../db/querys');
 const ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn();
 const processMarkdown = require('../processMarkdown');
+const cachedData = require('../CachedData');
 
 router.get('/', function (req, res, next) {
-  models.about.findOne({active: true}).lean().select('body author postedAt,').exec((err, data) => {
-    if (err) {
-      return next(err);
-    }
+  cachedData.getCachedOrDb('about', querys.aboutGetQuery).then(data => {
     req.context.about = data;
     req.context.csrfToken = req.csrfToken();
     res.send(HbsViews.views.about(req.context));
+  }).catch(err => {
+    return next(err);
   });
 });
 
@@ -61,7 +62,11 @@ router.post('/new', ensureLoggedIn, function (req, res, next) {
       return next(err);
     }
     models.about.setActive(about._id).then(() => {
-      res.redirect('/about');
+      cachedData.updateCache('about', querys.aboutGetQuery).then(() => {
+        res.redirect('/about');
+      }).catch(err => {
+        return next(err);
+      });
     }).catch(err => {
       return next(err);
     });

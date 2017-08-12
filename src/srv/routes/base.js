@@ -20,15 +20,15 @@ const auth = require('../../lib/auth');
 const cache = require('../CachedData');
 const normalizeError = require('../Error').normalizeError;
 const config = require('../../helpers/configStub')('main');
+const querys = require('../../db/querys');
 auth.setErrorPageFunc(HbsViews.views.error);
 
 router.get('/', function (req, res, next) {
-  cache.getProjects().then(data => {
+  cache.getCachedOrDb('indexProjects', querys.indexProjectsQuery).then(data => {
     req.context.projects = data;
     res.send(HbsViews.views.index(req.context));
   }).catch(err => {
-    req.context.error = normalizeError(err);
-    res.send(HbsViews.views.error(req.context));
+    return next(err);
   });
 });
 

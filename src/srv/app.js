@@ -95,15 +95,20 @@ if (config.DEV === true) {
 if (config.DEV === true && config.devSettings) {
   if (config.devSettings.recompileHBS === true) {
     app.use(function (req, res, next) {
+      if (req.originalUrl.indexOf('.css') > -1 || req.originalUrl.indexOf('.ico') > -1) {
+        return next();
+      }
       let views = Object.keys(HbsViews.views);
       HbsViews.reloadPartials();
       HbsViews.recompile(views);
+      debug('HbsViews recompiled!');
       next();
     });
   }
   if (config.devSettings.invalidateCache) {
     app.use(function (req, res, next) {
       cacheClient.flushall();
+      debug('Redis cache invalidated!');
       next();
     });
   }

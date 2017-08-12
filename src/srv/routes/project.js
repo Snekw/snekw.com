@@ -26,6 +26,7 @@ const ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn();
 const cachedData = require('../CachedData');
 const auth0Api = require('../../lib/auth0Api');
 const processMarkdown = require('../processMarkdown');
+const querys = require('../../db/querys');
 require('prismjs/components/prism-javascript');
 require('prismjs/components/prism-markdown');
 require('prismjs/components/prism-c');
@@ -89,7 +90,7 @@ router.get('/id/:project', function (req, res, next) {
     err.status = 404;
     err.message = req.originalUrl;
     req.context.error = normalizeError(err);
-    return res.send(HbsViews.views.error404(req.context));
+    return next(err);
   }
   res.send(HbsViews.views.project(req.context));
 });
@@ -122,8 +123,11 @@ router.post('/new', ensureLoggedIn, function (req, res, next) {
       res.status(500);
       return res.send(HbsViews.views.error(normalizeError(err)));
     }
-    cachedData.getProjectsFromMongoose();
-    return res.redirect('/project/id/' + data._id);
+    cachedData.updateCache('indexProjects', querys.indexProjectsQuery).then(() => {
+      return res.redirect('/project/id/' + data._id);
+    }).catch(err => {
+      return next(err);
+    });
   });
 });
 

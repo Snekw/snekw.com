@@ -21,50 +21,63 @@
 const models = require('../db/models.js');
 const redis = require('redis');
 const client = redis.createClient();
+const config = require('../helpers/configStub')('main');
+const debug = require('debug')('App::Cache');
 
-client.flushall();
+// Force cache flush when restarting the app in dev mode
+if (config.DEV === true) {
+  client.flushall();
+}
 
-// 7d cache expiry
-const expireCacheTime = 60 * 60 * 24 * 7;
+function getCachedOrDb (key, query) {
+  if (!key || !query) {
+    throw new Error('No key specified');
+  }
 
-function getProjects () {
-  return new Promise(function (resolve, reject) {
-    client.get('projects', (err, data) => {
+  return new Promise((resolve, reject) => {
+    client.get(key, (err, data) => {
       if (err) {
         return reject(err);
       }
+
       if (!data) {
-        return getProjectsFromMongoose().then(data => {
-          return resolve(data);
-        }).catch(err => {
-          return reject(err);
+        query.lean().exec((err, dbData) => {
+          if (err) {
+            return reject(err);
+          }
+          if (!dbData) {
+            return reject(new Error('No data in database'));
+          }
+          client.set(key, JSON.stringify(dbData));
+
+          debug('Cache returned from db.');
+          return resolve(dbData);
         });
       } else {
+        debug('Cache returned from redis');
         return resolve(JSON.parse(data));
       }
     });
   });
 }
 
-function getProjectsFromMongoose () {
-  return new Promise(function (resolve, reject) {
-    models.project.find()
-      .select('author brief title indexImageUrl updatedAt postedAt')
-      .sort('-postedAt')
-      .limit(10)
-      .lean()
-      .exec((err, data) => {
-        if (err) {
-          return reject(err);
-        } else {
-          client.set('projects', JSON.stringify(data), 'EX', expireCacheTime);
-          return resolve(data);
-        }
-      });
+function updateCache (key, query) {
+  return new Promise((resolve, reject) => {
+    query.exec((err, data) => {
+      if (err) {
+        return reject(err);
+      }
+      if (!data) {
+        return reject(new Error('No data returned from db.'));
+      }
+      client.set(key, JSON.stringify(data));
+      debug('Cache updated for key: ' + key);
+      return resolve(data);
+    });
   });
 }
 
 module.exports = {
-  getProjects: getProjects,
-  getProjectsFromMongoose: getProjectsFromMongoose
+  getCachedOrDb: getCachedOrDb,
+  updateCache: updateCache
 };
