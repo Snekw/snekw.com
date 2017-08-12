@@ -70,11 +70,11 @@ function saveCssMin (input) {
       if (err) {
         return reject(err);
       }
-      fs.writeFile('./dist/static/' + input.file + '.min.css', input.out.styles, err => {
+      fs.writeFile('./dist/static/' + input.file + '.css', input.out.styles, err => {
         if (err) {
           return reject(err);
         } else {
-          return resolve('./dist/static/' + input.file + '.min.css written.');
+          return resolve('./dist/static/' + input.file + '.css written.');
         }
       });
     });
@@ -138,7 +138,6 @@ const files = [
   copyFile('./src/config/mainConfig.js', './dist/config/mainConfig.js'),
   copyFile('./src/static/favicon.ico', './dist/static/favicon.ico'),
   copyFile('./node_modules/prismjs/prism.js', './dist/static/prism.js'),
-  copyFile('./node_modules/prismjs/themes/prism-okaidia.css', './dist/static/prism-okaidia.css'),
   copyFile('./src/static/mdEditor.js', './dist/static/mdEditor.js')
 ];
 
@@ -170,6 +169,18 @@ compileScss('mdEditor')
   })
   .catch(err => {
     console.log(err);
+  });
+
+prefixCss({
+  file: 'prism-okaidia',
+  out: {
+    css: fs.readFileSync('./node_modules/prismjs/themes/prism-okaidia.css')
+  }
+})
+  .then(cleanCss)
+  .then(saveCssMin)
+  .then(out => {
+    console.log(out);
   });
 
 let all = files.concat(dirs);
