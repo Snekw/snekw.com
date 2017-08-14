@@ -20,14 +20,14 @@
 'use strict';
 const auth0Api = require('../../lib/auth0Api');
 const ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn();
-const HbsViews = require('../HbsViews');
+const HbsViews = require('../hbsSystem').views;
 const router = require('express').Router();
 const validator = require('validator');
 const normalizeError = require('../Error').normalizeError;
 
 router.get('/update', ensureLoggedIn, function (req, res, next) {
   req.context.csrfToken = req.csrfToken();
-  res.send(HbsViews.views.manageUser(req.context));
+  res.send(HbsViews.user.manage.hbs(req.context));
 });
 
 router.post('/update/username', ensureLoggedIn, function (req, res, next) {
@@ -53,7 +53,7 @@ router.post('/update/username', ensureLoggedIn, function (req, res, next) {
     res.status(400);
     req.context.csrfToken = req.csrfToken();
     req.context.error = normalizeError(new Error('Bad username'));
-    res.send(HbsViews.views.manageUser(req.context));
+    res.send(HbsViews.user.manage.hbs(req.context));
   }
 });
 
@@ -80,7 +80,7 @@ router.post('/update/picture', ensureLoggedIn, function (req, res, next) {
     res.status(400);
     req.context.csrfToken = req.csrfToken();
     req.context.error = normalizeError(new Error('Bad url'));
-    res.send(HbsViews.views.manageUser(req.context));
+    res.send(HbsViews.user.manage.hbs(req.context));
   }
 });
 

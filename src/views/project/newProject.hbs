@@ -1,3 +1,4 @@
+{{!
 /**
  *  snekw.com,
  *  Copyright (C) 2017 Ilkka Kuosmanen
@@ -17,21 +18,21 @@
  *  You should have received a copy of the GNU General Public License
  *  along with snekw.com.  If not, see <http://www.gnu.org/licenses/>.
  */
-'use strict';
-let editor = document.getElementById('editor');
-let editorOut = document.getElementById('editorOut');
-const reader = new commonmark.Parser();
-const renderer = new commonmark.HtmlRenderer();
-
-editor.addEventListener('keyup', onEdit);
-
-function onEdit () {
-  let parsed = reader.parse(editor.value);
-  let rendered = renderer.render(parsed);
-
-  editorOut.innerHTML = rendered;
-
-  Prism.highlightAll();
-}
-
-onEdit();
+}}
+{{#>layout}}
+  {{bad}}
+  <form action="/project/new" method="post">
+{{>markdownEditor}}
+    <div class="container">
+      <input type="hidden" name="_csrf" value="{{csrfToken}}">
+      <input type="hidden" name="postedBy" value="{{user.id}}">
+      <label for="title">Title:</label>
+      <input type="text" id="title" name="title" value="t">
+      <label for="indexImg">Index img url:</label>
+      <input type="text" id="indexImg" name="indexImg">
+      <label for="brief">Brief:</label>
+      <input type="text" id="brief" name="brief" value="t">
+      <input type="submit">
+    </div>
+  </form>
+{{/layout}}

@@ -19,7 +19,7 @@
  */
 'use strict';
 const router = require('express').Router();
-const HbsViews = require('../HbsViews');
+const HbsViews = require('../hbsSystem').views;
 const normalizeError = require('../Error').normalizeError;
 const models = require('../../db/models.js');
 const ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn();
@@ -89,13 +89,52 @@ router.get('/id/:project', function (req, res, next) {
     err.message = req.originalUrl;
     return next(err);
   }
-  res.send(HbsViews.views.project(req.context));
+  res.send(HbsViews.project.get.hbs(req.context));
 });
 
 router.get('/new', ensureLoggedIn, function (req, res, next) {
   res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
   req.context.csrfToken = req.csrfToken();
-  res.send(HbsViews.views.newProject(req.context));
+  res.send(HbsViews.project.new.hbs(req.context));
+});
+
+router.get('/edit/:project', ensureLoggedIn, function (req, res, next) {
+  res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
+
+  req.context.csrfToken = req.csrfToken();
+
+  res.send(HbsViews.project.edit.hbs(req.context));
+});
+
+router.post('/edit', ensureLoggedIn, function (req, res, next) {
+  if (!req.body.body || !req.body.projectId) {
+    return next(new Error('Body and project id are required'));
+  }
+
+  let rendered = processMarkdown(req.body.body);
+
+  let update = {
+    rawBody: req.body.body,
+    body: rendered,
+    updatedAt: Date.now()
+  };
+
+  if (req.body.title) {
+    update.title = req.body.title;
+  }
+  if (req.body.indexImageUrl) {
+    update.indexImageUrl = req.body.indexImageUrl;
+  }
+  if (req.body.brief) {
+    update.brief = req.body.brief;
+  }
+
+  models.project.findByIdAndUpdate(req.body.projectId, update, (err) => {
+    if (err) {
+      return next(err);
+    }
+    return res.redirect('/project/id/' + req.body.projectId);
+  });
 });
 
 router.post('/new', ensureLoggedIn, function (req, res, next) {
@@ -103,7 +142,7 @@ router.post('/new', ensureLoggedIn, function (req, res, next) {
   if (!req.body.title || !req.body.body) {
     res.status(400);
     // TODO
-    res.send(HbsViews.views.newProject({bad: 'Missing data', csrfToken: req.csrfToken()}));
+    res.send(HbsViews.project.new.hbs({bad: 'Missing data', csrfToken: req.csrfToken()}));
   }
   let rendered = processMarkdown(req.body.body);
   // eslint-disable-next-line

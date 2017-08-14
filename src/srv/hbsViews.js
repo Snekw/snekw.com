@@ -18,20 +18,56 @@
  *  along with snekw.com.  If not, see <http://www.gnu.org/licenses/>.
  */
 'use strict';
-let editor = document.getElementById('editor');
-let editorOut = document.getElementById('editorOut');
-const reader = new commonmark.Parser();
-const renderer = new commonmark.HtmlRenderer();
 
-editor.addEventListener('keyup', onEdit);
-
-function onEdit () {
-  let parsed = reader.parse(editor.value);
-  let rendered = renderer.render(parsed);
-
-  editorOut.innerHTML = rendered;
-
-  Prism.highlightAll();
-}
-
-onEdit();
+module.exports = {
+  index: {
+    get: {
+      path: 'index.hbs'
+    }
+  },
+  user: {
+    get: {
+      path: 'user.hbs'
+    },
+    manage: {
+      path: 'manageUser.hbs'
+    }
+  },
+  error: {
+    get: {
+      path: 'error.hbs'
+    }
+  },
+  error404: {
+    get: {
+      path: 'error404.hbs'
+    }
+  },
+  project: {
+    get: {
+      path: 'project/project.hbs'
+    },
+    new: {
+      path: 'project/newProject.hbs'
+    },
+    edit: {
+      path: 'project/editProject.hbs'
+    }
+  },
+  about: {
+    get: {
+      path: 'about/about.hbs'
+    },
+    new: {
+      path: 'about/newAbout.hbs'
+    },
+    edit: {
+      path: 'about/editAbout.hbs'
+    }
+  },
+  archive: {
+    get: {
+      path: 'archive.hbs'
+    }
+  }
+};
