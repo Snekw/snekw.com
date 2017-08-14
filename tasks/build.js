@@ -132,6 +132,13 @@ function clean () {
   rimraf.sync('./dist');
 }
 
+// Save the previously used config file
+let previousConfig;
+let prevConfigPath = './dist/config/mainConfig.js';
+if (fs.existsSync(prevConfigPath)) {
+  previousConfig = fs.readFileSync(prevConfigPath);
+}
+
 clean();
 
 const files = [
@@ -188,6 +195,11 @@ let all = files.concat(dirs);
 Promise.all(all)
   .then(() => {
     console.log('Files copied');
+
+    if (previousConfig) {
+      fs.writeFileSync(prevConfigPath, previousConfig);
+      console.log('Config file restored.');
+    }
   })
   .catch(err => {
     console.log(err);

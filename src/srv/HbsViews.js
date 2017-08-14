@@ -23,7 +23,7 @@ const fs = require('fs');
 const moment = require('moment');
 
 function getHbs (path) {
-  return fs.readFileSync('./views/' + path).toString();
+  return fs.readFileSync('./src/views/' + path).toString();
 }
 
 function getPartialHbs (partial) {

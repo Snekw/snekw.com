@@ -37,11 +37,13 @@ router.get('/', function (req, res, next) {
 });
 
 router.get('/new', ensureLoggedIn, function (req, res, next) {
+  res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
   req.context.csrfToken = req.csrfToken();
   res.send(HbsViews.views.newAbout(req.context));
 });
 
 router.post('/new', ensureLoggedIn, function (req, res, next) {
+  res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
   if (!req.body.author || !req.body.body) {
     req.context.error = new Error('Bad arguments');
     return res.send(HbsViews.views.error(req.context));

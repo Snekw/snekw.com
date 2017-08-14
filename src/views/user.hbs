@@ -20,9 +20,8 @@
  */
 }}
 {{#> layout}}
-  {{#*inline "header"}}
-  {{/inline}}
-  test2
-  {{user.username}}
-  <img src="{{user.picture}}"/>
+  <div class="container">
+    {{user.username}}
+    <img src="{{user.picture}}"/>
+  </div>
 {{/layout}}

@@ -62,21 +62,19 @@ router.param('project', function (req, res, next, project) {
 
     auth0Api.queryApi(opts, function (err, body) {
       if (err) {
-        res.status(500);
-        req.context.error = normalizeError(err);
-        res.send(HbsViews.views.error(req.context));
-        return;
+        return next(err);
       }
-      if (body.length < 1) {
+      if (!body.length) {
         return next();
       }
+      body = body[0];
       req.context.project.author = {
-        username: body[0].app_metadata.username,
-        id: body[0].user_id,
-        picture: body[0].picture,
-        app_metadata: body[0].app_metadata || {},
-        user_metadata: body[0].user_metadata || {},
-        locale: body[0].locale
+        username: body.app_metadata.username,
+        id: body.user_id,
+        picture: body.picture,
+        app_metadata: body.app_metadata || {},
+        user_metadata: body.user_metadata || {},
+        locale: body.locale
       };
       next();
     });
@@ -89,19 +87,19 @@ router.get('/id/:project', function (req, res, next) {
     let err = new Error(404);
     err.status = 404;
     err.message = req.originalUrl;
-    req.context.error = normalizeError(err);
     return next(err);
   }
   res.send(HbsViews.views.project(req.context));
 });
 
 router.get('/new', ensureLoggedIn, function (req, res, next) {
-  res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+  res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
   req.context.csrfToken = req.csrfToken();
   res.send(HbsViews.views.newProject(req.context));
 });
 
 router.post('/new', ensureLoggedIn, function (req, res, next) {
+  res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
   if (!req.body.title || !req.body.body) {
     res.status(400);
     // TODO
@@ -121,7 +119,7 @@ router.post('/new', ensureLoggedIn, function (req, res, next) {
   newProject.save((err, data) => {
     if (err) {
       res.status(500);
-      return res.send(HbsViews.views.error(normalizeError(err)));
+      return next(err);
     }
     cachedData.updateCache('indexProjects', querys.indexProjectsQuery).then(() => {
       return res.redirect('/project/id/' + data._id);

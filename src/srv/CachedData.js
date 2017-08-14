@@ -18,15 +18,22 @@
  *  along with snekw.com.  If not, see <http://www.gnu.org/licenses/>.
  */
 'use strict';
-const models = require('../db/models.js');
 const redis = require('redis');
-const client = redis.createClient();
 const config = require('../helpers/configStub')('main');
 const debug = require('debug')('App::Cache');
+
+const client = redis.createClient({
+  password: config.db.redis.password
+});
 
 // Force cache flush when restarting the app in dev mode
 if (config.DEV === true) {
   client.flushall();
+}
+
+if (config.db.redis.password) {
+  client.config('set', 'requirepass', config.db.redis.password);
+  client.auth(config.db.redis.password);
 }
 
 function getCachedOrDb (key, query) {

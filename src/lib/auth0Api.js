@@ -45,6 +45,12 @@ function getAuthToken (cb) {
       console.error(err);
       return cb(err);
     }
+    if (req.statusCode === 403) {
+      err = new Error(req.body.error_description);
+      err.status = 403;
+      err.full = JSON.stringify(req.body);
+      return cb(err);
+    }
     AuthTokenExpiryTime = Date.now() + body.expires_in;
     AuthToken = body.access_token;
     cb(null);
@@ -55,7 +61,7 @@ function queryApi (opts, cb) {
   if (!AuthToken || hasAuthTokenExpired()) {
     getAuthToken(function (err) {
       if (err) {
-        cb(err);
+        return cb(err);
       } else {
         queryApi(opts, cb);
       }
@@ -68,6 +74,12 @@ function queryApi (opts, cb) {
     };
     request(opts, function (err, req, body) {
       if (err) {
+        return cb(err);
+      }
+      if (req.statusCode === 403) {
+        err = new Error('Unauthorized');
+        err.status = 403;
+        err.full = JSON.stringify(body);
         return cb(err);
       }
       let temp = JSON.parse(body);

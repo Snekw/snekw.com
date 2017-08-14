@@ -41,7 +41,6 @@ const strategy = new Auth0Strategy(
     callbackURL: env.AUTH0_CALLBACK_URL
   },
   (accessToken, refreshToken, extraParams, profile, done) => {
-    let p = profile;
     request.get('https://' + env.AUTH0_DOMAIN + '/userinfo', {
       headers: {
         Authorization: 'Bearer ' + accessToken
@@ -63,7 +62,6 @@ const strategy = new Auth0Strategy(
 
       return done(null, user);
     });
-
   }
 );
 
@@ -99,11 +97,13 @@ function setupPassport () {
 function getRoutes () {
   router.get('/login', passport.authenticate('auth0', auth0LoginOpts),
     function (req, res) {
+      res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
       res.redirect('/');
     }
   );
 
   router.get('/logout', (req, res) => {
+    res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
     req.logout();
     req.session.destroy((err) => {
       if (err) {
@@ -117,6 +117,7 @@ function getRoutes () {
 
   router.get('/callback', passport.authenticate('auth0', auth0CallbackOpts),
     function (req, res) {
+      res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
       res.redirect(req.session.returnTo || '/user');
     }
   );

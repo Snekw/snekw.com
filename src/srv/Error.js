@@ -29,6 +29,7 @@ function normalizeError (err) {
   if (config.DEV === true) {
     ret.stack = err.stack;
     ret.full = err;
+    ret.full = err.full;
   }
 
   return ret;
