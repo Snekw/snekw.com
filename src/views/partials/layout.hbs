@@ -29,7 +29,11 @@
 </head>
 <body>
   {{>nav}}{{> @partial-block}}
-  <link rel="stylesheet" href="/static/main.css"/>
-  <link rel="stylesheet" href="/static/prism-okaidia.css"/>
+  <link rel="preload" as="style" href="/static/main.css" onload="this.rel='stylesheet';"/>
+  <link rel="preload" as="style" href="/static/prism-okaidia.css" onload="this.rel='stylesheet';"/>
+  <noscript id="deferred-styles">
+    <link rel="stylesheet" href="/static/main.css"/>
+    <link rel="stylesheet" href="/static/prism-okaidia.css"/>
+  </noscript>
 </body>
 </html>
