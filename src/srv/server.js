@@ -26,8 +26,9 @@
 
 let app = require('./app.js');
 let debug = require('debug')('App:Server');
+let https = require('https');
 let http = require('http');
-let fcgi = require('node-fastcgi');
+let fs = require('fs');
 let config = require('../helpers/configStub')('main');
 debug('Starting express...');
 
@@ -42,16 +43,37 @@ debug('Used port: ' + port);
  * Create HTTPs server.
  */
 
+let useHttps = config.server.useHttps;
 let server = null;
-if (config.DEV === true) {
+debug('useHttps: ' + useHttps);
+if (useHttps === true) {
+  debug('Using https.');
   debug('Creating http server.');
-  server = http.createServer(app).listen(port);
-} else {
-  debug('Creating fastcgi server.');
-  server = fcgi.createServer(app).listen();
-}
-debug('Server created.');
+  http.createServer(function (req, res) {
+    res.writeHead(301, {'Location': 'https://' + req.headers.host + req.url});
+    res.end();
+  }).listen(80);
+  debug('Http server created for redirection.');
+  console.log('Redirecting http traffic to https!');
 
+  debug('Creating https server.');
+  server = https.createServer({
+    key: fs.readFileSync('localhost.key'),
+    cert: fs.readFileSync('localhost.crt')
+  }, app);
+  debug('Https server created.');
+} else {
+  debug('Not using https.');
+  debug('Creating http server.');
+  server = http.createServer(app);
+  debug('Http server created.');
+}
+
+/**
+ * Listen on provided port, on all network interfaces.
+ */
+
+server.listen(port);
 server.on('error', onError);
 server.on('listening', onListening);
 
