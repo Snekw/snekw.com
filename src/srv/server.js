@@ -26,48 +26,19 @@
 
 let app = require('./app.js');
 let debug = require('debug')('App:Server');
-let https = require('https');
 let http = require('http');
-let fs = require('fs');
 let config = require('../helpers/configStub')('main');
 debug('Starting express...');
 
 /**
  * Get port from environment and store in Express.
  */
-debug('ENV port: ' + process.env.port);
-let port = normalizePort(process.env.PORT || config.server.port || '3001');
+let port = normalizePort(config.server.port || '3001');
 debug('Used port: ' + port);
 
-/**
- * Create HTTPs server.
- */
-
-let useHttps = config.server.useHttps;
-let server = null;
-debug('useHttps: ' + useHttps);
-if (useHttps === true) {
-  debug('Using https.');
-  debug('Creating http server.');
-  http.createServer(function (req, res) {
-    res.writeHead(301, {'Location': 'https://' + req.headers.host + req.url});
-    res.end();
-  }).listen(80);
-  debug('Http server created for redirection.');
-  console.log('Redirecting http traffic to https!');
-
-  debug('Creating https server.');
-  server = https.createServer({
-    key: fs.readFileSync('localhost.key'),
-    cert: fs.readFileSync('localhost.crt')
-  }, app);
-  debug('Https server created.');
-} else {
-  debug('Not using https.');
-  debug('Creating http server.');
-  server = http.createServer(app);
-  debug('Http server created.');
-}
+debug('Creating http server.');
+let server = http.createServer(app);
+debug('Http server created.');
 
 /**
  * Listen on provided port, on all network interfaces.
