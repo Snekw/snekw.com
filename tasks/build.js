@@ -27,7 +27,6 @@ const fsExt = require('fs-extra');
 const path = require('path');
 const rimraf = require('rimraf');
 const css = require('css');
-const hbs = require('handlebars');
 
 function compileScss (file, style) {
   return new Promise((resolve, reject) => {
@@ -204,7 +203,7 @@ function getFoldCss (input) {
 clean();
 
 const files = [
-  copyFile('./src/config/mainConfig.js', './dist/config/mainConfig.js'),
+  copyFile('./src/config-example/mainConfig.js', './dist/config/mainConfig.js'),
   copyFile('./src/static/favicon.ico', './dist/static/favicon.ico'),
   copyFile('./node_modules/prismjs/prism.js', './dist/static/prism.js'),
   copyFile('./src/static/mdEditor.js', './dist/static/mdEditor.js'),

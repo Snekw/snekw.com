@@ -53,3 +53,4 @@ nogit
 *.map
 /dist
 /src/static/*.css
+**/config
