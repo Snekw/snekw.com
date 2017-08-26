@@ -26,9 +26,42 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Test</title>
   {{#>header}}{{/header}}
+  {{!@#
+  .indexBody
+  .indexBody ul
+  .indexBody ul li
+  .left
+  .right
+  .nav
+  .btn
+  .btn-nav
+  .indexProject
+  .indexProject h1
+  .indexProject a
+  .indexProjectClickArea
+  .indexProjectClickArea h1
+  .indexProjectClickArea a
+  .container
+  html, body
+  nav
+  a
+  img
+  li
+  #@}}
 </head>
 <body>
-  {{>nav}}{{> @partial-block}}
+  {{>nav}}
+  <noscript>
+    <style>
+      #noscript {
+        background-color: red;
+      }
+    </style>
+    <div id="noscript">
+      Some of the features do not work with Javascript disabled.
+    </div>
+  </noscript>{{> @partial-block}}
+
   <link rel="stylesheet" href="/static/main.css"/>
   <link rel="preload" as="style" href="/static/prism-okaidia.css" onload="this.rel='stylesheet';"/>
   <noscript id="deferred-styles">
