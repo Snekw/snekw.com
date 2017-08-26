@@ -22,9 +22,14 @@ const hbs = require('hbs');
 const fs = require('fs');
 const moment = require('moment');
 let HbsViews = require('./hbsViews');
+const config = require('../helpers/configStub')('main');
 
 function getHbs (path) {
-  return fs.readFileSync('./src/views/' + path).toString();
+  let pathStart = './dist/views/';
+  if (config.DEV === true) {
+    pathStart = './src/views/';
+  }
+  return fs.readFileSync(pathStart + path).toString();
 }
 
 function getPartialHbs (partial) {
