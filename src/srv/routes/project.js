@@ -22,7 +22,7 @@ const router = require('express').Router();
 const HbsViews = require('../hbsSystem').views;
 const normalizeError = require('../Error').normalizeError;
 const models = require('../../db/models.js');
-const ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn();
+const ensureAdmin = require('../../lib/ensureAdmin');
 const cachedData = require('../CachedData');
 const auth0Api = require('../../lib/auth0Api');
 const processMarkdown = require('../processMarkdown');
@@ -92,13 +92,13 @@ router.get('/id/:project', function (req, res, next) {
   res.send(HbsViews.project.get.hbs(req.context));
 });
 
-router.get('/new', ensureLoggedIn, function (req, res, next) {
+router.get('/new', ensureAdmin, function (req, res, next) {
   res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
   req.context.csrfToken = req.csrfToken();
   res.send(HbsViews.project.new.hbs(req.context));
 });
 
-router.get('/edit/:project', ensureLoggedIn, function (req, res, next) {
+router.get('/edit/:project', ensureAdmin, function (req, res, next) {
   res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
 
   req.context.csrfToken = req.csrfToken();
@@ -106,7 +106,7 @@ router.get('/edit/:project', ensureLoggedIn, function (req, res, next) {
   res.send(HbsViews.project.edit.hbs(req.context));
 });
 
-router.post('/edit', ensureLoggedIn, function (req, res, next) {
+router.post('/edit', ensureAdmin, function (req, res, next) {
   if (!req.body.body || !req.body.projectId) {
     return next(new Error('Body and project id are required'));
   }
@@ -133,11 +133,15 @@ router.post('/edit', ensureLoggedIn, function (req, res, next) {
     if (err) {
       return next(err);
     }
-    return res.redirect('/project/id/' + req.body.projectId);
+    cachedData.updateCache('indexProjects', querys.indexProjectsQuery).then(() => {
+      return res.redirect('/project/id/' + req.body.projectId);
+    }).catch(err => {
+      return next(err);
+    });
   });
 });
 
-router.post('/new', ensureLoggedIn, function (req, res, next) {
+router.post('/new', ensureAdmin, function (req, res, next) {
   res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
   if (!req.body.title || !req.body.body) {
     res.status(400);

@@ -22,7 +22,7 @@ const router = require('express').Router();
 const HbsViews = require('../hbsSystem').views;
 const models = require('../../db/models.js');
 const querys = require('../../db/querys');
-const ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn();
+const ensureAdmin = require('../../lib/ensureAdmin');
 const processMarkdown = require('../processMarkdown');
 const cachedData = require('../CachedData');
 
@@ -36,13 +36,13 @@ router.get('/', function (req, res, next) {
   });
 });
 
-router.get('/new', ensureLoggedIn, function (req, res, next) {
+router.get('/new', ensureAdmin, function (req, res, next) {
   res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
   req.context.csrfToken = req.csrfToken();
   res.send(HbsViews.about.new.hbs(req.context));
 });
 
-router.get('/edit/:id', ensureLoggedIn, function (req, res, next) {
+router.get('/edit/:id', ensureAdmin, function (req, res, next) {
   models.about.findById(req.params.id).lean().exec((err, about) => {
     if (err) {
       return next(err);
@@ -53,7 +53,7 @@ router.get('/edit/:id', ensureLoggedIn, function (req, res, next) {
   });
 });
 
-router.post('/edit/:id', ensureLoggedIn, function (req, res, next) {
+router.post('/edit/:id', ensureAdmin, function (req, res, next) {
   if (!req.body.body || !req.body.aboutId) {
     return next(new Error('Body and aboutId are required'));
   }
@@ -78,7 +78,7 @@ router.post('/edit/:id', ensureLoggedIn, function (req, res, next) {
   });
 });
 
-router.post('/new', ensureLoggedIn, function (req, res, next) {
+router.post('/new', ensureAdmin, function (req, res, next) {
   res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
   if (!req.body.author || !req.body.body) {
     req.context.error = new Error('Bad arguments');
