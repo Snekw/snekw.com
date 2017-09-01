@@ -48,6 +48,12 @@ img {
   max-width: 100%;
   height: auto;
   border-radius: 5px;
+  @media screen and (max-width: $break-small) {
+    margin: 0;
+  }
+  &[src = ""] {
+    display: none;
+  }
 }
 
 hr {

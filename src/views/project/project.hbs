@@ -24,9 +24,9 @@
     <img id="titleImg" src="{{project.indexImageUrl}}"/>
     <h1 id="projectTitle">{{project.title}}</h1>
     <hr/>
-    <div class="container project">{{{project.body}}}</div>
+    <div class="project">{{{project.body}}}</div>
     <hr>
-    <div class="container">
+    <div>
       <p>Written by: {{project.author.username}}</p>
       <p>Published: {{formatTime project.postedAt 'LLLL'}}</p>
       {{#if_neq project.postedAt project.updatedAt}}
