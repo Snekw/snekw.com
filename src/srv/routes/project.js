@@ -122,8 +122,8 @@ router.post('/edit', ensureLoggedIn, function (req, res, next) {
   if (req.body.title) {
     update.title = req.body.title;
   }
-  if (req.body.indexImageUrl) {
-    update.indexImageUrl = req.body.indexImageUrl;
+  if (req.body.indexImg) {
+    update.indexImageUrl = req.body.indexImg;
   }
   if (req.body.brief) {
     update.brief = req.body.brief;
