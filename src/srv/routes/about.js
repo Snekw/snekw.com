@@ -53,7 +53,7 @@ router.get('/edit/:id', ensureAdmin, function (req, res, next) {
   });
 });
 
-router.post('/edit/:id', ensureAdmin, function (req, res, next) {
+router.post('/edit', ensureAdmin, function (req, res, next) {
   if (!req.body.body || !req.body.aboutId) {
     return next(new Error('Body and aboutId are required'));
   }
@@ -107,6 +107,39 @@ router.post('/new', ensureAdmin, function (req, res, next) {
       });
     }).catch(err => {
       return next(err);
+    });
+  });
+});
+
+router.get('/delete/:id', ensureAdmin, function (req, res, next) {
+  models.about.findById(req.params.id).lean().exec((err, data) => {
+    if (err) {
+      return next(err);
+    }
+    if (!data) {
+      return next(new Error('No about found'));
+    }
+
+    req.context.about = data;
+    res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
+    req.context.csrfToken = req.csrfToken();
+    res.send(HbsViews.about.delete.hbs(req.context));
+  });
+});
+
+router.post('/delete', ensureAdmin, function (req, res, next) {
+  if (!req.body.delete || req.body.delete !== 'on') {
+    return res.redirect('/');
+  }
+
+  models.about.findByIdAndRemove(req.body.id).exec((err) => {
+    if (err) {
+      return next(err);
+    }
+    cachedData.updateCache('about', querys.aboutGetQuery).then(() => {
+      return res.redirect('/about');
+    }).catch(() => {
+      return res.redirect('/about');
     });
   });
 });

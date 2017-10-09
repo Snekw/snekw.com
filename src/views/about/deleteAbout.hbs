@@ -19,14 +19,17 @@
  *  along with snekw.com.  If not, see <http://www.gnu.org/licenses/>.
  */
 }}
-{{#if @root.user.app_metadata.admin}}
-  <div class="adminControls">
-    {{#if @root.isAbout}}
-      <a href="/about/edit/{{_id}}">Edit</a>
-      <a href="/about/delete/{{_id}}">Delete</a>
-    {{else}}
-      <a href="/project/edit/{{_id}}">Edit</a>
-      <a href="/project/delete/{{_id}}">Delete</a>
-    {{/if}}
+{{#>layout}}
+  <div class="container">
+    <h1>Delete</h1>
+    <h2>Are you sure you want to delete the about page?</h2>
+    <div class="container">{{{about.body}}}</div>
+    <form action="/about/delete" method="post">
+      <input type="hidden" name="_csrf" value="{{csrfToken}}">
+      <input type="hidden" name="id" value="{{about._id}}">
+      <label for="delete">Delete?</label>
+      <input type="checkbox" id="delete" name="delete">
+      <input type="submit">
+    </form>
   </div>
-{{/if}}
+{{/layout}}

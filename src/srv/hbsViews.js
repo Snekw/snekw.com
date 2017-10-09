@@ -66,6 +66,9 @@ module.exports = {
     },
     edit: {
       path: 'about/editAbout.hbs'
+    },
+    delete: {
+      path: 'about/deleteAbout.hbs'
     }
   },
   archive: {

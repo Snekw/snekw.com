@@ -109,9 +109,9 @@ function middleware (req, res, next) {
   req.context = {
     user: req.user
   };
-  req.context.pageType = 'project';
+  req.context.isAbout = false;
   if (req.originalUrl.startsWith('/about')) {
-    req.context.pageType = 'about';
+    req.context.isAbout = true;
   }
   next();
 }
