@@ -19,8 +19,10 @@
  */
 'use strict';
 const mongoose = require('mongoose');
+const shortId = require('shortid');
 
 const aboutSchema = new mongoose.Schema({
+  _id: {type: String, default: shortId.generate},
   rawBody: {type: String, required: true},
   body: {type: String, required: true},
   author: {type: String, required: true},

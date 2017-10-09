@@ -20,11 +20,19 @@
  */
 }}
 {{#>layout}}
-  <form action="/about/new" method="post">
-    {{>markdownEditor}}
-    <input type="hidden" name="_csrf" value="{{csrfToken}}">
-    <input type="hidden" name="author" value="{{user.id}}">
+  {{bad}}
+  <form action="/project/edit" method="post">
+{{>markdownEditor editorDefault=project.rawBody}}
     <div class="container">
+      <input type="hidden" name="_csrf" value="{{csrfToken}}">
+      <input type="hidden" name="postedBy" value="{{user.id}}">
+      <input type="hidden" name="projectId" value="{{project._id}}">
+      <label for="title">Title:</label>
+      <input type="text" id="title" name="title" value="{{project.title}}">
+      <label for="indexImg">Index img url:</label>
+      <input type="text" id="indexImg" name="indexImg" value="{{project.indexImageUrl}}">
+      <label for="brief">Brief:</label>
+      <input type="text" id="brief" name="brief" value="{{project.brief}}">
       <input type="submit">
     </div>
   </form>

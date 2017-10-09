@@ -21,6 +21,15 @@
 }}
 {{#>layout}}
   <div class="container">
-    <div class="container">{{{about.body}}}</div>
+    <h1>Delete</h1>
+    <h2>Are you sure you want to delete the project?</h2>
+    {{>projectBrief project}}
+    <form action="/project/delete" method="post">
+      <input type="hidden" name="_csrf" value="{{csrfToken}}">
+      <input type="hidden" name="id" value="{{project._id}}">
+      <label for="delete">Delete?</label>
+      <input type="checkbox" id="delete" name="delete">
+      <input type="submit">
+    </form>
   </div>
 {{/layout}}

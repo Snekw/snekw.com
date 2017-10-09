@@ -26,6 +26,7 @@ const CleanCss = require('clean-css');
 const fsExt = require('fs-extra');
 const path = require('path');
 const rimraf = require('rimraf');
+const css = require('css');
 
 function compileScss (file, style) {
   return new Promise((resolve, reject) => {
@@ -139,10 +140,70 @@ if (fs.existsSync(prevConfigPath)) {
   previousConfig = fs.readFileSync(prevConfigPath);
 }
 
+function getFoldCss (input) {
+  return new Promise((resolve, reject) => {
+    fs.readFile('./src/views/partials/layout.hbs', 'utf8', (err, data) => {
+      if (err) {
+        return reject(err);
+      }
+      let cssContent = css.parse(input.out.css.toString());
+      let start = data.indexOf('{{!@#') + 7; // Trim the comment syntax out
+      let end = data.indexOf('#@}}');
+      let content = data.substr(start, end - start).split(/[\n]|,/);
+      content = content.map((val) => {
+        return val.trim();
+      });
+
+      let foldCssAST = {
+        parent: null,
+        stylesheet: {
+          rules: [],
+          parsingErrors: []
+        },
+        type: 'stylesheet'
+      };
+      let addedRuleIndices = [];
+      for (let i = 0; i < content.length; i++) {
+        for (let d = 0; d < cssContent.stylesheet.rules.length; d++) {
+          let rule = cssContent.stylesheet.rules[d];
+          if (rule.type !== 'rule') {
+            continue;
+          }
+          for (let x = 0; x < rule.selectors.length; x++) {
+            if (content[i] === rule.selectors[x]) {
+              if (addedRuleIndices.indexOf(d) > -1) {
+                continue;
+              }
+              addedRuleIndices.push(d);
+              foldCssAST.stylesheet.rules.push(rule);
+            }
+          }
+        }
+      }
+
+      let foldCss = css.stringify(foldCssAST);
+      new CleanCss({returnPromise: true}).minify(foldCss).then(out => {
+        let newData = data.slice(0, start - 7);
+        newData += '<style>' + out.styles + '</style>';
+        newData += data.slice(end + 4, data.length);
+        fs.writeFile('./dist/views/partials/layout.hbs', newData, {}, (err) => {
+          if (err) {
+            return reject(err);
+          }
+          return resolve(input);
+        });
+      }).catch(err => {
+        return reject(err);
+      });
+
+    });
+  });
+}
+
 clean();
 
 const files = [
-  copyFile('./src/config/mainConfig.js', './dist/config/mainConfig.js'),
+  copyFile('./src/config-example/mainConfig.js', './dist/config/mainConfig.js'),
   copyFile('./src/static/favicon.ico', './dist/static/favicon.ico'),
   copyFile('./node_modules/prismjs/prism.js', './dist/static/prism.js'),
   copyFile('./src/static/mdEditor.js', './dist/static/mdEditor.js'),
@@ -160,6 +221,7 @@ const dirs = [
 
 compileScss('main')
   .then(prefixCss)
+  // .then(getFoldCss)
   .then(cleanCss)
   .then(saveCssMin)
   .then(out => {

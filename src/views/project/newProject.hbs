@@ -1,4 +1,8 @@
+{{!
 /**
+ *  snekw.com,
+ *  Copyright (C) 2017 Ilkka Kuosmanen
+ *
  *  This file is part of snekw.com.
  *
  *  snekw.com is free software: you can redistribute it and/or modify
@@ -14,15 +18,21 @@
  *  You should have received a copy of the GNU General Public License
  *  along with snekw.com.  If not, see <http://www.gnu.org/licenses/>.
  */
-$primary-color: #a1a1a1;
-$background-color: #444444;
-$accent-color: #ff9511;
-$text-color-primary: #000000;
-$text-color-secondary: #c2bfc0;
-$secondary-color: #707070;
-$link-color: #222222;
-$prism-code-background-color: #272822;
-
-$break-extra-small: 328px;
-$break-small: 500px;
-$break-large: 1200px;
+}}
+{{#>layout}}
+  {{bad}}
+  <form action="/project/new" method="post">
+{{>markdownEditor}}
+    <div class="container">
+      <input type="hidden" name="_csrf" value="{{csrfToken}}">
+      <input type="hidden" name="postedBy" value="{{user.id}}">
+      <label for="title">Title:</label>
+      <input type="text" id="title" name="title" value="t">
+      <label for="indexImg">Index img url:</label>
+      <input type="text" id="indexImg" name="indexImg">
+      <label for="brief">Brief:</label>
+      <input type="text" id="brief" name="brief" value="t">
+      <input type="submit">
+    </div>
+  </form>
+{{/layout}}

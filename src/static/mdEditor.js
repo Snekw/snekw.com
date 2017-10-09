@@ -33,3 +33,5 @@ function onEdit () {
 
   Prism.highlightAll();
 }
+
+onEdit();

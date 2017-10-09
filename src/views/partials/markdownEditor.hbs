@@ -19,15 +19,15 @@
  *  along with snekw.com.  If not, see <http://www.gnu.org/licenses/>.
  */
 }}
-<link rel="stylesheet" href="/mdEditor.css"/>
 <div class="mdContainer">
-  <div class="md left">
-    <textarea name="body" id="editor"></textarea>
+  <div class="md md-left">
+<textarea title="editor" name="body" id="editor">{{editorDefault}}</textarea>
   </div>
-  <div class="md right">
-    <div id="editorOut" class="container mdOut"></div>
+  <div class="md md-right">
+    <div id="editorOut" class="mdOut"></div>
   </div>
 </div>
 <script src="/static/commonmark.min.js"></script>
 <script src="/static/prism.js"></script>
 <script src="/static/mdEditor.js"></script>
+<link rel="stylesheet" href="/static/mdEditor.css"/>

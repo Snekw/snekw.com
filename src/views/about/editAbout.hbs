@@ -1,4 +1,8 @@
+{{!
 /**
+ *  snekw.com,
+ *  Copyright (C) 2017 Ilkka Kuosmanen
+ *
  *  This file is part of snekw.com.
  *
  *  snekw.com is free software: you can redistribute it and/or modify
@@ -14,15 +18,15 @@
  *  You should have received a copy of the GNU General Public License
  *  along with snekw.com.  If not, see <http://www.gnu.org/licenses/>.
  */
-$primary-color: #a1a1a1;
-$background-color: #444444;
-$accent-color: #ff9511;
-$text-color-primary: #000000;
-$text-color-secondary: #c2bfc0;
-$secondary-color: #707070;
-$link-color: #222222;
-$prism-code-background-color: #272822;
-
-$break-extra-small: 328px;
-$break-small: 500px;
-$break-large: 1200px;
+}}
+{{#>layout}}
+  <form action="/about/new" method="post">
+{{>markdownEditor editorDefault=about.rawBody}}
+    <input type="hidden" name="_csrf" value="{{csrfToken}}">
+    <input type="hidden" name="author" value="{{user.id}}">
+    <input type="hidden" name="aboutId" value="{{about._id}}">
+    <div class="container">
+      <input type="submit">
+    </div>
+  </form>
+{{/layout}}

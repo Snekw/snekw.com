@@ -19,10 +19,10 @@
  */
 'use strict';
 const router = require('express').Router();
-const HbsViews = require('../HbsViews');
+const HbsViews = require('../hbsSystem').views;
 const normalizeError = require('../Error').normalizeError;
 const models = require('../../db/models.js');
-const ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn();
+const ensureAdmin = require('../../lib/ensureAdmin');
 const cachedData = require('../CachedData');
 const auth0Api = require('../../lib/auth0Api');
 const processMarkdown = require('../processMarkdown');
@@ -89,21 +89,64 @@ router.get('/id/:project', function (req, res, next) {
     err.message = req.originalUrl;
     return next(err);
   }
-  res.send(HbsViews.views.project(req.context));
+  res.send(HbsViews.project.get.hbs(req.context));
 });
 
-router.get('/new', ensureLoggedIn, function (req, res, next) {
+router.get('/new', ensureAdmin, function (req, res, next) {
   res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
   req.context.csrfToken = req.csrfToken();
-  res.send(HbsViews.views.newProject(req.context));
+  res.send(HbsViews.project.new.hbs(req.context));
 });
 
-router.post('/new', ensureLoggedIn, function (req, res, next) {
+router.get('/edit/:project', ensureAdmin, function (req, res, next) {
+  res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
+
+  req.context.csrfToken = req.csrfToken();
+
+  res.send(HbsViews.project.edit.hbs(req.context));
+});
+
+router.post('/edit', ensureAdmin, function (req, res, next) {
+  if (!req.body.body || !req.body.projectId) {
+    return next(new Error('Body and project id are required'));
+  }
+
+  let rendered = processMarkdown(req.body.body);
+
+  let update = {
+    rawBody: req.body.body,
+    body: rendered,
+    updatedAt: Date.now()
+  };
+
+  if (req.body.title) {
+    update.title = req.body.title;
+  }
+  if (req.body.indexImg) {
+    update.indexImageUrl = req.body.indexImg;
+  }
+  if (req.body.brief) {
+    update.brief = req.body.brief;
+  }
+
+  models.project.findByIdAndUpdate(req.body.projectId, update, (err) => {
+    if (err) {
+      return next(err);
+    }
+    cachedData.updateCache('indexProjects', querys.indexProjectsQuery).then(() => {
+      return res.redirect('/project/id/' + req.body.projectId);
+    }).catch(err => {
+      return next(err);
+    });
+  });
+});
+
+router.post('/new', ensureAdmin, function (req, res, next) {
   res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
   if (!req.body.title || !req.body.body) {
     res.status(400);
     // TODO
-    res.send(HbsViews.views.newProject({bad: 'Missing data', csrfToken: req.csrfToken()}));
+    res.send(HbsViews.project.new.hbs({bad: 'Missing data', csrfToken: req.csrfToken()}));
   }
   let rendered = processMarkdown(req.body.body);
   // eslint-disable-next-line
@@ -123,6 +166,31 @@ router.post('/new', ensureLoggedIn, function (req, res, next) {
     }
     cachedData.updateCache('indexProjects', querys.indexProjectsQuery).then(() => {
       return res.redirect('/project/id/' + data._id);
+    }).catch(err => {
+      return next(err);
+    });
+  });
+});
+
+router.get('/delete/:project', ensureAdmin, function (req, res, next) {
+  res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
+
+  req.context.csrfToken = req.csrfToken();
+
+  res.send(HbsViews.project.delete.hbs(req.context));
+});
+
+router.post('/delete', ensureAdmin, function (req, res, next) {
+  if (!req.body.delete || req.body.delete !== 'on') {
+    return res.redirect('/');
+  }
+
+  models.project.findByIdAndRemove(req.body.id).exec((err) => {
+    if (err) {
+      return next(err);
+    }
+    cachedData.updateCache('indexProjects', querys.indexProjectsQuery).then(() => {
+      return res.redirect('/');
     }).catch(err => {
       return next(err);
     });

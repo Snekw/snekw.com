@@ -19,15 +19,25 @@
  *  along with snekw.com.  If not, see <http://www.gnu.org/licenses/>.
  */
 }}
+{{#> header}}
+  {{#each projects}}
+    <link rel="preload" as="image" href="{{indexImageUrl}}"/>
+  {{/each}}
+{{/header}}
 {{#>layout}}
-{{#each projects}}
-  {{>projectBrief}}
-{{/each}}
-<div class="container">
-  <div class="pagination">
-    {{#each pagination}}
-      <a class="{{#if this.active}}active{{/if}} {{#if this.disabled}}disabled{{/if}}" {{#if this.disabled}}aria-disabled="true" tabindex="-1" {{/if}} href="/archive/{{this.href}}">{{this.page}}</a>
+  <ul>
+    {{#each projects}}
+      <li>
+        {{>projectBrief}}
+      </li>
     {{/each}}
+  </ul>
+  <div class="container">
+    <div class="pagination">
+      {{#each pagination}}
+        <a class="{{#if this.active}}active{{/if}} {{#if this.disabled}}disabled{{/if}}" {{#if
+            this.disabled}}aria-disabled="true" tabindex="-1" {{/if}} href="/archive/{{this.href}}">{{this.page}}</a>
+      {{/each}}
+    </div>
   </div>
-</div>
 {{/layout}}

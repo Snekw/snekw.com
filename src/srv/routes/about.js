@@ -19,10 +19,10 @@
  */
 'use strict';
 const router = require('express').Router();
-const HbsViews = require('../HbsViews');
+const HbsViews = require('../hbsSystem').views;
 const models = require('../../db/models.js');
 const querys = require('../../db/querys');
-const ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn();
+const ensureAdmin = require('../../lib/ensureAdmin');
 const processMarkdown = require('../processMarkdown');
 const cachedData = require('../CachedData');
 
@@ -30,23 +30,59 @@ router.get('/', function (req, res, next) {
   cachedData.getCachedOrDb('about', querys.aboutGetQuery).then(data => {
     req.context.about = data;
     req.context.csrfToken = req.csrfToken();
-    res.send(HbsViews.views.about(req.context));
+    res.send(HbsViews.about.get.hbs(req.context));
   }).catch(err => {
     return next(err);
   });
 });
 
-router.get('/new', ensureLoggedIn, function (req, res, next) {
+router.get('/new', ensureAdmin, function (req, res, next) {
   res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
   req.context.csrfToken = req.csrfToken();
-  res.send(HbsViews.views.newAbout(req.context));
+  res.send(HbsViews.about.new.hbs(req.context));
 });
 
-router.post('/new', ensureLoggedIn, function (req, res, next) {
+router.get('/edit/:id', ensureAdmin, function (req, res, next) {
+  models.about.findById(req.params.id).lean().exec((err, about) => {
+    if (err) {
+      return next(err);
+    }
+    req.context.csrfToken = req.csrfToken();
+    req.context.about = about;
+    return res.send(HbsViews.about.edit.hbs(req.context));
+  });
+});
+
+router.post('/edit', ensureAdmin, function (req, res, next) {
+  if (!req.body.body || !req.body.aboutId) {
+    return next(new Error('Body and aboutId are required'));
+  }
+
+  let rendered = processMarkdown(req.body.body);
+
+  let update = {
+    rawBody: req.body.body,
+    body: rendered,
+    updatedAt: Date.now()
+  };
+
+  if (req.body.title) {
+    update.title = req.body.title;
+  }
+
+  models.about.findByIdAndUpdate(req.body.aboutId, update, (err) => {
+    if (err) {
+      return next(err);
+    }
+    return res.redirect('/about');
+  });
+});
+
+router.post('/new', ensureAdmin, function (req, res, next) {
   res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
   if (!req.body.author || !req.body.body) {
     req.context.error = new Error('Bad arguments');
-    return res.send(HbsViews.views.error(req.context));
+    return res.send(HbsViews.error.get.hbs(req.context));
   }
 
   let rendered = processMarkdown(req.body.body);
@@ -71,6 +107,39 @@ router.post('/new', ensureLoggedIn, function (req, res, next) {
       });
     }).catch(err => {
       return next(err);
+    });
+  });
+});
+
+router.get('/delete/:id', ensureAdmin, function (req, res, next) {
+  models.about.findById(req.params.id).lean().exec((err, data) => {
+    if (err) {
+      return next(err);
+    }
+    if (!data) {
+      return next(new Error('No about found'));
+    }
+
+    req.context.about = data;
+    res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
+    req.context.csrfToken = req.csrfToken();
+    res.send(HbsViews.about.delete.hbs(req.context));
+  });
+});
+
+router.post('/delete', ensureAdmin, function (req, res, next) {
+  if (!req.body.delete || req.body.delete !== 'on') {
+    return res.redirect('/');
+  }
+
+  models.about.findByIdAndRemove(req.body.id).exec((err) => {
+    if (err) {
+      return next(err);
+    }
+    cachedData.updateCache('about', querys.aboutGetQuery).then(() => {
+      return res.redirect('/about');
+    }).catch(() => {
+      return res.redirect('/about');
     });
   });
 });

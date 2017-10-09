@@ -41,7 +41,7 @@
   display: block;
   width: 70%;
   margin: auto;
-  h1{
+  h1 {
     text-align: center;
   }
   a {
@@ -59,13 +59,5 @@
       background-color: #606060;
       color: $text-color-secondary;
     }
-  }
-}
-
-.indexBody {
-  ul {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
   }
 }

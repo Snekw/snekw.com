@@ -20,18 +20,18 @@
 'use strict';
 const router = require('express').Router();
 const ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn();
-const HbsViews = require('../HbsViews');
+const HbsViews = require('../hbsSystem').views;
 const auth = require('../../lib/auth');
 const cache = require('../CachedData');
 const normalizeError = require('../Error').normalizeError;
 const config = require('../../helpers/configStub')('main');
 const querys = require('../../db/querys');
-auth.setErrorPageFunc(HbsViews.views.error);
+auth.setErrorPageFunc(HbsViews.error.get.hbs);
 
 router.get('/', function (req, res, next) {
   cache.getCachedOrDb('indexProjects', querys.indexProjectsQuery).then(data => {
     req.context.projects = data;
-    res.send(HbsViews.views.index(req.context));
+    res.send(HbsViews.index.get.hbs(req.context));
   }).catch(err => {
     return next(err);
   });
@@ -39,15 +39,14 @@ router.get('/', function (req, res, next) {
 
 router.get('/user', ensureLoggedIn, function (req, res, next) {
   res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
-  res.send(HbsViews.views.user(req.context));
+  res.send(HbsViews.user.get.hbs(req.context));
 });
 
 // Used to test the Error page, only enabled in developer mode
 if (config.DEV === true) {
   router.get('/err', function (req, res, next) {
-    HbsViews.recompile(['error']);
     req.context.error = normalizeError(new Error('Test'));
-    res.send(HbsViews.views.error(req.context));
+    res.send(HbsViews.error.get.hbs(req.context));
   });
 }
 

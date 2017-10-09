@@ -75,6 +75,7 @@ function updateCache (key, query) {
         return reject(err);
       }
       if (!data) {
+        client.del(key);
         return reject(new Error('No data returned from db.'));
       }
       client.set(key, JSON.stringify(data));

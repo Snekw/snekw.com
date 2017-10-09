@@ -21,26 +21,39 @@
 const hbs = require('hbs');
 const fs = require('fs');
 const moment = require('moment');
+let HbsViews = require('./hbsViews');
+const config = require('../helpers/configStub')('main');
 
 function getHbs (path) {
-  return fs.readFileSync('./src/views/' + path).toString();
+  let pathStart = './dist/views/';
+  if (config.DEV === true) {
+    pathStart = './src/views/';
+  }
+  return fs.readFileSync(pathStart + path).toString();
 }
 
 function getPartialHbs (partial) {
   return getHbs('partials/' + partial);
 }
 
-function recompile (views) {
-  views.forEach((view) => {
-    hbsViews[view] = hbs.compile(getHbs(view + '.hbs'));
-  });
+function recompileAll () {
+  for (let view in HbsViews) {
+    if (HbsViews.hasOwnProperty(view)) {
+      for (let inner in HbsViews[view]) {
+        if (HbsViews[view].hasOwnProperty(inner)) {
+          HbsViews[view][inner].hbs = hbs.compile(getHbs(HbsViews[view][inner].path));
+        }
+      }
+    }
+  }
 }
 
 const partials = {
   layout: getPartialHbs('layout.hbs'),
   nav: getPartialHbs('nav.hbs'),
   projectBrief: getPartialHbs('projectBrief.hbs'),
-  markdownEditor: getPartialHbs('markdownEditor.hbs')
+  markdownEditor: getPartialHbs('markdownEditor.hbs'),
+  editControls: getPartialHbs('editControls.hbs')
 };
 
 function reloadPartials () {
@@ -76,29 +89,36 @@ hbs.registerHelper('timeFromNow', function (time) {
 
 hbs.registerPartial(partials);
 
-const hbsViews = {
+recompileAll();
+
+const _hbsViews = {
   index: hbs.compile(getHbs('index.hbs')),
   user: hbs.compile(getHbs('user.hbs')),
   error: hbs.compile(getHbs('error.hbs')),
-  project: hbs.compile(getHbs('project.hbs')),
-  newProject: hbs.compile(getHbs('newProject.hbs')),
+  project: hbs.compile(getHbs('project/project.hbs')),
+  newProject: hbs.compile(getHbs('project/newProject.hbs')),
   manageUser: hbs.compile(getHbs('manageUser.hbs')),
   error404: hbs.compile(getHbs('error404.hbs')),
   archive: hbs.compile(getHbs('archive.hbs')),
-  about: hbs.compile(getHbs('about.hbs')),
-  newAbout: hbs.compile(getHbs('newAbout.hbs'))
+  about: hbs.compile(getHbs('about/about.hbs')),
+  newAbout: hbs.compile(getHbs('about/newAbout.hbs')),
+  editProject: hbs.compile(getHbs('project/editProject.hbs'))
 };
 
 function middleware (req, res, next) {
   req.context = {
     user: req.user
   };
+  req.context.isAbout = false;
+  if (req.originalUrl.startsWith('/about')) {
+    req.context.isAbout = true;
+  }
   next();
 }
 
 module.exports = {
-  views: hbsViews,
-  recompile: recompile,
+  views: HbsViews,
+  recompileAll: recompileAll,
   reloadPartials: reloadPartials,
   middleware: middleware
 };

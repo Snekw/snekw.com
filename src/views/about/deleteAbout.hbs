@@ -1,4 +1,8 @@
+{{!
 /**
+ *  snekw.com,
+ *  Copyright (C) 2017 Ilkka Kuosmanen
+ *
  *  This file is part of snekw.com.
  *
  *  snekw.com is free software: you can redistribute it and/or modify
@@ -14,15 +18,18 @@
  *  You should have received a copy of the GNU General Public License
  *  along with snekw.com.  If not, see <http://www.gnu.org/licenses/>.
  */
-$primary-color: #a1a1a1;
-$background-color: #444444;
-$accent-color: #ff9511;
-$text-color-primary: #000000;
-$text-color-secondary: #c2bfc0;
-$secondary-color: #707070;
-$link-color: #222222;
-$prism-code-background-color: #272822;
-
-$break-extra-small: 328px;
-$break-small: 500px;
-$break-large: 1200px;
+}}
+{{#>layout}}
+  <div class="container">
+    <h1>Delete</h1>
+    <h2>Are you sure you want to delete the about page?</h2>
+    <div class="container">{{{about.body}}}</div>
+    <form action="/about/delete" method="post">
+      <input type="hidden" name="_csrf" value="{{csrfToken}}">
+      <input type="hidden" name="id" value="{{about._id}}">
+      <label for="delete">Delete?</label>
+      <input type="checkbox" id="delete" name="delete">
+      <input type="submit">
+    </form>
+  </div>
+{{/layout}}

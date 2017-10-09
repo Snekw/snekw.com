@@ -19,20 +19,21 @@
  *  along with snekw.com.  If not, see <http://www.gnu.org/licenses/>.
  */
 }}
-<nav>
-  <div class="left nav">
-    <a class="btn" href="/">Snekw.com</a>
-    <a class="btn" href="/about">About</a>
-  </div>
-  <div class="right nav">
-    <a class="btn btn-nav" href="/archive">Archive</a>
-    {{#if user}}
-      {{#if user.app_metadata.admin}}
-        <a class="btn btn-nav" href="/project/new">New post</a>
-      {{/if}}
-      <a class="btn btn-nav" href="/logout">Logout</a>
-    {{else}}
-      <a class="btn btn-nav" href="/login">Login</a>
-    {{/if}}
-  </div>
-</nav>
+{{#> header}}
+  <link rel="preload" as="image" href="{{project.indexImageUrl}}"/>
+{{/header}}
+{{#> layout}}
+  <div class="container">
+    <img id="titleImg" src="{{project.indexImageUrl}}"/>
+    <h1 id="projectTitle">{{project.title}}</h1>
+    <hr/>
+    <div class="project">{{{project.body}}}</div>
+    <hr>
+    <div>
+      <p>Written by: {{project.author.username}}</p>
+      <p>Published: {{formatTime project.postedAt 'DD.MM.YYYY HH:mm'}}</p>
+      {{#if_neq project.postedAt project.updatedAt}}
+        <p>Edited: {{formatTime project.updatedAt 'DD.MM.YYYY HH:mm - '}} {{timeFromNow project.updatedAt}}</p>
+      {{/if_neq}}
+    </div>
+  </div>{{/layout}}

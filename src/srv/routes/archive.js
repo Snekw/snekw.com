@@ -19,7 +19,7 @@
  */
 'use strict';
 const router = require('express').Router();
-const HbsViews = require('../HbsViews');
+const HbsViews = require('../hbsSystem').views;
 const models = require('../../db/models.js');
 const normalizeError = require('../Error').normalizeError;
 const auth0Api = require('../../lib/auth0Api');
@@ -151,7 +151,7 @@ function getArchive (req, res, next) {
                 }
               }
             }
-            res.send(HbsViews.views.archive(req.context));
+            res.send(HbsViews.archive.get.hbs(req.context));
           }).catch(err => {
             return next(err);
           });

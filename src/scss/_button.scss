@@ -31,4 +31,10 @@
   .btn-nav {
     margin-left: 3em;
   }
+  @media screen and (max-width: $break-small){
+    padding: 0.5em;
+  }
+  @media screen and (max-width: $break-extra-small){
+    padding: 0.1em;
+  }
 }

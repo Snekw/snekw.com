@@ -20,11 +20,11 @@
   height: 90vh;
   padding: 0;
 
-  .left {
+  &.md-left {
     float: left;
     background-color: #66d9ef;
   }
-  .right {
+  &.md-right {
     float: right;
     background-color: #999999;
   }
@@ -60,7 +60,7 @@
 }
 
 .mdContainer {
-  width: calc(100% - 1em);
+  width: calc(100% - 2vw - 2em);
   height: 90vh;
   margin: 2em;
 }

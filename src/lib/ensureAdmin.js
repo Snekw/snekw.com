@@ -1,4 +1,3 @@
-{{!
 /**
  *  snekw.com,
  *  Copyright (C) 2017 Ilkka Kuosmanen
@@ -18,19 +17,16 @@
  *  You should have received a copy of the GNU General Public License
  *  along with snekw.com.  If not, see <http://www.gnu.org/licenses/>.
  */
-}}
-{{#> layout}}
-  <div class="container">
-    <img id="titleImg" src="{{project.indexImageUrl}}"/>
-    <h1 id="projectTitle">{{project.title}}</h1>
-    <hr/>
-    <div class="container project">{{{project.body}}}</div>
-    <hr>
-    <div class="container">
-      <p>Written by: {{project.author.username}}</p>
-      <p>Published: {{formatTime project.postedAt 'LLLL'}}</p>
-      {{#if_neq project.postedAt project.updatedAt}}
-        <p>Edited: {{formatTime project.updatedAt 'LLLL'}} {{timeFromNow project.updatedAt}}</p>
-      {{/if_neq}}
-    </div>
-  </div>{{/layout}}
+'use strict';
+const ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn();
+module.exports = [
+  ensureLoggedIn,
+  function (req, res, next) {
+    if (!req.user.app_metadata.admin) {
+      let err = new Error('Admin rights required');
+      err.status = 403;
+      return next(err);
+    }
+    next();
+  }
+];

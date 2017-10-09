@@ -31,7 +31,8 @@ const RedisSessionStore = require('connect-redis')(session);
 const passport = require('passport');
 const auth = require('../lib/auth');
 const normalizeError = require('./Error').normalizeError;
-const HbsViews = require('./HbsViews');
+const HbsViews = require('./hbsViews');
+const hbsSystem = require('./hbsSystem');
 const helmet = require('helmet');
 const csrf = require('csurf');
 const redis = require('redis');
@@ -105,9 +106,8 @@ if (config.DEV === true && config.devSettings) {
       if (req.originalUrl.indexOf('.css') > -1 || req.originalUrl.indexOf('.ico') > -1) {
         return next();
       }
-      let views = Object.keys(HbsViews.views);
-      HbsViews.reloadPartials();
-      HbsViews.recompile(views);
+      hbsSystem.reloadPartials();
+      hbsSystem.recompileAll();
       debug('HbsViews recompiled!');
       next();
     });
@@ -136,7 +136,7 @@ app.use(function (req, res, next) {
   next();
 });
 
-app.use(HbsViews.middleware);
+app.use(hbsSystem.middleware);
 
 // Routing
 debug('Routing');
@@ -151,14 +151,14 @@ function error404 (req, res, next) {
   let err = new Error('Not found');
   err.status = 404;
   err.message = req.originalUrl;
-  res.send(HbsViews.views.error404(normalizeError(err)));
+  res.send(HbsViews.error404.get.hbs(normalizeError(err)));
 }
 
 // Error handler
 function errorHandler (err, req, res, next) {
   let status = err.status || 500;
   res.status(status);
-  res.send(HbsViews.views.error(normalizeError(err)));
+  res.send(HbsViews.error.get.hbs(normalizeError(err)));
 }
 
 app.use(error404);

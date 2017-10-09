@@ -34,7 +34,7 @@ nav {
   width: 100%;
   min-height: 5vh;
   background-color: $primary-color;
-  border-bottom: inset;
+  border-bottom: solid;
   border-bottom-color: $accent-color;
 }
 
@@ -48,10 +48,17 @@ img {
   max-width: 100%;
   height: auto;
   border-radius: 5px;
+  @media screen and (max-width: $break-small) {
+    margin: 0;
+  }
+  &[src = ""] {
+    display: none;
+  }
 }
 
 hr {
   border-color: $accent-color;
+  border-style: solid;
 }
 
 p {
@@ -76,6 +83,12 @@ pre {
   padding: 1px 2px 1px 2px;
   border-radius: 2px;
   border-style: hidden;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
 }
 
 li {
