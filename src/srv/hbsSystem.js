@@ -52,7 +52,8 @@ const partials = {
   layout: getPartialHbs('layout.hbs'),
   nav: getPartialHbs('nav.hbs'),
   projectBrief: getPartialHbs('projectBrief.hbs'),
-  markdownEditor: getPartialHbs('markdownEditor.hbs')
+  markdownEditor: getPartialHbs('markdownEditor.hbs'),
+  editControls: getPartialHbs('editControls.hbs')
 };
 
 function reloadPartials () {
@@ -108,6 +109,10 @@ function middleware (req, res, next) {
   req.context = {
     user: req.user
   };
+  req.context.pageType = 'project';
+  if (req.originalUrl.startsWith('/about')) {
+    req.context.pageType = 'about';
+  }
   next();
 }
 

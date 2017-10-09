@@ -19,9 +19,9 @@
  *  along with snekw.com.  If not, see <http://www.gnu.org/licenses/>.
  */
 }}
-{{#>layout}}
-  <div class="container">
-    <div >{{{about.body}}}</div>
-    {{>editControls user}}
+{{#if @root.user.app_metadata.admin}}
+  <div class="adminControls">
+    <a href="/{{@root.pageType}}/edit/{{_id}}">Edit</a>
+    <a href="/{{@root.pageType}}/delete/{{_id}}">Delete</a>
   </div>
-{{/layout}}
+{{/if}}

@@ -29,15 +29,7 @@
     <ul>
       {{#each projects}}
         <li>
-          <div class="container">
-            <br/>
-            <img src="{{indexImageUrl}}" width="550" height="250"/><br/>
-            <div class="projectContainer indexProjectClickArea">
-              <h1>{{title}}</h1>
-              {{brief}}<br/>
-              <a href="/project/id/{{_id}}">Read more...</a>
-            </div>
-          </div>
+          {{>projectBrief}}
         </li>
       {{/each}}
     </ul>

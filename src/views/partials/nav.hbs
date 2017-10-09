@@ -27,6 +27,9 @@
   <div class="right nav">
     <a class="btn btn-nav" href="/archive">Archive</a>
     {{#if user}}
+      {{#if user.app_metadata.admin}}
+        <a class="btn btn-nav" href="/project/new">New post</a>
+      {{/if}}
       <a class="btn btn-nav" href="/logout">Logout</a>
     {{else}}
       <a class="btn btn-nav" href="/login">Login</a>
