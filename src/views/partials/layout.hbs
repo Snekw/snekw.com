@@ -25,29 +25,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Test</title>
+  <link rel="preload" href="/static/main.css" as="style"/>
+  <link rel="preload" href="/static/prism-okaidia.css" as="style"/>
   {{#>header}}{{/header}}
-  {{!@#
-  .indexBody
-  .indexBody ul
-  .indexBody ul li
-  .left
-  .right
-  .nav
-  .btn
-  .btn-nav
-  .indexProject
-  .indexProject h1
-  .indexProject a
-  .indexProjectClickArea
-  .indexProjectClickArea h1
-  .indexProjectClickArea a
-  .container
-  html, body
-  nav
-  a
-  img
-  li
-  #@}}
 </head>
 <body>
   {{>nav}}
@@ -62,10 +42,7 @@
     </div>
   </noscript>{{> @partial-block}}
 
-  <link rel="preload" as="style" href="/static/main.css" onload="this.rel='stylesheet';"/>
-  <link rel="preload" as="style" href="/static/prism-okaidia.css" onload="this.rel='stylesheet';"/>
-  <noscript id="deferred-styles">
-    <link rel="stylesheet" href="/static/prism-okaidia.css"/>
-  </noscript>
+  <link rel="stylesheet" href="/static/main.css"/>
+  <link rel="stylesheet" href="/static/prism-okaidia.css"/>
 </body>
 </html>

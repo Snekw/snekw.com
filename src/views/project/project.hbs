@@ -28,9 +28,9 @@
     <hr>
     <div>
       <p>Written by: {{project.author.username}}</p>
-      <p>Published: {{formatTime project.postedAt 'LLLL'}}</p>
+      <p>Published: {{formatTime project.postedAt 'DD.MM.YYYY HH:mm'}}</p>
       {{#if_neq project.postedAt project.updatedAt}}
-        <p>Edited: {{formatTime project.updatedAt 'LLLL'}} {{timeFromNow project.updatedAt}}</p>
+        <p>Edited: {{formatTime project.updatedAt 'DD.MM.YYYY HH:mm - '}} {{timeFromNow project.updatedAt}}</p>
       {{/if_neq}}
     </div>
   </div>{{/layout}}

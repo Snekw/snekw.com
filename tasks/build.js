@@ -221,7 +221,7 @@ const dirs = [
 
 compileScss('main')
   .then(prefixCss)
-  .then(getFoldCss)
+  // .then(getFoldCss)
   .then(cleanCss)
   .then(saveCssMin)
   .then(out => {
