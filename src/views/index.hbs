@@ -19,6 +19,11 @@
  *  along with snekw.com.  If not, see <http://www.gnu.org/licenses/>.
  */
 }}
+{{#> header}}
+  {{#each projects}}
+    <link rel="preload" as="image" href="{{indexImageUrl}}"/>
+  {{/each}}
+{{/header}}
 {{#> layout}}
   <div class="indexBody">
     <ul>
