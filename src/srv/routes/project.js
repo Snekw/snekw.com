@@ -172,4 +172,29 @@ router.post('/new', ensureAdmin, function (req, res, next) {
   });
 });
 
+router.get('/delete/:project', ensureAdmin, function (req, res, next) {
+  res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
+
+  req.context.csrfToken = req.csrfToken();
+
+  res.send(HbsViews.project.delete.hbs(req.context));
+});
+
+router.post('/delete', ensureAdmin, function (req, res, next) {
+  if (!req.body.delete || req.body.delete !== 'on') {
+    return res.redirect('/');
+  }
+
+  models.project.findByIdAndRemove(req.body.id).exec((err) => {
+    if (err) {
+      return next(err);
+    }
+    cachedData.updateCache('indexProjects', querys.indexProjectsQuery).then(() => {
+      return res.redirect('/');
+    }).catch(err => {
+      return next(err);
+    });
+  });
+});
+
 module.exports = router;

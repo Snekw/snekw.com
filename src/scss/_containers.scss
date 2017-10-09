@@ -25,6 +25,9 @@
   padding: 1em;
   border-radius: 2px;
   border-style: hidden;
+  .container{
+    padding: 0;
+  }
 
   @media screen and (max-width: $break-small) {
     width: calc(99vw - 1px);

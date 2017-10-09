@@ -52,6 +52,9 @@ module.exports = {
     },
     edit: {
       path: 'project/editProject.hbs'
+    },
+    delete: {
+      path: 'project/deleteProject.hbs'
     }
   },
   about: {
