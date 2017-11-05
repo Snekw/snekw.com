@@ -22,14 +22,14 @@ const router = require('express').Router();
 const ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn();
 const HbsViews = require('../hbsSystem').views;
 const auth = require('../../lib/auth');
-const cache = require('../CachedData');
+const cache = require('../../db/CachedData');
 const normalizeError = require('../Error').normalizeError;
 const config = require('../../helpers/configStub')('main');
 const querys = require('../../db/querys');
 auth.setErrorPageFunc(HbsViews.error.get.hbs);
 
 router.get('/', function (req, res, next) {
-  cache.getCachedOrDb('indexProjects', querys.indexProjectsQuery).then(data => {
+  cache.getCachedOrDb(cache.keys.indexProjects, querys.indexProjectsQuery).then(data => {
     req.context.projects = data;
     res.send(HbsViews.index.get.hbs(req.context));
   }).catch(err => {

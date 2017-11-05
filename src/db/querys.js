@@ -23,13 +23,21 @@ const models = require('./models.js');
 const indexProjectsQuery = models.project.find()
   .select('author brief title indexImageUrl updatedAt postedAt')
   .sort('-postedAt')
-  .limit(10);
+  .limit(10)
+  .lean();
 
 const aboutGetQuery = models.about.findOne({active: true})
   .lean()
   .select('body author postedAt');
 
+const getLatestProjects = models.project.find()
+  .select('author brief body title indexImageUrl updatedAt postedAt')
+  .sort('-postedAt')
+  .limit(10)
+  .lean();
+
 module.exports = {
   indexProjectsQuery: indexProjectsQuery,
-  aboutGetQuery: aboutGetQuery
+  aboutGetQuery: aboutGetQuery,
+  getLatestProjects: getLatestProjects
 };

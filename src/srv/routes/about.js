@@ -24,7 +24,7 @@ const models = require('../../db/models.js');
 const querys = require('../../db/querys');
 const ensureAdmin = require('../../lib/ensureAdmin');
 const processMarkdown = require('../processMarkdown');
-const cachedData = require('../CachedData');
+const cachedData = require('../../db/CachedData');
 
 router.get('/', function (req, res, next) {
   cachedData.getCachedOrDb('about', querys.aboutGetQuery).then(data => {
@@ -100,7 +100,7 @@ router.post('/new', ensureAdmin, function (req, res, next) {
       return next(err);
     }
     models.about.setActive(about._id).then(() => {
-      cachedData.updateCache('about', querys.aboutGetQuery).then(() => {
+      cachedData.updateCache(cachedData.keys.about, querys.aboutGetQuery).then(() => {
         res.redirect('/about');
       }).catch(err => {
         return next(err);
@@ -136,7 +136,7 @@ router.post('/delete', ensureAdmin, function (req, res, next) {
     if (err) {
       return next(err);
     }
-    cachedData.updateCache('about', querys.aboutGetQuery).then(() => {
+    cachedData.updateCache(cachedData.keys.about, querys.aboutGetQuery).then(() => {
       return res.redirect('/about');
     }).catch(() => {
       return res.redirect('/about');

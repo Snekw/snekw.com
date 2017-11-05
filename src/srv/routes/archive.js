@@ -27,6 +27,7 @@ const auth0Api = require('../../lib/auth0Api');
 const defaultPage = 0;
 const defaultCount = 10;
 
+// TODO: Seriously this needs to be refactored. This is awful.
 function getArchive (req, res, next) {
   if (!req.params.page) {
     req.params.page = defaultPage;

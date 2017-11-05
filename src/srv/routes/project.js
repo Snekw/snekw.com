@@ -23,7 +23,7 @@ const HbsViews = require('../hbsSystem').views;
 const normalizeError = require('../Error').normalizeError;
 const models = require('../../db/models.js');
 const ensureAdmin = require('../../lib/ensureAdmin');
-const cachedData = require('../CachedData');
+const cachedData = require('../../db/CachedData');
 const auth0Api = require('../../lib/auth0Api');
 const processMarkdown = require('../processMarkdown');
 const querys = require('../../db/querys');
@@ -39,46 +39,47 @@ require('prismjs/components/prism-css');
 require('prismjs/components/prism-http');
 
 router.param('project', function (req, res, next, project) {
-  models.project.findById(project).lean().exec((err, data) => {
-    if (err) {
+  let query = models.project.findById(project).lean();
+
+  cachedData.getCachedOrDb(project, query, false)
+    .catch(err => {
       res.status(500);
       req.context.error = normalizeError(err);
       return res.send(HbsViews.views.error(req.context));
-    }
-
-    if (!data) {
-      return next();
-    }
-
-    req.context.project = data;
-
-    const opts = {
-      method: 'GET',
-      url: 'users',
-      qs: {
-        q: 'user_id:"' + data.author + '"'
-      }
-    };
-
-    auth0Api.queryApi(opts, function (err, body) {
-      if (err) {
-        return next(err);
-      }
-      if (!body.length) {
+    })
+    .then((data) => {
+      if (!data) {
         return next();
       }
-      body = body[0];
-      req.context.project.author = {
-        username: body.app_metadata.username,
-        id: body.user_id,
-        picture: body.picture,
-        app_metadata: body.app_metadata || {},
-        user_metadata: body.user_metadata || {},
-        locale: body.locale
+      req.context.project = data;
+
+      const opts = {
+        method: 'GET',
+        url: 'users',
+        qs: {
+          q: 'user_id:"' + data.author + '"'
+        }
       };
-      next();
+
+      auth0Api.queryApi(opts, function (err, body) {
+        if (err) {
+          return next(err);
+        }
+        if (!body.length) {
+          return next();
+        }
+        body = body[0];
+        req.context.project.author = {
+          username: body.app_metadata.username,
+          id: body.user_id,
+          picture: body.picture,
+          app_metadata: body.app_metadata || {},
+          user_metadata: body.user_metadata || {},
+          locale: body.locale
+        };
+        next();
+      });
     });
-  });
 });
 
 router.get('/id/:project', function (req, res, next) {
@@ -133,7 +134,7 @@ router.post('/edit', ensureAdmin, function (req, res, next) {
     if (err) {
       return next(err);
     }
-    cachedData.updateCache('indexProjects', querys.indexProjectsQuery).then(() => {
+    cachedData.updateCache(cachedData.keys.indexProjects, querys.indexProjectsQuery).then(() => {
       return res.redirect('/project/id/' + req.body.projectId);
     }).catch(err => {
       return next(err);
@@ -164,7 +165,7 @@ router.post('/new', ensureAdmin, function (req, res, next) {
       res.status(500);
       return next(err);
     }
-    cachedData.updateCache('indexProjects', querys.indexProjectsQuery).then(() => {
+    cachedData.updateCache(cachedData.keys.indexProjects, querys.indexProjectsQuery).then(() => {
       return res.redirect('/project/id/' + data._id);
     }).catch(err => {
       return next(err);
@@ -189,7 +190,7 @@ router.post('/delete', ensureAdmin, function (req, res, next) {
     if (err) {
       return next(err);
     }
-    cachedData.updateCache('indexProjects', querys.indexProjectsQuery).then(() => {
+    cachedData.updateCache(cachedData.keys.indexProjects, querys.indexProjectsQuery).then(() => {
       return res.redirect('/');
     }).catch(err => {
       return next(err);
