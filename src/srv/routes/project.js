@@ -102,9 +102,18 @@ router.get('/new', ensureAdmin, function (req, res, next) {
 router.get('/edit/:project', ensureAdmin, function (req, res, next) {
   res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
 
-  req.context.csrfToken = req.csrfToken();
+  // Load the project from the database ignoring the cached version
+  models.project.findById(req.params.project).lean().exec((err, data) => {
+    if (err) {
+      return next(err);
+    }
 
-  res.send(HbsViews.project.edit.hbs(req.context));
+    req.context.project = data;
+
+    req.context.csrfToken = req.csrfToken();
+
+    res.send(HbsViews.project.edit.hbs(req.context));
+  });
 });
 
 router.post('/edit', ensureAdmin, function (req, res, next) {
