@@ -21,9 +21,11 @@
 }}
 {{#> layout}}
   <div class="container">
+  {{#with error}}
     <h1>404 - Not found</h1>
     <h2>{{message}}</h2>
     {{status}}<br/>
     {{stack}}<br/>
+  {{/with}}
   </div>
 {{/layout}}

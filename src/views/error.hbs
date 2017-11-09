@@ -21,9 +21,11 @@
 }}
 {{#> layout}}
   <div class="container">
-    <h1>{{message}}</h1>
-    <h2>{{status}}</h2>
-    <p>{{full}}</p>
-    {{stack}}<br/>
+    {{#with error}}
+      <h1>{{message}}</h1>
+      <h2>{{status}}</h2>
+      <p>{{full}}</p>
+      {{stack}}<br/>
+    {{/with}}
   </div>
 {{/layout}}

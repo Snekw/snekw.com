@@ -29,7 +29,6 @@ const cachedData = require('../../db/CachedData');
 router.get('/', function (req, res, next) {
   cachedData.getCachedOrDb('about', querys.aboutGetQuery).then(data => {
     req.context.about = data;
-    req.context.csrfToken = req.csrfToken();
     res.send(HbsViews.about.get.hbs(req.context));
   }).catch(err => {
     return next(err);
