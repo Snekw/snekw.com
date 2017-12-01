@@ -18,29 +18,27 @@
  *  along with snekw.com.  If not, see <http://www.gnu.org/licenses/>.
  */
 'use strict';
-module.exports = {
-  DEV: true,
-  devSettings: {
-    recompileHBS: true,
-    invalidateCache: false
-  },
-  server: {
-    useHttps: false,
-    port: 3000,
-    sessionSecret: 'Use your own'
-  },
-  db: {
-    mongo: {
-      connectionString: 'mongodb://localhost/dbhere'
-    },
-    redis: {
-    }
-  },
-  auth: {
-    secret: 'your auth0 secret',
-    id: 'your auth0 id',
-    domain: 'your auth0 domain',
-    apiBaseUrl: 'your auth0 api base url',
-    callback: 'your full callback url'
+
+document.getElementById('adminNavToggle').addEventListener('click', doAdminNavToggle);
+
+let nav = document.getElementsByClassName('admin-nav-container')[0];
+let adminNavKey = 'admin-nav';
+let toggleClass = 'toggle-hide';
+
+function updateNavState () {
+  if (JSON.parse(window.localStorage.getItem(adminNavKey)) === false) {
+    nav.classList.remove(toggleClass);
+  } else {
+    nav.classList.add(toggleClass);
   }
-};
+}
+
+function doAdminNavToggle (e) {
+  window.localStorage.setItem(adminNavKey, !JSON.parse(window.localStorage.getItem(adminNavKey)));
+  updateNavState();
+  if (e) {
+    e.preventDefault();
+  }
+}
+
+updateNavState();

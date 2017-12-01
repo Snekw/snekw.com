@@ -1,3 +1,4 @@
+{{!
 /**
  *  snekw.com,
  *  Copyright (C) 2017 Ilkka Kuosmanen
@@ -17,30 +18,19 @@
  *  You should have received a copy of the GNU General Public License
  *  along with snekw.com.  If not, see <http://www.gnu.org/licenses/>.
  */
-'use strict';
-module.exports = {
-  DEV: true,
-  devSettings: {
-    recompileHBS: true,
-    invalidateCache: false
-  },
-  server: {
-    useHttps: false,
-    port: 3000,
-    sessionSecret: 'Use your own'
-  },
-  db: {
-    mongo: {
-      connectionString: 'mongodb://localhost/dbhere'
-    },
-    redis: {
-    }
-  },
-  auth: {
-    secret: 'your auth0 secret',
-    id: 'your auth0 id',
-    domain: 'your auth0 domain',
-    apiBaseUrl: 'your auth0 api base url',
-    callback: 'your full callback url'
-  }
-};
+}}
+{{#>layout}}
+  {{#> header}}
+    <link rel="stylesheet" href="/static/admin.css"/>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+          rel="stylesheet">
+  {{/header}}
+  <div class="admin-area">
+    <div class="admin-nav-container">
+      {{>adminNav}}
+    </div>
+    <div class="admin-container">
+      {{>admin}}
+    </div>
+  </div>
+{{/layout}}

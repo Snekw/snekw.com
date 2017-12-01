@@ -1,0 +1,73 @@
+/**
+ *  This file is part of snekw.com.
+ *
+ *  snekw.com is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  snekw.com is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with snekw.com.  If not, see <http://www.gnu.org/licenses/>.
+ */
+@import "vars";
+
+// Force the body to full height of the page
+body {
+  height: calc(100vh - 2.4em - 2.4em);
+}
+
+// Force the nav bar to stay in place
+nav {
+  position: fixed !important;
+}
+
+.admin-area {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+.admin-container {
+  background-color: red;
+}
+
+.admin-nav-container {
+  position: fixed;
+  margin: 0;
+  width: $admin-nav-width;
+  height: 100%;
+  background-color: blue;
+  ul {
+    list-style-type: none;
+  }
+  a{
+    text-decoration: none;
+  }
+}
+
+.active {
+  background-color: $accent-color;
+}
+
+.toggle-hide {
+  right: calc(100% - 30px);
+}
+
+.inline {
+  width: 100%;
+  display: block;
+  border-radius: 2px;
+  border-style: hidden;
+  &:hover {
+    background-color: whitesmoke;
+  }
+  span{
+    font-size: large;
+    margin-left: 0.3em;
+  }
+}

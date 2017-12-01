@@ -18,29 +18,16 @@
  *  along with snekw.com.  If not, see <http://www.gnu.org/licenses/>.
  */
 'use strict';
-module.exports = {
-  DEV: true,
-  devSettings: {
-    recompileHBS: true,
-    invalidateCache: false
-  },
-  server: {
-    useHttps: false,
-    port: 3000,
-    sessionSecret: 'Use your own'
-  },
-  db: {
-    mongo: {
-      connectionString: 'mongodb://localhost/dbhere'
-    },
-    redis: {
-    }
-  },
-  auth: {
-    secret: 'your auth0 secret',
-    id: 'your auth0 id',
-    domain: 'your auth0 domain',
-    apiBaseUrl: 'your auth0 api base url',
-    callback: 'your full callback url'
-  }
-};
+const router = require('express').Router();
+const HbsViews = require('../../hbsSystem').views;
+const normalizeError = require('../../Error').normalizeError;
+const models = require('../../../db/models.js');
+const ensureAdmin = require('../../../lib/ensureAdmin');
+const cachedData = require('../../../db/CachedData');
+const auth0Api = require('../../../lib/auth0Api');
+
+router.get('', ensureAdmin, function (req, res, next) {
+  res.send(HbsViews.admin.get.hbs(req.context));
+});
+
+module.exports = router;
