@@ -75,5 +75,10 @@ module.exports = {
     get: {
       path: 'archive.hbs'
     }
+  },
+  admin: {
+    get: {
+      path: 'admin/home.hbs'
+    }
   }
 };
