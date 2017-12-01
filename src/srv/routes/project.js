@@ -52,12 +52,16 @@ router.param('project', function (req, res, next, project) {
         return next();
       }
       req.context.project = data;
+      let author = data.author;
+      if (typeof data.author !== 'string') {
+        author = data.author.id;
+      }
 
       const opts = {
         method: 'GET',
         url: 'users',
         qs: {
-          q: 'user_id:"' + data.author + '"'
+          q: 'user_id:"' + author + '"'
         }
       };
 
@@ -165,7 +169,10 @@ router.post('/new', ensureAdmin, function (req, res, next) {
     body: rendered,
     rawBody: req.body.body,
     indexImageUrl: req.body.indexImg,
-    author: req.body.postedBy,
+    author: {
+      id: req.body.postedById,
+      username: req.body.postedByName
+    },
     brief: req.body.brief
   });
 

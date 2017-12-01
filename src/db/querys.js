@@ -28,7 +28,7 @@ const indexProjectsQuery = models.project.find()
 
 const aboutGetQuery = models.about.findOne({active: true})
   .lean()
-  .select('body author postedAt');
+  .select('body postedAt');
 
 const getLatestProjects = models.project.find()
   .select('author brief body title indexImageUrl updatedAt postedAt')

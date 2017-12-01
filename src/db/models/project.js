@@ -30,7 +30,10 @@ const projectSchema = new mongoose.Schema({
   postedAt: {type: Date, default: Date.now, required: true},
   updatedAt: {type: Date, default: Date.now},
   indexImageUrl: {type: String, default: '/defaultProjectImage.png'},
-  author: {type: String, required: true}
+  author: {
+    id: {type: String, required: true},
+    username: {type: String, required: false}
+  }
 });
 
 mongoose.model('project', projectSchema);

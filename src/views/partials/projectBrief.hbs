@@ -26,6 +26,7 @@
     <h1>{{title}}</h1>
     {{brief}}<br/>
     <p>Published: {{formatTime project.postedAt 'LLLL'}}</p>
+    <p>By: {{author.username}}</p>
     <a href="/project/id/{{_id}}">Read more...</a>
     {{>editControls}}
   </div>
