@@ -26,7 +26,8 @@ const models = require('./models');
 
 const keys = {
   indexProjects: 'indexProjects',
-  about: 'about'
+  about: 'about',
+  projectCount: 'pCount'
 };
 
 let redisClientOptions = {
@@ -59,6 +60,9 @@ function setupCache () {
     console.log(err);
   });
   updateCache(keys.about, querys.aboutGetQuery).catch(err => {
+    console.log(err);
+  });
+  updateCache(keys.projectCount, querys.getProjectCount).catch(err => {
     console.log(err);
   });
 }
