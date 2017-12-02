@@ -36,4 +36,5 @@
         <p>Edited: {{formatTime project.updatedAt 'DD.MM.YYYY HH:mm - '}} {{timeFromNow project.updatedAt}}</p>
       {{/if_neq}}
     </div>
+    {{>editControls project}}
   </div>{{/layout}}

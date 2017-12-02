@@ -20,7 +20,6 @@
 'use strict';
 const router = require('express').Router();
 const HbsViews = require('../hbsSystem').views;
-const normalizeError = require('../Error').normalizeError;
 const models = require('../../db/models.js');
 const ensureAdmin = require('../../lib/ensureAdmin');
 const cachedData = require('../../db/CachedData');
@@ -42,11 +41,6 @@ router.param('project', function (req, res, next, project) {
   let query = models.project.findById(project).lean();
 
   cachedData.getCachedOrDb(project, query, false)
-    .catch(err => {
-      res.status(500);
-      req.context.error = normalizeError(err);
-      return res.send(HbsViews.views.error(req.context));
-    })
     .then((data) => {
       if (!data) {
         return next();
@@ -83,6 +77,9 @@ router.param('project', function (req, res, next, project) {
         };
         next();
       });
+    })
+    .catch(err => {
+      return next(err);
     });
 });
 
@@ -93,6 +90,9 @@ router.get('/id/:project', function (req, res, next) {
     err.status = 404;
     err.message = req.originalUrl;
     return next(err);
+  }
+  if (!req.context.project.public) {
+    return res.redirect('/');
   }
   res.send(HbsViews.project.get.hbs(req.context));
 });
@@ -142,6 +142,11 @@ router.post('/edit', ensureAdmin, function (req, res, next) {
   if (req.body.brief) {
     update.brief = req.body.brief;
   }
+  if (req.body.public) {
+    update.public = (req.body.public === 'true');
+  } else {
+    update.public = false;
+  }
 
   models.project.findByIdAndUpdate(req.body.projectId, update, (err) => {
     if (err) {
@@ -163,6 +168,7 @@ router.post('/new', ensureAdmin, function (req, res, next) {
     res.send(HbsViews.project.new.hbs({bad: 'Missing data', csrfToken: req.csrfToken()}));
   }
   let rendered = processMarkdown(req.body.body);
+  let p = (req.body.public === 'true');
   // eslint-disable-next-line
   let newProject = new models.project({
     title: req.body.title,
@@ -173,7 +179,8 @@ router.post('/new', ensureAdmin, function (req, res, next) {
       id: req.body.postedById,
       username: req.body.postedByName
     },
-    brief: req.body.brief
+    brief: req.body.brief,
+    public: p
   });
 
   newProject.save((err, data) => {

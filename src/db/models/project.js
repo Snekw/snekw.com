@@ -33,7 +33,8 @@ const projectSchema = new mongoose.Schema({
   author: {
     id: {type: String, required: true},
     username: {type: String, required: false}
-  }
+  },
+  public: {type: Boolean, default: false}
 });
 
 mongoose.model('project', projectSchema);
