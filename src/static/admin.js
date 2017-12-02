@@ -19,9 +19,9 @@
  */
 'use strict';
 
-document.getElementById('adminNavToggle').addEventListener('click', doAdminNavToggle);
+document.getElementById('admin-nav-toggle').addEventListener('click', doAdminNavToggle);
 
-let nav = document.getElementsByClassName('admin-nav-container')[0];
+let nav = document.getElementById('admin-nav-container');
 let adminNavKey = 'admin-nav';
 let toggleClass = 'toggle-hide';
 

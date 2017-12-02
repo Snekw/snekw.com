@@ -20,14 +20,38 @@
 'use strict';
 const router = require('express').Router();
 const HbsViews = require('../../hbsSystem').views;
-const normalizeError = require('../../Error').normalizeError;
 const models = require('../../../db/models.js');
 const ensureAdmin = require('../../../lib/ensureAdmin');
 const cachedData = require('../../../db/CachedData');
 const auth0Api = require('../../../lib/auth0Api');
 
-router.get('', ensureAdmin, function (req, res, next) {
-  res.send(HbsViews.admin.get.hbs(req.context));
+let adminPages = {};
+
+for (let item in HbsViews.admin) {
+  if (item === 'base') {
+    continue;
+  }
+  if (HbsViews.admin.hasOwnProperty(item)) {
+    adminPages[item] = {};
+    adminPages[item].active = false;
+    adminPages[item].name = item.toLowerCase();
+    adminPages[item].longName = HbsViews.admin[item].name || 'ERR! NO NAME';
+    adminPages[item].icon = HbsViews.admin[item].icon || 'face';
+  }
+}
+
+router.use(function (req, res, next) {
+  req.context.adminPages = adminPages;
+  next();
+});
+
+router.get(['', '/dashboard'], ensureAdmin, function (req, res, next) {
+  req.context.adminPages['dashboard'].active = true;
+  res.send(HbsViews.admin.dashboard.hbs(req.context));
+});
+router.get('/statistics', ensureAdmin, function (req, res, next) {
+  req.context.adminPages['statistics'].active = true;
+  res.send(HbsViews.admin.statistics.hbs(req.context));
 });
 
 module.exports = router;

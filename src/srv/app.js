@@ -146,6 +146,7 @@ app.use('/project', require('./routes/project'));
 app.use('/user', require('./routes/user'));
 app.use('/archive', require('./routes/archive'));
 app.use('/about', require('./routes/about'));
+app.use('/admin', require('./routes/admin/home'));
 
 function error404 (req, res, next) {
   let err = new Error('Not found');

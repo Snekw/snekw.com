@@ -38,10 +38,19 @@ function getPartialHbs (partial) {
 
 function recompileAll () {
   for (let view in HbsViews) {
+    if (view === 'base') {
+      continue;
+    }
     if (HbsViews.hasOwnProperty(view)) {
       for (let inner in HbsViews[view]) {
+        if (inner === 'base') {
+          continue;
+        }
         if (HbsViews[view].hasOwnProperty(inner)) {
-          HbsViews[view][inner].hbs = hbs.compile(getHbs(HbsViews[view][inner].path));
+          HbsViews[view].base = HbsViews[view].base || '';
+          HbsViews[view][inner].hbs = hbs.compile(
+            getHbs(HbsViews[view].base + HbsViews[view][inner].path)
+          );
         }
       }
     }
@@ -55,7 +64,8 @@ const partials = {
   markdownEditor: getPartialHbs('markdownEditor.hbs'),
   editControls: getPartialHbs('editControls.hbs'),
   adminLayout: getPartialHbs('adminLayout.hbs'),
-  adminNav: getPartialHbs('adminNav.hbs')
+  adminNav: getPartialHbs('adminNav.hbs'),
+  adminNavItem: getPartialHbs('adminNavItem.hbs')
 };
 
 function reloadPartials () {

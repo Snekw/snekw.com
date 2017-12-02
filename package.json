@@ -41,6 +41,7 @@
     "validator": "^8.0.0"
   },
   "devDependencies": {
+    "browser-sync": "^2.18.13",
     "eslint": "^4.4.1",
     "eslint-config-semistandard": "^11.0.0",
     "eslint-config-standard": "^10.2.1",

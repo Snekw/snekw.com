@@ -19,70 +19,15 @@
  *  along with snekw.com.  If not, see <http://www.gnu.org/licenses/>.
  */
 }}
-<ul>
-  <li>
-    <a id="adminNavToggle" class="inline active" href="">
-      <span>
-          Toggle
-          <i class="right-nom material-icons">menu</i>
-      </span>
-    </a>
-  </li>
-  <li>
-    <a class="inline active" href="/admin">
-      <span>
-        Test
-        <i class="right-nom material-icons">face</i>
-    </span>
-    </a>
-  </li>
-  <li>
-    <a class="inline active" href="/admin">
-      <span>
-        Test
-        <i class="right-nom material-icons">face</i>
-    </span>
-    </a>
-
-  <li>
-    <a class="inline active" href="/admin">
-      <span>
-        Test
-        <i class="right-nom material-icons">face</i>
-    </span>
-    </a>
-  </li>
-  <li>
-    <a class="inline active" href="/admin">
-      <span>
-        Test
-        <i class="right-nom material-icons">face</i>
-    </span>
-    </a>
-  </li>
-  <li>
-    <a class="inline active" href="/admin">
-      <span>
-        Test
-        <i class="right-nom material-icons">face</i>
-    </span>
-    </a>
-  </li>
-  <li>
-    <a class="inline active" href="/admin">
-      <span>
-        Test
-        <i class="right-nom material-icons">face</i>
-    </span>
-    </a>
-  </li>
-  <li>
-    <a class="inline" href="/admin">
-      <span>
-        Test
-        <i class="right-nom material-icons">face</i>
-    </span>
-    </a>
-  </li>
-</ul>
+<div id="admin-nav-container">
+  <a id="admin-nav-toggle" class="inline" href="#" title="Toggle menu">
+    <span>Menu</span>
+    <i class="right-nom material-icons">menu</i>
+  </a>
+  <ul id="admin-nav">
+    {{#each adminPages}}
+      {{>adminNavItem }}
+    {{/each}}
+  </ul>
+</div>
 <script src="/static/admin.js"></script>

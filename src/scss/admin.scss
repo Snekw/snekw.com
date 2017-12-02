@@ -30,22 +30,27 @@ nav {
   margin: 0;
   padding: 0;
   height: 100%;
+  display: flex;
+  align-items: stretch;
+  border-top: solid $accent-color;
 }
 
 .admin-container {
-  background-color: red;
+  background-color: $primary-color;
+  flex:1;
+  overflow: scroll;
+  overflow-x: hidden;
 }
 
 .admin-nav-container {
-  position: fixed;
-  margin: 0;
-  width: $admin-nav-width;
-  height: 100%;
-  background-color: blue;
+  float: left;
+  min-width: $admin-nav-icon-size;
+  background-color: $secondary-color;
+  border-right: solid $accent-color;
   ul {
     list-style-type: none;
   }
-  a{
+  a {
     text-decoration: none;
   }
 }
@@ -55,19 +60,33 @@ nav {
 }
 
 .toggle-hide {
-  right: calc(100% - 30px);
+  span {
+    display: none !important;
+  }
+  width: $admin-nav-icon-size !important;
 }
 
 .inline {
   width: 100%;
+  min-width: $admin-nav-icon-size;
+  min-height: $admin-nav-icon-size;
   display: block;
   border-radius: 2px;
   border-style: hidden;
   &:hover {
     background-color: whitesmoke;
   }
-  span{
+  span {
     font-size: large;
     margin-left: 0.3em;
+    line-height: $admin-nav-icon-size;
   }
+  i{
+    line-height: $admin-nav-icon-size;
+  }
+}
+
+#admin-nav-container {
+  width: $admin-nav-width;
+  max-width: $admin-nav-max-width;
 }

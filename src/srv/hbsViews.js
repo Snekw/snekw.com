@@ -44,31 +44,33 @@ module.exports = {
     }
   },
   project: {
+    base: 'project/',
     get: {
-      path: 'project/project.hbs'
+      path: 'project.hbs'
     },
     new: {
-      path: 'project/newProject.hbs'
+      path: 'newProject.hbs'
     },
     edit: {
-      path: 'project/editProject.hbs'
+      path: 'editProject.hbs'
     },
     delete: {
-      path: 'project/deleteProject.hbs'
+      path: 'deleteProject.hbs'
     }
   },
   about: {
+    base: 'about/',
     get: {
-      path: 'about/about.hbs'
+      path: 'about.hbs'
     },
     new: {
-      path: 'about/newAbout.hbs'
+      path: 'newAbout.hbs'
     },
     edit: {
-      path: 'about/editAbout.hbs'
+      path: 'editAbout.hbs'
     },
     delete: {
-      path: 'about/deleteAbout.hbs'
+      path: 'deleteAbout.hbs'
     }
   },
   archive: {
@@ -77,8 +79,16 @@ module.exports = {
     }
   },
   admin: {
-    get: {
-      path: 'admin/home.hbs'
+    base: 'admin/',
+    dashboard: {
+      path: 'dashboard.hbs',
+      icon: 'dashboard',
+      name: 'Dashboard'
+    },
+    statistics: {
+      path: 'statistics.hbs',
+      icon: 'poll',
+      name: 'Statistics'
     }
   }
 };
