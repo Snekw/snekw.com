@@ -22,7 +22,6 @@ const redis = require('redis');
 const config = require('../helpers/configStub')('main');
 const debug = require('debug')('App::Cache');
 const querys = require('./querys');
-const models = require('./models');
 
 const keys = {
   indexProjects: 'indexProjects',
@@ -43,11 +42,11 @@ const client = redis.createClient(redisClientOptions);
 
 // Force cache flush when restarting the app in dev mode
 if (config.DEV === true) {
-  client.flushall();
+  client.flushdb();
 }
 
 function setupCache () {
-  client.flushall();
+  client.flushdb();
   querys.getLatestProjects.exec((err, data) => {
     if (err) {
       return err;

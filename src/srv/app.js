@@ -71,11 +71,16 @@ let sessionOpts = {
   }
 };
 
-if (config.DEV === false) {
+if (config.devSettings.useRedisSession === true || !config.DEV) {
   sessionOpts.store = new RedisSessionStore({
     db: 1
   });
   sessionOpts.cookie.secure = true;
+}
+
+// Disable the need for HTTPS on DEV
+if (config.DEV) {
+  sessionOpts.cookie.secure = false;
 }
 
 app.use(session(sessionOpts));

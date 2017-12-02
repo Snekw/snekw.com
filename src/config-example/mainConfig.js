@@ -22,7 +22,8 @@ module.exports = {
   DEV: true,
   devSettings: {
     recompileHBS: true,
-    invalidateCache: false
+    invalidateCache: false,
+    useRedisSession: false
   },
   server: {
     useHttps: false,
