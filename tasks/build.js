@@ -240,6 +240,16 @@ compileScss('mdEditor')
   .catch(err => {
     console.log(err);
   });
+compileScss('admin')
+  .then(prefixCss)
+  .then(cleanCss)
+  .then(saveCssMin)
+  .then(out => {
+    console.log(out);
+  })
+  .catch(err => {
+    console.log(err);
+  });
 
 prefixCss({
   file: 'prism-okaidia',
