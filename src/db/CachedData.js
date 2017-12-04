@@ -21,22 +21,52 @@
 const redis = require('redis');
 const config = require('../helpers/configStub')('main');
 const debug = require('debug')('App::Cache');
+const querys = require('./querys');
 
-const client = redis.createClient({
+const keys = {
+  indexProjects: 'indexProjects',
+  about: 'about',
+  projectCount: 'pCount'
+};
+
+let redisClientOptions = {
   password: config.db.redis.password
-});
+};
+
+// Don't supply password if the server doesn't use it
+if (!config.db.redis.password) {
+  redisClientOptions = {};
+}
+
+const client = redis.createClient(redisClientOptions);
 
 // Force cache flush when restarting the app in dev mode
 if (config.DEV === true) {
-  client.flushall();
+  client.flushdb();
 }
 
-if (config.db.redis.password) {
-  client.config('set', 'requirepass', config.db.redis.password);
-  client.auth(config.db.redis.password);
+function setupCache () {
+  client.flushdb();
+  querys.getLatestProjects.exec((err, data) => {
+    if (err) {
+      return err;
+    }
+    data.map(d => {
+      client.set(d._id, JSON.stringify(d));
+    });
+  });
+  updateCache(keys.indexProjects, querys.indexProjectsQuery).catch(err => {
+    console.log(err);
+  });
+  updateCache(keys.about, querys.aboutGetQuery).catch(err => {
+    console.log(err);
+  });
+  updateCache(keys.projectCount, querys.getProjectCount).catch(err => {
+    console.log(err);
+  });
 }
 
-function getCachedOrDb (key, query) {
+function getCachedOrDb (key, query, save = true) {
   if (!key || !query) {
     throw new Error('No key specified');
   }
@@ -55,7 +85,9 @@ function getCachedOrDb (key, query) {
           if (!dbData) {
             return reject(new Error('No data in database'));
           }
-          client.set(key, JSON.stringify(dbData));
+          if (save) {
+            client.set(key, JSON.stringify(dbData));
+          }
 
           debug('Cache returned from db.');
           return resolve(dbData);
@@ -76,7 +108,7 @@ function updateCache (key, query) {
       }
       if (!data) {
         client.del(key);
-        return reject(new Error('No data returned from db.'));
+        return reject(new Error('No data returned from db for key: ' + key));
       }
       client.set(key, JSON.stringify(data));
       debug('Cache updated for key: ' + key);
@@ -86,6 +118,8 @@ function updateCache (key, query) {
 }
 
 module.exports = {
+  keys: keys,
   getCachedOrDb: getCachedOrDb,
-  updateCache: updateCache
+  updateCache: updateCache,
+  setupCache: setupCache
 };

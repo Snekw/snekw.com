@@ -25,7 +25,6 @@ const aboutSchema = new mongoose.Schema({
   _id: {type: String, default: shortId.generate},
   rawBody: {type: String, required: true},
   body: {type: String, required: true},
-  author: {type: String, required: true},
   postedAt: {type: Date, default: Date.now},
   active: {type: Boolean, default: false}
 });

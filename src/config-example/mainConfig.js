@@ -22,7 +22,8 @@ module.exports = {
   DEV: true,
   devSettings: {
     recompileHBS: true,
-    invalidateCache: false
+    invalidateCache: false,
+    useRedisSession: false
   },
   server: {
     useHttps: false,
@@ -37,10 +38,10 @@ module.exports = {
     }
   },
   auth: {
-    secret: 'yep',
-    id: 'not',
-    domain: 'telling',
-    apiBaseUrl: 'these',
-    callback: 'http://localhost:3000/callback'
+    secret: 'your auth0 secret',
+    id: 'your auth0 id',
+    domain: 'your auth0 domain',
+    apiBaseUrl: 'your auth0 api base url',
+    callback: 'your full callback url'
   }
 };

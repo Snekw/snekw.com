@@ -25,13 +25,16 @@
 {{>markdownEditor}}
     <div class="container">
       <input type="hidden" name="_csrf" value="{{csrfToken}}">
-      <input type="hidden" name="postedBy" value="{{user.id}}">
+      <input type="hidden" name="postedById" value="{{user.id}}">
+      <input type="hidden" name="postedByName" value="{{user.username}}">
       <label for="title">Title:</label>
-      <input type="text" id="title" name="title" value="t">
+      <input type="text" id="title" name="title">
       <label for="indexImg">Index img url:</label>
       <input type="text" id="indexImg" name="indexImg">
       <label for="brief">Brief:</label>
-      <input type="text" id="brief" name="brief" value="t">
+      <input type="text" id="brief" name="brief">
+      <label for="public">Public</label>
+      <input type="checkbox" id="public" name="public" value="true">
       <input type="submit">
     </div>
   </form>

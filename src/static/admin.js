@@ -18,29 +18,27 @@
  *  along with snekw.com.  If not, see <http://www.gnu.org/licenses/>.
  */
 'use strict';
-const models = require('./models.js');
 
-const indexProjectsQuery = models.project.find({public: true})
-  .select('author brief title indexImageUrl updatedAt postedAt public')
-  .sort('-postedAt')
-  .limit(10)
-  .lean();
+document.getElementById('admin-nav-toggle').addEventListener('click', doAdminNavToggle);
 
-const aboutGetQuery = models.about.findOne({active: true})
-  .lean()
-  .select('body postedAt');
+let nav = document.getElementById('admin-nav-container');
+let adminNavKey = 'admin-nav';
+let toggleClass = 'toggle-hide';
 
-const getLatestProjects = models.project.find({public: true})
-  .select('author brief body title indexImageUrl updatedAt postedAt public')
-  .sort('-postedAt')
-  .limit(10)
-  .lean();
+function updateNavState () {
+  if (JSON.parse(window.localStorage.getItem(adminNavKey)) === false) {
+    nav.classList.remove(toggleClass);
+  } else {
+    nav.classList.add(toggleClass);
+  }
+}
 
-const getProjectCount = models.project.count();
+function doAdminNavToggle (e) {
+  window.localStorage.setItem(adminNavKey, !JSON.parse(window.localStorage.getItem(adminNavKey)));
+  updateNavState();
+  if (e) {
+    e.preventDefault();
+  }
+}
 
-module.exports = {
-  indexProjectsQuery,
-  aboutGetQuery,
-  getLatestProjects,
-  getProjectCount
-};
+updateNavState();

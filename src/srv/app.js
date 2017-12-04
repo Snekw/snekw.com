@@ -28,6 +28,7 @@ const bodyParser = require('body-parser');
 const config = require('../helpers/configStub')('main');
 const session = require('express-session');
 const RedisSessionStore = require('connect-redis')(session);
+const favicon = require('serve-favicon');
 const passport = require('passport');
 const auth = require('../lib/auth');
 const normalizeError = require('./Error').normalizeError;
@@ -71,11 +72,16 @@ let sessionOpts = {
   }
 };
 
-if (config.DEV === false) {
+if (config.devSettings.useRedisSession === true || !config.DEV) {
   sessionOpts.store = new RedisSessionStore({
     db: 1
   });
   sessionOpts.cookie.secure = true;
+}
+
+// Disable the need for HTTPS on DEV
+if (config.DEV) {
+  sessionOpts.cookie.secure = false;
 }
 
 app.use(session(sessionOpts));
@@ -136,6 +142,8 @@ app.use(function (req, res, next) {
   next();
 });
 
+app.use(favicon(path.join(__dirname, '../static/favicon.ico')));
+
 app.use(hbsSystem.middleware);
 
 // Routing
@@ -146,19 +154,22 @@ app.use('/project', require('./routes/project'));
 app.use('/user', require('./routes/user'));
 app.use('/archive', require('./routes/archive'));
 app.use('/about', require('./routes/about'));
+app.use('/admin', require('./routes/admin/home'));
 
 function error404 (req, res, next) {
   let err = new Error('Not found');
   err.status = 404;
   err.message = req.originalUrl;
-  res.send(HbsViews.error404.get.hbs(normalizeError(err)));
+  req.context.error = normalizeError(err);
+  res.send(HbsViews.error404.get.hbs(req.context));
 }
 
 // Error handler
 function errorHandler (err, req, res, next) {
   let status = err.status || 500;
   res.status(status);
-  res.send(HbsViews.error.get.hbs(normalizeError(err)));
+  req.context.error = normalizeError(err);
+  res.send(HbsViews.error.get.hbs(req.context));
 }
 
 app.use(error404);

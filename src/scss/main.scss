@@ -21,21 +21,56 @@
 @import "button";
 
 html, body {
-  margin: 2.4em 0 0 0;
+  display: flex;
+  justify-content: flex-start;
+  align-items: stretch;
+  align-content: stretch;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  //margin: 2.4em 0 0 0;
   padding: 0;
   background-color: $background-color;
 }
 
 nav {
-  position: absolute;
-  display: block;
+  order: 1;
+  flex: 0 0 auto;
+  //position: absolute;
+  display: flex;
+  align-content: space-around;
+  align-items: center;
+  justify-content: space-around;
+  flex-direction: row;
   top: 0;
   left: 0;
   width: 100%;
   min-height: 5vh;
   background-color: $primary-color;
-  border-bottom: solid;
-  border-bottom-color: $accent-color;
+  border-bottom: solid $accent-color;
+  img {
+    flex: 0;
+    margin: auto;
+    @media screen and (max-width: $break-extra-small) {
+      display: none;
+    }
+  }
+  div {
+    flex: 0;
+    order: 1;
+    display: flex;
+    a {
+      overflow-wrap: normal;
+      white-space: nowrap;
+    }
+  }
+}
+
+#content{
+  flex: 0 1 91%;
+  order: 2;
+  align-self: stretch;
 }
 
 a {
@@ -46,6 +81,7 @@ img {
   display: block;
   margin: auto;
   max-width: 100%;
+  width: auto;
   height: auto;
   border-radius: 5px;
   @media screen and (max-width: $break-small) {
@@ -57,8 +93,7 @@ img {
 }
 
 hr {
-  border-color: $accent-color;
-  border-style: solid;
+  border: solid $accent-color;
 }
 
 p {

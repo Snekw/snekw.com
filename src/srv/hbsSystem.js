@@ -38,10 +38,19 @@ function getPartialHbs (partial) {
 
 function recompileAll () {
   for (let view in HbsViews) {
+    if (view === 'base') {
+      continue;
+    }
     if (HbsViews.hasOwnProperty(view)) {
       for (let inner in HbsViews[view]) {
+        if (inner === 'base') {
+          continue;
+        }
         if (HbsViews[view].hasOwnProperty(inner)) {
-          HbsViews[view][inner].hbs = hbs.compile(getHbs(HbsViews[view][inner].path));
+          HbsViews[view].base = HbsViews[view].base || '';
+          HbsViews[view][inner].hbs = hbs.compile(
+            getHbs(HbsViews[view].base + HbsViews[view][inner].path)
+          );
         }
       }
     }
@@ -53,7 +62,11 @@ const partials = {
   nav: getPartialHbs('nav.hbs'),
   projectBrief: getPartialHbs('projectBrief.hbs'),
   markdownEditor: getPartialHbs('markdownEditor.hbs'),
-  editControls: getPartialHbs('editControls.hbs')
+  editControls: getPartialHbs('editControls.hbs'),
+  adminLayout: getPartialHbs('adminLayout.hbs'),
+  adminNav: getPartialHbs('adminNav.hbs'),
+  adminNavItem: getPartialHbs('adminNavItem.hbs'),
+  adminProject: getPartialHbs('adminProject.hbs')
 };
 
 function reloadPartials () {
@@ -91,28 +104,13 @@ hbs.registerPartial(partials);
 
 recompileAll();
 
-const _hbsViews = {
-  index: hbs.compile(getHbs('index.hbs')),
-  user: hbs.compile(getHbs('user.hbs')),
-  error: hbs.compile(getHbs('error.hbs')),
-  project: hbs.compile(getHbs('project/project.hbs')),
-  newProject: hbs.compile(getHbs('project/newProject.hbs')),
-  manageUser: hbs.compile(getHbs('manageUser.hbs')),
-  error404: hbs.compile(getHbs('error404.hbs')),
-  archive: hbs.compile(getHbs('archive.hbs')),
-  about: hbs.compile(getHbs('about/about.hbs')),
-  newAbout: hbs.compile(getHbs('about/newAbout.hbs')),
-  editProject: hbs.compile(getHbs('project/editProject.hbs'))
-};
-
 function middleware (req, res, next) {
   req.context = {
     user: req.user
   };
-  req.context.isAbout = false;
-  if (req.originalUrl.startsWith('/about')) {
-    req.context.isAbout = true;
-  }
+
+  req.context.isAbout = req.originalUrl.startsWith('/about');
+
   next();
 }
 

@@ -1,3 +1,4 @@
+{{!
 /**
  *  snekw.com,
  *  Copyright (C) 2017 Ilkka Kuosmanen
@@ -17,30 +18,17 @@
  *  You should have received a copy of the GNU General Public License
  *  along with snekw.com.  If not, see <http://www.gnu.org/licenses/>.
  */
-'use strict';
-const models = require('./models.js');
-
-const indexProjectsQuery = models.project.find({public: true})
-  .select('author brief title indexImageUrl updatedAt postedAt public')
-  .sort('-postedAt')
-  .limit(10)
-  .lean();
-
-const aboutGetQuery = models.about.findOne({active: true})
-  .lean()
-  .select('body postedAt');
-
-const getLatestProjects = models.project.find({public: true})
-  .select('author brief body title indexImageUrl updatedAt postedAt public')
-  .sort('-postedAt')
-  .limit(10)
-  .lean();
-
-const getProjectCount = models.project.count();
-
-module.exports = {
-  indexProjectsQuery,
-  aboutGetQuery,
-  getLatestProjects,
-  getProjectCount
-};
+}}
+<div class="admin-project">
+  <img src="{{indexImageUrl}}" class="project-img-small">
+  <div class="project-flex-info">
+    <span class="large-text bold">{{title}}</span>
+    <span class="small-text">By: {{author.username}}</span>
+  </div>
+  <div class="admin-edit-controls admin-public-{{#if public}}true{{else}}false{{/if}} ">
+    Public
+  </div>
+  <div class="admin-edit-controls">
+    {{>editControls}}
+  </div>
+</div>

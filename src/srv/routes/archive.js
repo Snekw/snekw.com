@@ -21,12 +21,14 @@
 const router = require('express').Router();
 const HbsViews = require('../hbsSystem').views;
 const models = require('../../db/models.js');
-const normalizeError = require('../Error').normalizeError;
-const auth0Api = require('../../lib/auth0Api');
+const cachedData = require('../../db/CachedData');
+const querys = require('../../db/querys');
 
 const defaultPage = 0;
 const defaultCount = 10;
 
+// TODO: Seriously this needs to be refactored. This is awful.
+// Still needs some more work 1.12.2017
 function getArchive (req, res, next) {
   if (!req.params.page) {
     req.params.page = defaultPage;
@@ -38,12 +40,10 @@ function getArchive (req, res, next) {
   } else {
     req.params.count = parseInt(req.params.count);
   }
-  // Pagination
-  models.project.count(
-    (err, count) => {
-      if (err) {
-        console.error(err);
-      }
+
+  cachedData.getCachedOrDb(cachedData.keys.projectCount, querys.getProjectCount)
+    .then(count => {
+      // Pagination
       // Determine needed page numbers
       let page = req.params.page;
       let dcount = req.params.count;
@@ -103,61 +103,27 @@ function getArchive (req, res, next) {
           disabled: disabled
         }];
       req.context.pagination = req.context.pagination.concat(temp);
-    }
-  );
-
-  models.project.find()
-    .skip(req.params.page * req.params.count)
-    .limit(req.params.count)
-    .sort('-postedAt')
-    .lean()
-    .select('postedAt updatedAt author brief title indexImageUrl')
-    .exec(
-      (err, data) => {
-        if (err) {
-          req.context.error = normalizeError(new Error('Db query failed'));
-          return res.send(HbsViews.views.error(req.context));
-        }
-        if (data) {
-          req.context.projects = data;
-          let querys = [];
-
-          let uniques = [];
-          for (let i = 0; i < req.context.projects.length; i++) {
-            if (uniques.indexOf(req.context.projects[i].author) === -1) {
-              uniques.push(req.context.projects[i].author);
-            }
-          }
-
-          for (let i = 0; i < uniques.length; i++) {
-            const opts = {
-              method: 'GET',
-              url: 'users',
-              qs: {
-                q: 'user_id:"' + uniques[i] + '"'
-              }
-            };
-            querys.push(auth0Api.queryApiPromise(opts));
-          }
-
-          Promise.all(querys).then(data => {
-            for (let i = 0; i < req.context.projects.length; i++) {
-              for (let d = 0; d < data.length; d++) {
-                if (data[d].length < 1) {
-                  break;
-                }
-                if (req.context.projects[i].author === data[d][0].user_id) {
-                  req.context.projects[i].author = data[d][0];
-                }
-              }
-            }
-            res.send(HbsViews.archive.get.hbs(req.context));
-          }).catch(err => {
-            return next(err);
-          });
-        }
+    })
+    .then(() => {
+      return models.project.find({public: true})
+        .skip(req.params.page * req.params.count)
+        .limit(req.params.count)
+        .sort('-postedAt')
+        .lean()
+        .select('postedAt updatedAt author brief title indexImageUrl')
+        .exec();
+    })
+    .then(data => {
+      if (data) {
+        req.context.projects = data;
+        res.send(HbsViews.archive.get.hbs(req.context));
+      } else {
+        return next(new Error('There seems to be no projects?'));
       }
-    );
+    })
+    .catch(err => {
+      return next(err);
+    });
 }
 
 router.get('/', getArchive);

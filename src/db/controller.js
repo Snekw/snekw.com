@@ -21,12 +21,14 @@
 const mongoose = require('mongoose');
 const config = require('../helpers/configStub')('main');
 const debug = require('debug')('App:DB');
+const cachedData = require('./CachedData');
 
 mongoose.Promise = global.Promise;
 
 mongoose.connect(config.db.mongo.connectionString, {useMongoClient: true}).then(() => {
   console.log('Connected to database: ' + mongoose.connection.db.s.databaseName);
   debug('Connected to database');
+  cachedData.setupCache();
 }).catch((err) => {
   console.error('Failed to connect to database: ' + config.db.mongo.connectionString);
   console.error(err);

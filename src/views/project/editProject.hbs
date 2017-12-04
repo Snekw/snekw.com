@@ -33,6 +33,8 @@
       <input type="text" id="indexImg" name="indexImg" value="{{project.indexImageUrl}}">
       <label for="brief">Brief:</label>
       <input type="text" id="brief" name="brief" value="{{project.brief}}">
+      <label for="public">Public</label>
+      <input type="checkbox" id="public" name="public" value="true" {{#if project.public}}checked{{/if}}>
       <input type="submit">
     </div>
   </form>

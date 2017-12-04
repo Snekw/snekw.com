@@ -1,10 +1,10 @@
 {
   "name": "snekw.com",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "scripts": {
     "bsync": "browser-sync start --proxy \"dev:3000\" --files \"src/static/*.css\"",
-    "scss": "scss src/scss/main.scss src/static/main.css --style compressed",
-    "scss:w": "scss --watch src/scss:src/static --style compressed",
+    "scss": "scss src/scss/main.scss src/static/main.css --style expanded",
+    "scss:w": "scss --watch src/scss:src/static --style expanded",
     "build": "node tasks/build.js"
   },
   "dependencies": {
@@ -37,10 +37,12 @@
     "request": "^2.81.0",
     "rimraf": "^2.6.1",
     "rotating-file-stream": "^1.2.2",
+    "serve-favicon": "^2.4.5",
     "shortid": "^2.2.8",
     "validator": "^8.0.0"
   },
   "devDependencies": {
+    "browser-sync": "^2.18.13",
     "eslint": "^4.4.1",
     "eslint-config-semistandard": "^11.0.0",
     "eslint-config-standard": "^10.2.1",

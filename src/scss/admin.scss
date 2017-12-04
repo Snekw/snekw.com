@@ -1,0 +1,143 @@
+/**
+ *  This file is part of snekw.com.
+ *
+ *  snekw.com is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  snekw.com is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with snekw.com.  If not, see <http://www.gnu.org/licenses/>.
+ */
+@import "vars";
+
+$project-img-width: 50px;
+
+.admin-area {
+  margin: 0.7em 0 0 0;
+  padding: 0;
+  height: 100%;
+  display: flex;
+  justify-content: flex-start;
+  align-content: flex-start;
+  align-items: stretch;
+  border-top: solid $accent-color;
+  box-sizing: border-box;
+}
+
+.admin-container {
+  background-color: $primary-color;
+  flex: 2 1;
+  min-width: 0;
+}
+
+#admin-nav-container{
+  width: 100%;
+}
+
+.admin-nav-container {
+  flex: 0 1 auto;
+  float: left;
+  min-width: $admin-nav-icon-size;
+  width: $admin-nav-width;
+  max-width: $admin-nav-max-width;
+  background-color: $secondary-color;
+  border-right: solid $accent-color;
+  ul {
+    list-style-type: none;
+  }
+  a {
+    text-decoration: none;
+  }
+
+  @media screen and (max-width: $break-small) {
+    max-width: $admin-nav-width;
+  }
+}
+
+.active {
+  background-color: $accent-color;
+}
+
+.toggle-hide {
+  span {
+    display: none !important;
+  }
+  width: $admin-nav-icon-size !important;
+}
+
+.inline {
+  width: 100%;
+  min-width: $admin-nav-icon-size;
+  min-height: $admin-nav-icon-size;
+  display: block;
+  border-radius: 2px;
+  border-style: hidden;
+  &:hover {
+    background-color: whitesmoke;
+  }
+  span {
+    font-size: large;
+    margin-left: 0.3em;
+    line-height: $admin-nav-icon-size;
+  }
+  i {
+    line-height: $admin-nav-icon-size;
+  }
+}
+
+.admin-project {
+  flex: 1 1 auto;
+  padding: 1em;
+  display: flex;
+  justify-content: flex-start;
+  align-content: flex-start;
+  align-items: center;
+  border-bottom: solid $accent-color;
+  overflow: hidden;
+
+  &:hover {
+    background-color: $secondary-color;
+  }
+}
+
+.project-img-small {
+  flex: 0 1 $project-img-width;
+  order: 1;
+  width: $project-img-width;
+  height: $project-img-width;
+  display: inline-block !important;
+}
+
+.project-flex-info {
+  flex: 1 1 auto;
+  order: 2;
+  display: flex;
+  flex-direction: column;
+  padding: 0 1em 0 1em;;
+  max-width: 50%;
+  span {
+    padding: 0.1em;
+    overflow-wrap: break-word;
+  }
+}
+
+.admin-edit-controls {
+  order: 3;
+  border-radius: 3px;
+}
+
+.admin-public-false {
+  padding: 0.2em;
+  background-color: red;
+}
+
+.admin-public-true {
+  padding: 0.2em;
+  background-color: green;
+}
