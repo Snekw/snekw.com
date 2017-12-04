@@ -47,7 +47,7 @@ router.param('project', function (req, res, next, project) {
       }
       req.context.project = data;
       let author = data.author;
-      if (typeof data.author !== 'string') {
+      if (data.author && typeof data.author !== 'string') {
         author = data.author.id;
       }
 
