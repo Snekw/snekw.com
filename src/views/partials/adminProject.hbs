@@ -19,9 +19,16 @@
  *  along with snekw.com.  If not, see <http://www.gnu.org/licenses/>.
  */
 }}
-<li>
-  <a class="inline {{#if active}}active{{/if}}" href="/admin/{{name}}" title="{{longName}}">
-    <span>{{longName}}</span>
-    <i class="right-nom material-icons">{{icon}}</i>
-  </a>
-</li>
+<div class="admin-project">
+  <img src="{{indexImageUrl}}" class="project-img-small">
+  <div class="project-flex-info">
+    <span class="large-text bold">{{title}}</span>
+    <span class="small-text">By: {{author.username}}</span>
+  </div>
+  <div class="admin-edit-controls admin-public-{{#if public}}true{{else}}false{{/if}} ">
+    Public
+  </div>
+  <div class="admin-edit-controls">
+    {{>editControls}}
+  </div>
+</div>

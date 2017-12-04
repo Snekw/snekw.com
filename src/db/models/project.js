@@ -29,7 +29,7 @@ const projectSchema = new mongoose.Schema({
   brief: {type: String, required: true},
   postedAt: {type: Date, default: Date.now, required: true},
   updatedAt: {type: Date, default: Date.now},
-  indexImageUrl: {type: String, default: '/defaultProjectImage.png'},
+  indexImageUrl: {type: String, default: 'https://i.imgur.com/5Dmkrgz.png'},
   author: {
     id: {type: String, required: true},
     username: {type: String, required: false}

@@ -15,6 +15,7 @@
  *  along with snekw.com.  If not, see <http://www.gnu.org/licenses/>.
  */
 @import "vars";
+$project-img-width: 50px;
 
 // Force the body to full height of the page
 body {
@@ -33,6 +34,7 @@ nav {
   display: flex;
   align-items: stretch;
   border-top: solid $accent-color;
+  box-sizing: border-box;
 }
 
 .admin-container {
@@ -89,4 +91,61 @@ nav {
 #admin-nav-container {
   width: $admin-nav-width;
   max-width: $admin-nav-max-width;
+}
+
+.admin-project{
+  padding: 1em;
+  display: flex;
+  justify-content: flex-start;
+  align-content: flex-start;
+  align-items: center;
+
+  &:hover{
+    background-color: $secondary-color;
+  }
+}
+
+.project-img-small{
+  flex: 0 1 $project-img-width;
+  order: 1;
+  width: $project-img-width;
+  height: $project-img-width;
+  display: inline-block !important;
+}
+
+.project-flex-info{
+  flex: 1 1 auto;
+  order: 2;
+  display: flex;
+  flex-direction: column;
+  padding: 0 1em 0 1em;
+  span{
+    padding: 0.1em;
+  }
+}
+
+.admin-edit-controls{
+  order: 3;
+  border-radius: 3px;
+}
+
+.admin-public-false{
+  padding: 0.2em;
+  background-color: red;
+}
+
+.admin-public-true{
+  padding: 0.2em;
+  background-color: green;
+}
+
+.large-text {
+  font-size: large;
+}
+.bold {
+  font-weight: bold;
+}
+
+.small-text {
+  font-size: small;
 }

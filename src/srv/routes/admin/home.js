@@ -41,7 +41,12 @@ for (let item in HbsViews.admin) {
 }
 
 router.use(function (req, res, next) {
-  req.context.adminPages = adminPages;
+  req.context.adminPages = {};
+  for (let key in adminPages) {
+    if (adminPages.hasOwnProperty(key)) {
+      req.context.adminPages[key] = Object.assign({}, adminPages[key]);
+    }
+  }
   next();
 });
 
@@ -52,6 +57,31 @@ router.get(['', '/dashboard'], ensureAdmin, function (req, res, next) {
 router.get('/statistics', ensureAdmin, function (req, res, next) {
   req.context.adminPages['statistics'].active = true;
   res.send(HbsViews.admin.statistics.hbs(req.context));
+});
+
+router.get('/manageprojects', ensureAdmin, function (req, res, next) {
+  req.context.adminPages['manageProjects'].active = true;
+
+  models.project.find()
+    .sort('-postedAt')
+    .lean()
+    .then(data => {
+      if (!data) {
+        return next(new Error('No data'));
+      }
+      // Add default image if there is no image set
+      data.map(d => {
+        d.indexImageUrl = (d.indexImageUrl)
+          ? d.indexImageUrl
+          : 'https://i.imgur.com/5Dmkrgz.png';
+      });
+      req.context.projects = data;
+      res.send(HbsViews.admin.manageProjects.hbs(req.context));
+    })
+    .catch(err => {
+      return next(err);
+    });
+
 });
 
 module.exports = router;

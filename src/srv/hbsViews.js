@@ -89,6 +89,11 @@ module.exports = {
       path: 'statistics.hbs',
       icon: 'poll',
       name: 'Statistics'
+    },
+    manageProjects: {
+      path: 'manageProjects.hbs',
+      icon: 'list',
+      name: 'Manage projects'
     }
   }
 };

@@ -65,7 +65,8 @@ const partials = {
   editControls: getPartialHbs('editControls.hbs'),
   adminLayout: getPartialHbs('adminLayout.hbs'),
   adminNav: getPartialHbs('adminNav.hbs'),
-  adminNavItem: getPartialHbs('adminNavItem.hbs')
+  adminNavItem: getPartialHbs('adminNavItem.hbs'),
+  adminProject: getPartialHbs('adminProject.hbs')
 };
 
 function reloadPartials () {
