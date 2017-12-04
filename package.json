@@ -1,6 +1,6 @@
 {
   "name": "snekw.com",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "scripts": {
     "bsync": "browser-sync start --proxy \"dev:3000\" --files \"src/static/*.css\"",
     "scss": "scss src/scss/main.scss src/static/main.css --style expanded",
