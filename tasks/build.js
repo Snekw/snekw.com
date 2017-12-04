@@ -207,7 +207,8 @@ const files = [
   copyFile('./src/static/favicon.ico', './dist/static/favicon.ico'),
   copyFile('./node_modules/prismjs/prism.js', './dist/static/prism.js'),
   copyFile('./src/static/mdEditor.js', './dist/static/mdEditor.js'),
-  copyFile('./src/static/commonmark.min.js', './dist/static/commonmark.min.js')
+  copyFile('./src/static/commonmark.min.js', './dist/static/commonmark.min.js'),
+  copyFile('./src/static/admin.js', './dist/static/admin.js')
 ];
 
 const dirs = [
