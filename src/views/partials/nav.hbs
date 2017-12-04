@@ -19,21 +19,22 @@
  *  along with snekw.com.  If not, see <http://www.gnu.org/licenses/>.
  */
 }}
-<nav>
-  <div class="left nav">
+<nav role='navigation'>
+  <div>
+    <img src="/favicon.ico">
     <a class="btn" href="/">Snekw.com</a>
     <a class="btn" href="/about">About</a>
   </div>
-  <div class="right nav">
-    <a class="btn btn-nav" href="/archive">Archive</a>
+  <div>
+    <a class="btn" href="/archive">Archive</a>
     {{#if user}}
       {{#if user.app_metadata.admin}}
-        <a class="btn btn-nav" href="/project/new">New post</a>
-        <a class="btn btn-nav" href="/admin">Admin</a>
+        <a class="btn btn-hide-small" href="/project/new">New post</a>
+        <a class="btn" href="/admin">Admin</a>
       {{/if}}
-      <a class="btn btn-nav" href="/logout">Logout</a>
+      <a class="btn" href="/logout">Logout</a>
     {{else}}
-      <a class="btn btn-nav" href="/login">Login</a>
+      <a class="btn" href="/login">Login</a>
     {{/if}}
   </div>
 </nav>

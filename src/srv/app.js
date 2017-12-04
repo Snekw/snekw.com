@@ -28,6 +28,7 @@ const bodyParser = require('body-parser');
 const config = require('../helpers/configStub')('main');
 const session = require('express-session');
 const RedisSessionStore = require('connect-redis')(session);
+const favicon = require('serve-favicon');
 const passport = require('passport');
 const auth = require('../lib/auth');
 const normalizeError = require('./Error').normalizeError;
@@ -140,6 +141,8 @@ app.use(function (req, res, next) {
   }
   next();
 });
+
+app.use(favicon(path.join(__dirname, '../static/favicon.ico')));
 
 app.use(hbsSystem.middleware);
 

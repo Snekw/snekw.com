@@ -28,13 +28,22 @@
     background-color: $accent-color;
   }
 
-  .btn-nav {
-    margin-left: 3em;
+  &.btn-hide-small{
+    @media screen and (max-width: $break-small){
+      display: none;
+    }
   }
-  @media screen and (max-width: $break-small){
+
+  @media screen and (max-width: $break-800){
     padding: 0.5em;
   }
-  @media screen and (max-width: $break-extra-small){
-    padding: 0.1em;
+
+  @media screen and (max-width: $break-small) {
+    padding: 0.2em;
+    font-size: medium;
+  }
+
+  @media screen and (max-width: $break-extra-small) {
+    //padding: 0;
   }
 }
