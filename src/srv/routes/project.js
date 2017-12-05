@@ -40,7 +40,7 @@ require('prismjs/components/prism-http');
 router.param('project', function (req, res, next, project) {
   let query = models.project.findById(project).lean();
 
-  cachedData.getCachedOrDb(project, query, false)
+  cachedData.getCachedOrDb(project, query)
     .then((data) => {
       if (!data) {
         return next();
@@ -148,15 +148,20 @@ router.post('/edit', ensureAdmin, function (req, res, next) {
     update.public = false;
   }
 
-  models.project.findByIdAndUpdate(req.body.projectId, update, (err) => {
+  models.project.findByIdAndUpdate(req.body.projectId, update, (err, data) => {
     if (err) {
       return next(err);
     }
-    cachedData.updateCache(cachedData.keys.indexProjects, querys.indexProjectsQuery).then(() => {
-      return res.redirect('/project/id/' + req.body.projectId);
-    }).catch(err => {
-      return next(err);
-    });
+    cachedData.updateCache(data._id, models.project.findById(data._id).lean())
+      .then(() => {
+        return cachedData.updateCache(cachedData.keys.indexProjects, querys.indexProjectsQuery);
+      })
+      .then(() => {
+        return res.redirect('/project/id/' + req.body.projectId);
+      })
+      .catch(err => {
+        return next(err);
+      });
   });
 });
 
