@@ -130,3 +130,14 @@ li {
   font-size: medium;
   line-height: 1.5em;
 }
+
+blockquote {
+  border-radius: 0 5px 5px 0;
+  border-left: 1em solid $accent-color ;
+  margin-left: 1em;
+  padding: 0.5em;
+  background-color: $secondary-color;
+  p{
+    margin: 0;
+  }
+}
