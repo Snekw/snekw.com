@@ -55,10 +55,16 @@ const strategy = new Auth0Strategy(
         id: temp.sub,
         app_metadata: temp[namespace + 'app_metadata'],
         user_metadata: temp[namespace + 'user_metadata'],
-        username: temp[namespace + 'app_metadata'].username,
-        picture: temp[namespace + 'user_metadata'].picture || temp.picture,
+        username: '',
+        picture: temp.picture,
         locale: temp.locale
       };
+      if (user.app_metadata) {
+        user.username = user.app_metadata.username || '';
+      }
+      if (user.user_metadata) {
+        user.picture = user.user_metadata.picture || temp.picture;
+      }
 
       return done(null, user);
     });
@@ -71,7 +77,7 @@ const auth0LoginOpts = {
   redirectUri: env.AUTH0_CALLBACK_URL,
   audience: 'https://' + env.AUTH0_DOMAIN + '/userinfo',
   responseType: 'code',
-  scope: 'openid profile'
+  scope: 'openid profile email'
 };
 
 const auth0CallbackOpts = {

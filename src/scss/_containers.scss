@@ -120,3 +120,12 @@
 .small-text {
   font-size: small;
 }
+
+.error-text{
+  color: $error-color;
+  font-weight: bold;
+}
+
+.error-highlight {
+  border: solid $error-color;
+}

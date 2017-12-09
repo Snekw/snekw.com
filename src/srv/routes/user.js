@@ -31,7 +31,7 @@ router.get('/update', ensureLoggedIn, function (req, res, next) {
 });
 
 router.post('/update/username', ensureLoggedIn, function (req, res, next) {
-  if (validator.isAlphanumeric(req.body.username)) {
+  if (validator.matches(req.body.username, /^[a-zA-Z0-9-_]+$/g)) {
     const opts = {
       method: 'PATCH',
       url: 'users/' + req.user.id,
