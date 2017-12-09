@@ -23,7 +23,7 @@
   width: calc(90vw - 1em);
   margin: 5vh auto 5vh auto;
   padding: 1em;
-  border-radius: 2px;
+  border-radius: $general-border-radius;
   border-style: hidden;
   .container {
     padding: 0;

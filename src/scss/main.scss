@@ -83,7 +83,7 @@ img {
   max-width: 100%;
   width: auto;
   height: auto;
-  border-radius: 5px;
+  border-radius: $general-border-radius-alt;
   @media screen and (max-width: $break-small) {
     margin: 0;
   }
@@ -107,16 +107,17 @@ p {
 
 code {
   padding: 0.3em 0.4em 0.3em 0.4em;
-  border-radius: 2px;
+  border-radius: $general-border-radius;
   border-style: hidden;
   background-color: $prism-code-background-color;
   color: $text-color-secondary;
   word-wrap: normal;
+  font-size: medium;
 }
 
 pre {
   padding: 1px 2px 1px 2px;
-  border-radius: 2px;
+  border-radius: $general-border-radius;
   border-style: hidden;
 }
 
@@ -127,7 +128,7 @@ ul {
 }
 
 li {
-  font-size: medium;
+  //font-size: medium;
   line-height: 1.5em;
 }
 

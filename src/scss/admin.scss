@@ -76,7 +76,7 @@ $project-img-width: 50px;
   min-width: $admin-nav-icon-size;
   min-height: $admin-nav-icon-size;
   display: block;
-  border-radius: 2px;
+  border-radius: $general-border-radius;
   border-style: hidden;
   &:hover {
     background-color: whitesmoke;
@@ -130,7 +130,7 @@ $project-img-width: 50px;
 
 .admin-edit-controls {
   order: 3;
-  border-radius: 3px;
+  border-radius: $general-border-radius;
 }
 
 .admin-public-false {
