@@ -49,7 +49,7 @@ module.exports = {
       path: 'project.hbs'
     },
     new: {
-      path: 'newProject.hbs'
+      path: 'editProject.hbs'
     },
     edit: {
       path: 'editProject.hbs'

@@ -113,8 +113,8 @@ router.get('/edit/:project', ensureAdmin, function (req, res, next) {
     }
 
     req.context.project = data;
-
     req.context.csrfToken = req.csrfToken();
+    req.context.isEdit = true;
 
     res.send(HbsViews.project.edit.hbs(req.context));
   });
