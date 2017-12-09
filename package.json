@@ -2,7 +2,7 @@
   "name": "snekw.com",
   "version": "0.1.0",
   "scripts": {
-    "bsync": "browser-sync start --proxy \"dev:3000\" --files \"src/static/*.css\"",
+    "bsync": "browser-sync start --proxy \"dev.local:3000\" --files \"src/static/*.css\"",
     "scss": "scss src/scss/main.scss src/static/main.css --style expanded",
     "scss:w": "scss --watch src/scss:src/static --style expanded",
     "build": "node tasks/build.js"
@@ -32,7 +32,7 @@
     "passport": "^0.3.2",
     "passport-auth0": "^0.6.0",
     "postcss": "^6.0.8",
-    "prismjs": "^1.6.0",
+    "prismjs": "^1.9.0",
     "redis": "^2.8.0",
     "request": "^2.81.0",
     "rimraf": "^2.6.1",

@@ -20,7 +20,9 @@
  */
 }}
 {{#> header}}
-  <link rel="preload" as="image" href="{{project.indexImageUrl}}"/>
+  {{#if project.indexImageUrl}}
+    <link rel="preload" as="image" href="{{project.indexImageUrl}}"/>
+  {{/if}}
 {{/header}}
 {{#> layout}}
   <div class="container">
