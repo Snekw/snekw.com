@@ -19,17 +19,28 @@
  *  along with snekw.com.  If not, see <http://www.gnu.org/licenses/>.
  */
 }}
-<form action="/user/update/username" method="post">
-  <input type="hidden" name="_csrf" value="{{csrfToken}}">
-  <input type="hidden" name="userId" value="{{user.id}}">
-  <label for="username">Username:</label>
-  <input type="text" name="username" id="username" value="{{user.username}}">
-  <input type="submit">
-</form>
-<form action="/user/update/picture" method="post">
-  <input type="hidden" name="_csrf" value="{{csrfToken}}">
-  <input type="hidden" name="userId" value="{{user.id}}">
-  <label for="imgUrl">Profile picture:</label>
-  <input type="text" name="imgUrl" id="imgUrl" value="{{user.picture}}">
-  <input type="submit">
-</form>
+{{#>layout}}
+  {{#unless user.username}}
+    <div class="container error-text">
+      <span class="error">Username is required!</span><br>
+      <span>Please set username in the box below to continue to use the site.</span>
+    </div>
+  {{/unless}}
+  <div class="container">
+    <form action="/user/update/username" method="post">
+      <input type="hidden" name="_csrf" value="{{csrfToken}}">
+      <input type="hidden" name="userId" value="{{user.id}}">
+      <label for="username">Username:</label>
+      <input type="text" name="username" id="username" value="{{user.username}}"
+             class="{{#unless user.username}}error-highlight{{/unless}}">
+      <input type="submit">
+    </form>
+    <form action="/user/update/picture" method="post">
+      <input type="hidden" name="_csrf" value="{{csrfToken}}">
+      <input type="hidden" name="userId" value="{{user.id}}">
+      <label for="imgUrl">Profile picture:</label>
+      <input type="text" name="imgUrl" id="imgUrl" value="{{user.picture}}">
+      <input type="submit">
+    </form>
+  </div>
+{{/layout}}

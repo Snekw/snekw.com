@@ -136,6 +136,17 @@ if (config.DEV === true) {
 app.use(function (req, res, next) {
   if (req.user) {
     res.set('Cache-Control', 'private, must-revalidate');
+    if (req.originalUrl.indexOf('.css') > -1 ||
+      req.originalUrl.indexOf('.js') > -1 ||
+      req.originalUrl.indexOf('.ico') > -1) {
+      return next();
+    }
+    if (req.method === 'GET' &&
+      req.user.username === '' &&
+      req.originalUrl !== '/user/update' &&
+      req.originalUrl !== '/logout') {
+      return res.redirect('/user/update');
+    }
   } else {
     res.set('Cache-Control', 'public, must-revalidate');
   }

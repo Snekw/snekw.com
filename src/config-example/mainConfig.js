@@ -35,6 +35,7 @@ module.exports = {
       connectionString: 'mongodb://localhost/dbhere'
     },
     redis: {
+      cacheExpireSeconds: 60 * 60 * 24
     }
   },
   auth: {

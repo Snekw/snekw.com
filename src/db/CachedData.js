@@ -52,7 +52,7 @@ function setupCache () {
       return err;
     }
     data.map(d => {
-      client.set(d._id, JSON.stringify(d));
+      client.setex(d._id, config.db.redis.cacheExpireSeconds, JSON.stringify(d));
     });
   });
   updateCache(keys.indexProjects, querys.indexProjectsQuery).catch(err => {
@@ -86,7 +86,7 @@ function getCachedOrDb (key, query, save = true) {
             return reject(new Error('No data in database'));
           }
           if (save) {
-            client.set(key, JSON.stringify(dbData));
+            client.setex(key, config.db.redis.cacheExpireSeconds, JSON.stringify(dbData));
           }
 
           debug('Cache returned from db.');
@@ -110,7 +110,7 @@ function updateCache (key, query) {
         client.del(key);
         return reject(new Error('No data returned from db for key: ' + key));
       }
-      client.set(key, JSON.stringify(data));
+      client.setex(key, config.db.redis.cacheExpireSeconds, JSON.stringify(data));
       debug('Cache updated for key: ' + key);
       return resolve(data);
     });
@@ -118,8 +118,8 @@ function updateCache (key, query) {
 }
 
 module.exports = {
-  keys: keys,
-  getCachedOrDb: getCachedOrDb,
-  updateCache: updateCache,
-  setupCache: setupCache
+  keys,
+  getCachedOrDb,
+  updateCache,
+  setupCache
 };

@@ -49,7 +49,7 @@ module.exports = {
       path: 'project.hbs'
     },
     new: {
-      path: 'newProject.hbs'
+      path: 'editProject.hbs'
     },
     edit: {
       path: 'editProject.hbs'
@@ -64,7 +64,7 @@ module.exports = {
       path: 'about.hbs'
     },
     new: {
-      path: 'newAbout.hbs'
+      path: 'editAbout.hbs'
     },
     edit: {
       path: 'editAbout.hbs'

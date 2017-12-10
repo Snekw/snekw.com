@@ -20,18 +20,42 @@
 'use strict';
 let editor = document.getElementById('editor');
 let editorOut = document.getElementById('editorOut');
-const reader = new commonmark.Parser();
-const renderer = new commonmark.HtmlRenderer();
+const cmReader = new commonmark.Parser();
+const cmRenderer = new commonmark.HtmlRenderer();
 
 editor.addEventListener('keyup', onEdit);
 
+function processMarkdown (input) {
+  let parsed = cmReader.parse(input);
+
+  let walker = parsed.walker();
+  let event, node;
+
+  while ((event = walker.next())) {
+    node = event.node;
+    if (event.entering && node.type === 'code_block') {
+      let lang = Prism.languages[node.info];
+      let langName = node.info;
+      if (!lang) {
+        langName = 'bash';
+        lang = Prism.languages.bash;
+      }
+      let newNode = new commonmark.Node('html_block');
+      let className = 'language-' + langName;
+      newNode.literal = '<pre class="' + className + '"><code class="' +
+        className + '">' +
+        Prism.highlight(node.literal, lang) + '</code></pre>';
+      node.insertBefore(newNode);
+      node.unlink();
+    }
+  }
+
+  return cmRenderer.render(parsed);
+}
+
 function onEdit () {
-  let parsed = reader.parse(editor.value);
-  let rendered = renderer.render(parsed);
 
-  editorOut.innerHTML = rendered;
-
-  Prism.highlightAll();
+  editorOut.innerHTML = processMarkdown(editor.value);
 }
 
 onEdit();
