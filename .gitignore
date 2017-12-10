@@ -54,3 +54,4 @@ nogit
 /dist
 /src/static/*.css
 **/config
+!/src/static/prism.css
