@@ -20,11 +20,13 @@
  */
 }}
 {{#>layout}}
-  <form action="/about/new" method="post">
+  <form action="/about/{{#if isEdit}}edit{{else}}new{{/if}}" method="post">
 {{>markdownEditor editorDefault=about.rawBody}}
     <input type="hidden" name="_csrf" value="{{csrfToken}}">
     <input type="hidden" name="author" value="{{user.id}}">
-    <input type="hidden" name="aboutId" value="{{about._id}}">
+    {{#if isEdit}}
+      <input type="hidden" name="aboutId" value="{{about._id}}">
+    {{/if}}
     <div class="container">
       <input type="submit">
     </div>

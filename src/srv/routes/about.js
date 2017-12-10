@@ -48,6 +48,7 @@ router.get('/edit/:id', ensureAdmin, function (req, res, next) {
     }
     req.context.csrfToken = req.csrfToken();
     req.context.about = about;
+    req.context.isEdit = true;
     return res.send(HbsViews.about.edit.hbs(req.context));
   });
 });
@@ -73,7 +74,13 @@ router.post('/edit', ensureAdmin, function (req, res, next) {
     if (err) {
       return next(err);
     }
-    return res.redirect('/about');
+    cachedData.updateCache(cachedData.keys.about, querys.aboutGetQuery)
+      .then(() => {
+        return res.redirect('/about');
+      })
+      .catch(err => {
+        console.log(err);
+      });
   });
 });
 
