@@ -31,57 +31,57 @@ router.get('/update', ensureLoggedIn, function (req, res, next) {
 });
 
 router.post('/update/username', ensureLoggedIn, function (req, res, next) {
-  if (validator.matches(req.body.username, /^[a-zA-Z0-9-_]+$/g)) {
-    const opts = {
-      method: 'PATCH',
-      url: 'users/' + req.user.id,
-      body: JSON.stringify({
-        app_metadata: {
-          username: req.body.username
-        }
-      })
-    };
-    auth0Api.queryApi(opts, function (err, body) {
-      if (err) {
-        return next(err);
-      }
-      req.user.username = body.app_metadata.username;
-      req.user.app_metadata = body.app_metadata;
-      return res.redirect('/user');
-    });
-  } else {
+  if (!validator.matches(req.body.username, /^[a-zA-Z0-9-_]+$/g)) {
     res.status(400);
     req.context.csrfToken = req.csrfToken();
     req.context.error = normalizeError(new Error('Bad username'));
-    res.send(HbsViews.user.manage.hbs(req.context));
+    return res.send(HbsViews.user.manage.hbs(req.context));
   }
+
+  const opts = {
+    method: 'PATCH',
+    url: 'users/' + req.user.id,
+    body: JSON.stringify({
+      app_metadata: {
+        username: req.body.username
+      }
+    })
+  };
+  auth0Api.queryApi(opts, function (err, body) {
+    if (err) {
+      return next(err);
+    }
+    req.user.username = body.app_metadata.username;
+    req.user.app_metadata = body.app_metadata;
+    return res.redirect('/user');
+  });
 });
 
 router.post('/update/picture', ensureLoggedIn, function (req, res, next) {
-  if (validator.isURL(req.body.imgUrl) || validator.isDataURI(req.body.imgUrl)) {
-    const opts = {
-      method: 'PATCH',
-      url: 'users/' + req.user.id,
-      body: JSON.stringify({
-        user_metadata: {
-          picture: req.body.imgUrl
-        }
-      })
-    };
-    auth0Api.queryApi(opts, function (err, body) {
-      if (err) {
-        return next(err);
-      }
-      req.user.picture = body.user_metadata.picture;
-      req.user.user_metadata = body.user_metadata;
-      return res.redirect('/user');
-    });
-  } else {
+  if (!validator.isURL(req.body.imgUrl) && !validator.isDataURI(req.body.imgUrl)) {
     res.status(400);
     req.context.csrfToken = req.csrfToken();
     req.context.error = normalizeError(new Error('Bad url'));
-    res.send(HbsViews.user.manage.hbs(req.context));
+    return res.send(HbsViews.user.manage.hbs(req.context));
   }
+
+  const opts = {
+    method: 'PATCH',
+    url: 'users/' + req.user.id,
+    body: JSON.stringify({
+      user_metadata: {
+        picture: req.body.imgUrl
+      }
+    })
+  };
+  auth0Api.queryApi(opts, function (err, body) {
+    if (err) {
+      return next(err);
+    }
+    req.user.picture = body.user_metadata.picture;
+    req.user.user_metadata = body.user_metadata;
+    return res.redirect('/user');
+  });
 });
 
 module.exports = router;

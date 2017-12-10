@@ -20,7 +20,11 @@
  */
 }}
 {{#>layout}}
-  {{bad}}
+  {{#if bad}}
+    <div class="container error-highlight">
+      <span class="error-text">{{bad}}</span>
+    </div>
+  {{/if}}
   <form action="/project/{{#if isEdit}}edit{{else}}new{{/if}}" method="post">
     <div>{{>markdownEditor editorDefault=project.rawBody}}</div>
     <div class="container">

@@ -26,6 +26,7 @@ const cachedData = require('../../db/CachedData');
 const auth0Api = require('../../lib/auth0Api');
 const processMarkdown = require('../processMarkdown');
 const querys = require('../../db/querys');
+const validator = require('validator');
 require('prismjs/components/prism-javascript');
 require('prismjs/components/prism-markdown');
 require('prismjs/components/prism-c');
@@ -38,6 +39,11 @@ require('prismjs/components/prism-css');
 require('prismjs/components/prism-http');
 
 router.param('project', function (req, res, next, project) {
+  if (!validator.matches(project, /^[a-zA-Z0-9_-]+$/g)) {
+    let err = new Error('Invalid project id');
+    return next(err);
+  }
+
   let query = models.project.findById(project).lean();
 
   cachedData.getCachedOrDb(project, query)
@@ -167,10 +173,18 @@ router.post('/edit', ensureAdmin, function (req, res, next) {
 
 router.post('/new', ensureAdmin, function (req, res, next) {
   res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
-  if (!req.body.title || !req.body.body) {
+  if (!req.body.title || !req.body.body || !req.body.brief) {
     res.status(400);
-    // TODO
-    res.send(HbsViews.project.new.hbs({bad: 'Missing data', csrfToken: req.csrfToken()}));
+    req.context.csrfToken = req.csrfToken();
+    req.context.bad = 'Title, body or brief is missing!';
+    req.context.project = {
+      rawBody: req.body.body || '',
+      title: req.body.title || '',
+      brief: req.body.brief || '',
+      indexImageUrl: req.body.indexImg || '',
+      indexImageAlt: req.body.indexImgAlt || ''
+    };
+    res.send(HbsViews.project.new.hbs(req.context));
   }
   let rendered = processMarkdown(req.body.body);
   let p = (req.body.public === 'true');
