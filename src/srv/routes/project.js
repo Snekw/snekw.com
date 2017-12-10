@@ -127,8 +127,21 @@ router.get('/edit/:project', ensureAdmin, function (req, res, next) {
 });
 
 router.post('/edit', ensureAdmin, function (req, res, next) {
-  if (!req.body.body || !req.body.projectId) {
-    return next(new Error('Body and project id are required'));
+  if (!req.body.title || !req.body.body || !req.body.projectId) {
+    res.status(400);
+    req.context.csrfToken = req.csrfToken();
+    req.context.bad = 'Title, body or brief is missing!';
+    req.context.isEdit = true;
+    req.context.project = {
+      rawBody: req.body.body || '',
+      title: req.body.title || '',
+      brief: req.body.brief || '',
+      indexImageUrl: req.body.indexImg || '',
+      indexImageAlt: req.body.indexImgAlt || '',
+      public: (req.body.public === 'true'),
+      _id: req.body.projectId
+    };
+    res.send(HbsViews.project.edit.hbs(req.context));
   }
 
   let rendered = processMarkdown(req.body.body);
