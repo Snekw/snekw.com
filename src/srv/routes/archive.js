@@ -116,7 +116,8 @@ function getArchive (req, res, next) {
     .then(data => {
       if (data) {
         req.context.projects = data;
-        res.send(HbsViews.archive.get.hbs(req.context));
+        req.template = HbsViews.archive.get.hbs;
+        return next();
       } else {
         return next(new Error('There seems to be no projects?'));
       }

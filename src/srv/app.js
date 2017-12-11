@@ -37,6 +37,7 @@ const hbsSystem = require('./hbsSystem');
 const helmet = require('helmet');
 const csrf = require('csurf');
 const redis = require('redis');
+const dbController = require('../db/controller');
 const client = redis.createClient({
   password: config.db.redis.password
 });
@@ -52,7 +53,7 @@ app.use(helmet({
 app.set('trust proxy', '127.0.0.1');
 
 debug('Db setup started');
-require('../db/controller');
+dbController.connect();
 
 app.use(bodyParser.urlencoded({
   extended: true,
@@ -166,6 +167,14 @@ app.use('/user', require('./routes/user'));
 app.use('/archive', require('./routes/archive'));
 app.use('/about', require('./routes/about'));
 app.use('/admin', require('./routes/admin/home'));
+
+// The final middleware to do the rendering of the templates
+app.use(function (req, res, next) {
+  if (!req.template) {
+    return next(new Error('Missing template for route: ' + res.originalUrl));
+  }
+  return res.send(req.template(req.context));
+});
 
 function error404 (req, res, next) {
   let err = new Error('Not found');

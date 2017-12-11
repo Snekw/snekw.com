@@ -30,7 +30,8 @@ router.get('/', function (req, res, next) {
   cachedData.getCachedOrDb('about', querys.aboutGetQuery).then(data => {
     req.context.isAbout = true;
     req.context.about = data;
-    res.send(HbsViews.about.get.hbs(req.context));
+    req.template = HbsViews.about.get.hbs;
+    return next();
   }).catch(err => {
     return next(err);
   });
@@ -39,7 +40,8 @@ router.get('/', function (req, res, next) {
 router.get('/new', ensureAdmin, function (req, res, next) {
   res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
   req.context.csrfToken = req.csrfToken();
-  res.send(HbsViews.about.new.hbs(req.context));
+  req.template = HbsViews.about.new.hbs;
+  return next();
 });
 
 router.get('/edit/:id', ensureAdmin, function (req, res, next) {
@@ -50,7 +52,8 @@ router.get('/edit/:id', ensureAdmin, function (req, res, next) {
     req.context.csrfToken = req.csrfToken();
     req.context.about = about;
     req.context.isEdit = true;
-    return res.send(HbsViews.about.edit.hbs(req.context));
+    req.template = HbsViews.about.get.hbs;
+    return next();
   });
 });
 
@@ -89,7 +92,8 @@ router.post('/new', ensureAdmin, function (req, res, next) {
   res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
   if (!req.body.author || !req.body.body) {
     req.context.error = new Error('Bad arguments');
-    return res.send(HbsViews.error.get.hbs(req.context));
+    req.template = HbsViews.error.get.hbs;
+    return next();
   }
 
   let rendered = processMarkdown(req.body.body);
@@ -130,7 +134,8 @@ router.get('/delete/:id', ensureAdmin, function (req, res, next) {
     req.context.about = data;
     res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
     req.context.csrfToken = req.csrfToken();
-    res.send(HbsViews.about.delete.hbs(req.context));
+    req.template = HbsViews.about.delete.hbs;
+    return next();
   });
 });
 

@@ -26,9 +26,8 @@ function normalizeError (err) {
     message: err.message
   };
   // Return stack and full error object if in developer mode
-  if (config.DEV === true) {
+  if (config.DEV === true && process.env.NODE_ENV !== 'production') {
     ret.stack = err.stack;
-    ret.full = err;
     ret.full = err.full;
   }
 

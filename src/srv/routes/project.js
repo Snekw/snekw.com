@@ -100,13 +100,15 @@ router.get('/id/:project', function (req, res, next) {
   if (!req.context.project.public) {
     return res.redirect('/');
   }
-  res.send(HbsViews.project.get.hbs(req.context));
+  req.template = HbsViews.project.get.hbs;
+  next();
 });
 
 router.get('/new', ensureAdmin, function (req, res, next) {
   res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
   req.context.csrfToken = req.csrfToken();
-  res.send(HbsViews.project.new.hbs(req.context));
+  req.template = HbsViews.project.new.hbs;
+  next();
 });
 
 router.get('/edit/:project', ensureAdmin, function (req, res, next) {
@@ -122,7 +124,8 @@ router.get('/edit/:project', ensureAdmin, function (req, res, next) {
     req.context.csrfToken = req.csrfToken();
     req.context.isEdit = true;
 
-    res.send(HbsViews.project.edit.hbs(req.context));
+    req.template = HbsViews.project.edit.hbs;
+    next();
   });
 });
 
@@ -141,7 +144,8 @@ router.post('/edit', ensureAdmin, function (req, res, next) {
       public: (req.body.public === 'true'),
       _id: req.body.projectId
     };
-    res.send(HbsViews.project.edit.hbs(req.context));
+    req.template = HbsViews.project.edit.hbs;
+    return next();
   }
 
   let rendered = processMarkdown(req.body.body);
@@ -197,7 +201,8 @@ router.post('/new', ensureAdmin, function (req, res, next) {
       indexImageUrl: req.body.indexImg || '',
       indexImageAlt: req.body.indexImgAlt || ''
     };
-    res.send(HbsViews.project.new.hbs(req.context));
+    req.template = HbsViews.project.new.hbs;
+   return next();
   }
   let rendered = processMarkdown(req.body.body);
   let p = (req.body.public === 'true');
@@ -233,7 +238,8 @@ router.get('/delete/:project', ensureAdmin, function (req, res, next) {
 
   req.context.csrfToken = req.csrfToken();
 
-  res.send(HbsViews.project.delete.hbs(req.context));
+  req.template = HbsViews.project.delete.hbs;
+  next();
 });
 
 router.post('/delete', ensureAdmin, function (req, res, next) {
