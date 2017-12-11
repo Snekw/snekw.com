@@ -1,6 +1,8 @@
 {
   "name": "snekw.com",
   "version": "0.1.1",
+  "repository": "https://github.com/Snekw/snekw.com",
+  "license": "GPL-3.0",
   "scripts": {
     "bsync": "browser-sync start --proxy \"dev.local:3000\" --files \"src/static/*.css\"",
     "scss": "scss src/scss/main.scss src/static/main.css --style expanded",
@@ -28,7 +30,7 @@
     "moment": "^2.18.1",
     "mongoose": "^4.11.6",
     "morgan": "^1.8.2",
-    "node-sass": "^4.5.3",
+    "node-sass": "^4.7.2",
     "passport": "^0.3.2",
     "passport-auth0": "^0.6.0",
     "postcss": "^6.0.8",
