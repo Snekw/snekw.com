@@ -109,8 +109,6 @@ function middleware (req, res, next) {
     user: req.user
   };
 
-  req.context.isAbout = req.originalUrl.startsWith('/about');
-
   next();
 }
 
