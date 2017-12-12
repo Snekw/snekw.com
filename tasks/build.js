@@ -296,5 +296,5 @@ Promise.all(all)
   });
 
 uglify('./node_modules/prismjs/prism.js', './dist/static/js/third-party/prism.min.js');
-uglify('./src/static/js/mdEditor.js', './dist/static/js/mdEditor.min.js');
-uglify('./src/static/js/admin.js', './dist/static/js/admin.min.js');
+uglify('./src/static/js/mdEditor.js', './dist/static/js/mdEditor.js');
+uglify('./src/static/js/admin.js', './dist/static/js/admin.js');
