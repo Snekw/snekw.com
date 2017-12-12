@@ -1,4 +1,5 @@
-/**
+/** @preserve
+ *  @licence
  *  snekw.com,
  *  Copyright (C) 2017 Ilkka Kuosmanen
  *
@@ -18,30 +19,30 @@
  *  along with snekw.com.  If not, see <http://www.gnu.org/licenses/>.
  */
 'use strict';
-let editor = document.getElementById('editor');
-let editorOut = document.getElementById('editorOut');
-const cmReader = new commonmark.Parser();
-const cmRenderer = new commonmark.HtmlRenderer();
+var editor = document.getElementById('editor');
+var editorOut = document.getElementById('editorOut');
+var cmReader = new commonmark.Parser();
+var cmRenderer = new commonmark.HtmlRenderer();
 
 editor.addEventListener('keyup', onEdit);
 
 function processMarkdown (input) {
-  let parsed = cmReader.parse(input);
+  var parsed = cmReader.parse(input);
 
-  let walker = parsed.walker();
-  let event, node;
+  var walker = parsed.walker();
+  var event, node;
 
   while ((event = walker.next())) {
     node = event.node;
     if (event.entering && node.type === 'code_block') {
-      let lang = Prism.languages[node.info];
-      let langName = node.info;
+      var lang = Prism.languages[node.info];
+      var langName = node.info;
       if (!lang) {
         langName = 'bash';
         lang = Prism.languages.bash;
       }
-      let newNode = new commonmark.Node('html_block');
-      let className = 'language-' + langName;
+      var newNode = new commonmark.Node('html_block');
+      var className = 'language-' + langName;
       newNode.literal = '<pre class="' + className + '"><code class="' +
         className + '">' +
         Prism.highlight(node.literal, lang) + '</code></pre>';
@@ -54,7 +55,6 @@ function processMarkdown (input) {
 }
 
 function onEdit () {
-
   editorOut.innerHTML = processMarkdown(editor.value);
 }
 

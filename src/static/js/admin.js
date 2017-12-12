@@ -1,4 +1,5 @@
-/**
+/** @preserve
+ *  @licence
  *  snekw.com,
  *  Copyright (C) 2017 Ilkka Kuosmanen
  *
@@ -21,9 +22,9 @@
 
 document.getElementById('admin-nav-toggle').addEventListener('click', doAdminNavToggle);
 
-let nav = document.getElementById('admin-nav-container');
-let adminNavKey = 'admin-nav';
-let toggleClass = 'toggle-hide';
+var nav = document.getElementById('admin-nav-container');
+var adminNavKey = 'admin-nav';
+var toggleClass = 'toggle-hide';
 
 function updateNavState () {
   if (JSON.parse(window.localStorage.getItem(adminNavKey)) === false) {
