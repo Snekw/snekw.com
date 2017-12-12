@@ -52,6 +52,6 @@ nogit
 .sass-cache
 *.map
 /dist
-/src/static/*.css
+/src/static/**/*.css
 **/config
-!/src/static/prism.css
+!/src/static/css/third-party/prism.css

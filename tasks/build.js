@@ -71,11 +71,11 @@ function saveCssMin (input) {
       if (err) {
         return reject(err);
       }
-      fs.writeFile('./dist/static/' + input.file + '.css', input.out.styles, err => {
+      fs.writeFile('./dist/static/css/' + input.file + '.css', input.out.styles, err => {
         if (err) {
           return reject(err);
         } else {
-          return resolve('./dist/static/' + input.file + '.css written.');
+          return resolve('./dist/static/css/' + input.file + '.css written.');
         }
       });
     });
@@ -205,11 +205,11 @@ clean();
 const files = [
   copyFile('./src/config-example/mainConfig.js', './dist/config/mainConfig.js'),
   copyFile('./src/static/favicon.ico', './dist/static/favicon.ico'),
-  copyFile('./node_modules/prismjs/prism.js', './dist/static/prism.js'),
-  copyFile('./src/static/mdEditor.js', './dist/static/mdEditor.js'),
-  copyFile('./src/static/commonmark.min.js', './dist/static/commonmark.min.js'),
-  copyFile('./src/static/admin.js', './dist/static/admin.js'),
-  copyFile('./src/static/prism.css', './dist/static/prism.css')
+  copyFile('./node_modules/prismjs/prism.js', './dist/static/js/third-party/prism.js'),
+  copyFile('./src/static/commonmark.min.js', './dist/static/js/third-party/commonmark.min.js'),
+  copyFile('./src/static/mdEditor.js', './dist/static/js/mdEditor.js'),
+  copyFile('./src/static/admin.js', './dist/static/js/admin.js'),
+  copyFile('./src/static/prism.css', './dist/static/css/third-party/prism.css')
 ];
 
 const dirs = [
@@ -223,7 +223,6 @@ const dirs = [
 
 compileScss('main')
   .then(prefixCss)
-  // .then(getFoldCss)
   .then(cleanCss)
   .then(saveCssMin)
   .then(out => {
@@ -254,7 +253,7 @@ compileScss('admin')
   });
 
 prefixCss({
-  file: 'prism-okaidia',
+  file: 'third-party/prism',
   out: {
     css: fs.readFileSync('./node_modules/prismjs/themes/prism-okaidia.css')
   }

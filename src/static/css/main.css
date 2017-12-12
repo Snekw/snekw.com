@@ -1,0 +1,492 @@
+/**
+ *  This file is part of snekw.com.
+ *
+ *  snekw.com is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  snekw.com is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with snekw.com.  If not, see <http://www.gnu.org/licenses/>.
+ */
+/**
+ *  This file is part of snekw.com.
+ *
+ *  snekw.com is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  snekw.com is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with snekw.com.  If not, see <http://www.gnu.org/licenses/>.
+ */
+/**
+ *  This file is part of snekw.com.
+ *
+ *  snekw.com is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  snekw.com is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with snekw.com.  If not, see <http://www.gnu.org/licenses/>.
+ */
+/**
+ *  This file is part of snekw.com.
+ *
+ *  snekw.com is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  snekw.com is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with snekw.com.  If not, see <http://www.gnu.org/licenses/>.
+ */
+.indexProject {
+  margin: 2vh 2vw 2vh 2vw;
+  background-color: #909090;
+  border-radius: 5px;
+}
+.indexProject h1 {
+  display: block;
+  margin: auto;
+}
+.indexProject h1 a {
+  display: block;
+  margin: auto;
+  min-width: 50%;
+  width: 60%;
+  text-align: center;
+  text-decoration: none;
+  color: #c25d00;
+}
+
+.indexProjectClickArea {
+  display: block;
+  width: 70%;
+  margin: auto;
+}
+.indexProjectClickArea h1 {
+  text-align: center;
+}
+.indexProjectClickArea a {
+  text-align: center;
+  display: block;
+  padding-top: 3vh;
+  padding-bottom: 2vh;
+  text-decoration: underline;
+  text-decoration-color: #ff9511;
+  font-size: larger;
+  color: #000000;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+.indexProjectClickArea a:hover {
+  background-color: #848484;
+  color: #e3e0e1;
+}
+
+/**
+ *  This file is part of snekw.com.
+ *
+ *  snekw.com is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  snekw.com is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with snekw.com.  If not, see <http://www.gnu.org/licenses/>.
+ */
+/**
+ *  This file is part of snekw.com.
+ *
+ *  snekw.com is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  snekw.com is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with snekw.com.  If not, see <http://www.gnu.org/licenses/>.
+ */
+#titleImg {
+  display: block;
+  padding: 5vh 0 0 0;
+}
+
+#projectTitle {
+  text-align: center;
+}
+
+.project img {
+  display: inline-block;
+}
+.project ul {
+  list-style: disc;
+  margin: 1em 2em;
+  font-size: large;
+}
+
+/**
+ *  This file is part of snekw.com.
+ *
+ *  snekw.com is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  snekw.com is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with snekw.com.  If not, see <http://www.gnu.org/licenses/>.
+ */
+/**
+ *  This file is part of snekw.com.
+ *
+ *  snekw.com is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  snekw.com is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with snekw.com.  If not, see <http://www.gnu.org/licenses/>.
+ */
+.container {
+  background-color: #a1a1a1;
+  color: #000000;
+  text-align: left;
+  width: calc(90vw - 1em);
+  margin: 5vh auto 5vh auto;
+  padding: 1em;
+  border-radius: 3px;
+  border-style: hidden;
+}
+.container .container {
+  padding: 0;
+}
+@media screen and (max-width: 500px) {
+  .container {
+    width: calc(99vw - 1px);
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 0;
+    padding-right: 0;
+  }
+}
+@media screen and (min-width: 1200px) {
+  .container {
+    width: 960px;
+    margin: 5vh auto 5vh auto;
+    padding: 5vh 5vw 5vh 5vw;
+  }
+}
+.container h2 {
+  word-wrap: break-word;
+}
+
+.right {
+  float: right;
+  margin-right: 10vw;
+}
+@media screen and (max-width: 500px) {
+  .right {
+    margin-right: 1px;
+  }
+}
+
+.left {
+  float: left;
+  margin-left: 10vw;
+}
+@media screen and (max-width: 500px) {
+  .left {
+    margin-left: 1px;
+  }
+}
+
+.right-nom {
+  float: right;
+}
+
+.left-nom {
+  float: left;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  align-content: center;
+  justify-content: center;
+}
+.pagination a {
+  color: #000000;
+  padding: 8px 16px;
+  text-decoration: none;
+  transition: background-color .3s;
+}
+@media screen and (max-width: 500px) {
+  .pagination a {
+    padding: 4px 8px;
+  }
+}
+.pagination a.active {
+  background-color: #848484;
+  color: #ff9511;
+}
+.pagination a:hover:not(.active) {
+  background-color: #ff9511;
+}
+.pagination a.disabled {
+  pointer-events: none;
+}
+
+.adminControls a {
+  padding: 0;
+  margin: 4px;
+  text-align: left;
+  display: inline-block;
+}
+
+.large-text {
+  font-size: large;
+}
+
+.bold {
+  font-weight: bold;
+}
+
+.small-text {
+  font-size: small;
+}
+
+.error-text {
+  color: #c3172b;
+  font-weight: bold;
+}
+
+.error-highlight {
+  border: solid #c3172b;
+}
+
+/**
+ *  This file is part of snekw.com.
+ *
+ *  snekw.com is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  snekw.com is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with snekw.com.  If not, see <http://www.gnu.org/licenses/>.
+ */
+/**
+ *  This file is part of snekw.com.
+ *
+ *  snekw.com is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  snekw.com is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with snekw.com.  If not, see <http://www.gnu.org/licenses/>.
+ */
+.btn {
+  display: inline-block;
+  text-align: center;
+  padding: 1em;
+  font-size: large;
+  text-decoration: none;
+  transition: background-color 0.25s ease;
+}
+.btn:hover {
+  background-color: #ff9511;
+}
+@media screen and (max-width: 500px) {
+  .btn.btn-hide-small {
+    display: none;
+  }
+}
+@media screen and (max-width: 800px) {
+  .btn {
+    padding: 0.5em;
+  }
+}
+@media screen and (max-width: 500px) {
+  .btn {
+    padding: 0.2em;
+    font-size: medium;
+  }
+}
+
+html, body {
+  display: flex;
+  justify-content: flex-start;
+  align-items: stretch;
+  align-content: stretch;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background-color: #444444;
+}
+
+nav {
+  order: 1;
+  flex: 0 0 auto;
+  display: flex;
+  align-content: space-around;
+  align-items: center;
+  justify-content: space-around;
+  flex-direction: row;
+  top: 0;
+  left: 0;
+  width: 100%;
+  min-height: 5vh;
+  background-color: #a1a1a1;
+  border-bottom: solid #ff9511;
+}
+nav img {
+  flex: 0;
+  margin: auto;
+}
+@media screen and (max-width: 415px) {
+  nav img {
+    display: none;
+  }
+}
+nav div {
+  flex: 0;
+  order: 1;
+  display: flex;
+}
+nav div a {
+  overflow-wrap: normal;
+  white-space: nowrap;
+}
+
+#content {
+  flex: 0 1 91%;
+  order: 2;
+  align-self: stretch;
+  background-color: #444444;
+}
+
+a {
+  color: #222222;
+}
+
+img {
+  display: block;
+  margin: auto;
+  max-width: 100%;
+  width: auto;
+  height: auto;
+  border-radius: 5px;
+}
+@media screen and (max-width: 500px) {
+  img {
+    margin: 0;
+  }
+}
+img[src=""] {
+  display: none;
+}
+
+hr {
+  border: solid #ff9511;
+}
+
+p {
+  line-height: 1.5em;
+  margin: 1em auto;
+  text-align: left;
+  width: 100%;
+  word-wrap: normal;
+  font-size: large;
+}
+
+code {
+  padding: 0.3em 0.4em 0.3em 0.4em;
+  border-radius: 3px;
+  border-style: hidden;
+  background-color: #272822;
+  color: #e3e0e1;
+  word-wrap: normal;
+  font-size: medium;
+}
+
+pre {
+  padding: 1px 2px 1px 2px;
+  border-radius: 3px;
+  border-style: hidden;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+li {
+  line-height: 1.5em;
+}
+
+blockquote {
+  border-radius: 0 5px 5px 0;
+  border-left: 1em solid #ff9511;
+  margin-left: 1em;
+  padding: 0.5em;
+  background-color: #848484;
+}
+blockquote p {
+  margin: 0;
+}
+
+/*# sourceMappingURL=main.css.map */
