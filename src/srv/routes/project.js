@@ -27,16 +27,6 @@ const auth0Api = require('../../lib/auth0Api');
 const processMarkdown = require('../processMarkdown');
 const querys = require('../../db/querys');
 const validator = require('validator');
-require('prismjs/components/prism-javascript');
-require('prismjs/components/prism-markdown');
-require('prismjs/components/prism-c');
-require('prismjs/components/prism-cpp');
-require('prismjs/components/prism-csharp');
-require('prismjs/components/prism-bash');
-require('prismjs/components/prism-handlebars');
-require('prismjs/components/prism-scss');
-require('prismjs/components/prism-css');
-require('prismjs/components/prism-http');
 
 router.param('project', function (req, res, next, project) {
   if (!validator.matches(project, /^[a-zA-Z0-9_-]+$/g)) {
@@ -202,7 +192,7 @@ router.post('/new', ensureAdmin, function (req, res, next) {
       indexImageAlt: req.body.indexImgAlt || ''
     };
     req.template = HbsViews.project.new.hbs;
-   return next();
+    return next();
   }
   let rendered = processMarkdown(req.body.body);
   let p = (req.body.public === 'true');
