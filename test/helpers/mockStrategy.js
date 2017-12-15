@@ -18,22 +18,31 @@
  *  along with snekw.com.  If not, see <http://www.gnu.org/licenses/>.
  */
 'use strict';
-const config = require('../helpers/configStub')('main');
+const passport = require('passport');
+const util = require('util');
 
-function normalizeError (err) {
-  let ret = {
-    status: err.status || 500,
-    message: err.message
-  };
-  // Return stack and full error object if in developer mode
-  if (config.DEV === true && process.env.NODE_ENV !== 'production') {
-    ret.stack = err.stack;
-    ret.full = err;
-  }
-
-  return ret;
+function MockStrategy (options, verify) {
+  this.name = 'mock';
+  this.passAuthentication = options.passAuthentication || false;
+  this.userObj = options.user || {id: '1'};
+  this.verify = verify;
 }
 
-module.exports = {
-  normalizeError: normalizeError
+util.inherits(MockStrategy, passport.Strategy);
+
+MockStrategy.prototype.authenticate = function authenticate (req) {
+  if (this.passAuthentication) {
+    let self = this;
+    this.verify(this.userObj, function (err, resident) {
+      if (err) {
+        self.fail(err);
+      } else {
+        self.success(resident);
+      }
+    });
+  } else {
+    this.fail('Unauthorized');
+  }
 };
+
+module.exports = MockStrategy;

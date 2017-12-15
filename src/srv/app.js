@@ -38,9 +38,13 @@ const helmet = require('helmet');
 const csrf = require('csurf');
 const redis = require('redis');
 const dbController = require('../db/controller');
-const client = redis.createClient({
-  password: config.db.redis.password
-});
+
+let redisClientOpts = {};
+if (config.db.redis.password) {
+  redisClientOpts.password = config.db.redis.password;
+}
+
+const client = redis.createClient(redisClientOpts);
 
 // Application start
 debug('App start');
@@ -81,12 +85,12 @@ if (config.devSettings.useRedisSession === true || !config.DEV) {
 }
 
 // Disable the need for HTTPS on DEV
-if (config.DEV) {
+if (config.DEV || process.env.NODE_ENV === 'test') {
   sessionOpts.cookie.secure = false;
 }
 
 app.use(session(sessionOpts));
-app.use(csrf());
+app.use(csrf({cookie: false}));
 
 // Auth
 auth.setupPassport();
@@ -94,16 +98,18 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // Logger
-if (config.DEV === true) {
-  app.use(logger('dev'));
-} else if (config.server.logsEnabled === true) {
-  let logDir = path.join(__dirname, '../', config.server.logDir);
-  fs.existsSync(logDir) || fs.mkdirSync(logDir);
-  const logStream = rfs('accessLog.log', {
-    interval: '1d',
-    path: logDir
-  });
-  app.use(logger('combined', {stream: logStream}));
+if (process.env.NODE_ENV !== 'test') {
+  if (config.DEV === true) {
+    app.use(logger('dev'));
+  } else if (config.server.logsEnabled === true) {
+    let logDir = path.join(__dirname, '../', config.server.logDir);
+    fs.existsSync(logDir) || fs.mkdirSync(logDir);
+    const logStream = rfs('accessLog.log', {
+      interval: '1d',
+      path: logDir
+    });
+    app.use(logger('combined', {stream: logStream}));
+  }
 }
 
 // Recompile handlebars on each request on developer mode if enabled on devSettings
@@ -170,6 +176,9 @@ app.use('/admin', require('./routes/admin/home'));
 
 // The final middleware to do the rendering of the templates
 app.use(function (req, res, next) {
+  if (process.env.NODE_ENV === 'test') {
+    return res.json({context: req.context, user: req.user});
+  }
   if (!req.template) {
     return next(new Error('Missing template for route: ' + res.originalUrl));
   }
@@ -180,7 +189,12 @@ function error404 (req, res, next) {
   let err = new Error('Not found');
   err.status = 404;
   err.message = req.originalUrl;
+  req.context = req.context || {};
   req.context.error = normalizeError(err);
+
+  if (process.env.NODE_ENV === 'test') {
+    return res.json({context: req.context, user: req.user});
+  }
   res.send(HbsViews.error404.get.hbs(req.context));
 }
 
@@ -188,7 +202,12 @@ function error404 (req, res, next) {
 function errorHandler (err, req, res, next) {
   let status = err.status || 500;
   res.status(status);
+  req.context = req.context || {};
   req.context.error = normalizeError(err);
+
+  if (process.env.NODE_ENV === 'test') {
+    return res.json({context: req.context, user: req.user});
+  }
   res.send(HbsViews.error.get.hbs(req.context));
 }
 
