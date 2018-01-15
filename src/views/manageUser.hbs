@@ -29,7 +29,6 @@
   <div class="container">
     <form action="/user/update/username" method="post">
       <input type="hidden" name="_csrf" value="{{csrfToken}}">
-      <input type="hidden" name="userId" value="{{user.id}}">
       <label for="username">Username:</label>
       <input type="text" name="username" id="username" value="{{user.username}}"
              class="{{#unless user.username}}error-highlight{{/unless}}">
@@ -37,7 +36,6 @@
     </form>
     <form action="/user/update/picture" method="post">
       <input type="hidden" name="_csrf" value="{{csrfToken}}">
-      <input type="hidden" name="userId" value="{{user.id}}">
       <label for="imgUrl">Profile picture:</label>
       <input type="text" name="imgUrl" id="imgUrl" value="{{user.picture}}">
       <input type="submit">

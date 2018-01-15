@@ -1,4 +1,3 @@
-{{!
 /**
  *  snekw.com,
  *  Copyright (C) 2017 Ilkka Kuosmanen
@@ -18,16 +17,32 @@
  *  You should have received a copy of the GNU General Public License
  *  along with snekw.com.  If not, see <http://www.gnu.org/licenses/>.
  */
-}}
-<div class="mdContainer">
-  <div class="md md-left">
-<textarea title="editor" name="body" id="editor">{{editorDefault}}</textarea>
-  </div>
-  <div class="md md-right">
-    <div id="editorOut" class="mdOut"></div>
-  </div>
-</div>
-<script src="/static/third-party/commonmark.min.js"></script>
-<script src="/static/third-party/prism.js"></script>
-<script src="/static/js/mdEditor.js"></script>
-<link rel="stylesheet" href="/static/css/mdEditor.css"/>
+'use strict';
+const fs = require('fs');
+const fsExt = require('fs-extra');
+const path = require('path');
+
+function copyFile (source, target) {
+  return new Promise((resolve, reject) => {
+    fsExt.ensureDir(path.dirname(target), err => {
+      if (err && err.code !== 'EEXIST') {
+        return reject(err);
+      }
+
+      let rd = fs.createReadStream(source);
+      rd.on('error', function (err) {
+        return reject(err);
+      });
+      let wr = fs.createWriteStream(target);
+      wr.on('error', function (err) {
+        return reject(err);
+      });
+      wr.on('close', function (ex) {
+        return resolve();
+      });
+      rd.pipe(wr);
+    });
+  });
+}
+
+copyFile('./src/config/mainConfigDev.js', './dist/config/mainConfigDev.js');

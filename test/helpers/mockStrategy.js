@@ -1,4 +1,3 @@
-{{!
 /**
  *  snekw.com,
  *  Copyright (C) 2017 Ilkka Kuosmanen
@@ -18,16 +17,32 @@
  *  You should have received a copy of the GNU General Public License
  *  along with snekw.com.  If not, see <http://www.gnu.org/licenses/>.
  */
-}}
-<div class="mdContainer">
-  <div class="md md-left">
-<textarea title="editor" name="body" id="editor">{{editorDefault}}</textarea>
-  </div>
-  <div class="md md-right">
-    <div id="editorOut" class="mdOut"></div>
-  </div>
-</div>
-<script src="/static/third-party/commonmark.min.js"></script>
-<script src="/static/third-party/prism.js"></script>
-<script src="/static/js/mdEditor.js"></script>
-<link rel="stylesheet" href="/static/css/mdEditor.css"/>
+'use strict';
+const passport = require('passport');
+const util = require('util');
+
+function MockStrategy (options, verify) {
+  this.name = 'mock';
+  this.passAuthentication = options.passAuthentication || false;
+  this.userObj = options.user || {id: '1'};
+  this.verify = verify;
+}
+
+util.inherits(MockStrategy, passport.Strategy);
+
+MockStrategy.prototype.authenticate = function authenticate (req) {
+  if (this.passAuthentication) {
+    let self = this;
+    this.verify(this.userObj, function (err, resident) {
+      if (err) {
+        self.fail(err);
+      } else {
+        self.success(resident);
+      }
+    });
+  } else {
+    this.fail('Unauthorized');
+  }
+};
+
+module.exports = MockStrategy;

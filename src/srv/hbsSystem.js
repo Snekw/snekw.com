@@ -82,9 +82,9 @@ hbs.registerHelper('formatTime', function (date, format) {
 
 hbs.registerHelper('if_eq', function (a, b, opts) {
   if (a === b) {
-    opts.fn(this);
+    return opts.fn(this);
   } else {
-    opts.inverse(this);
+    return opts.inverse(this);
   }
 });
 
@@ -108,8 +108,6 @@ function middleware (req, res, next) {
   req.context = {
     user: req.user
   };
-
-  req.context.isAbout = req.originalUrl.startsWith('/about');
 
   next();
 }

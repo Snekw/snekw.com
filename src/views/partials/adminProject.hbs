@@ -25,9 +25,21 @@
     <span class="large-text bold">{{title}}</span>
     <span class="small-text">By: {{author.username}}</span>
   </div>
-  <div class="admin-edit-controls admin-public-{{#if public}}true{{else}}false{{/if}} ">
-    Public
-  </div>
+  {{#if_eq public 0}}
+    <div class="admin-edit-controls admin-public-false">
+      Private
+    </div>
+  {{/if_eq}}
+  {{#if_eq public 1}}
+    <div class="admin-edit-controls admin-public-true">
+      Public
+    </div>
+  {{/if_eq}}
+  {{#if_eq public 2}}
+    <div class="admin-edit-controls admin-public-link">
+      Link only
+    </div>
+  {{/if_eq}}
   <div class="admin-edit-controls">
     {{>editControls}}
   </div>

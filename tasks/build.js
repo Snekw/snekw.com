@@ -27,6 +27,7 @@ const fsExt = require('fs-extra');
 const path = require('path');
 const rimraf = require('rimraf');
 const css = require('css');
+const uglifyJS = require('uglify-js');
 
 function compileScss (file, style) {
   return new Promise((resolve, reject) => {
@@ -67,15 +68,15 @@ function cleanCss (input) {
 
 function saveCssMin (input) {
   return new Promise((resolve, reject) => {
-    fsExt.ensureDir('./dist/static', err => {
+    fsExt.ensureDir('./dist/static/css/third-party', err => {
       if (err) {
         return reject(err);
       }
-      fs.writeFile('./dist/static/' + input.file + '.css', input.out.styles, err => {
+      fs.writeFile('./dist/static/css/' + input.file + '.css', input.out.styles, err => {
         if (err) {
           return reject(err);
         } else {
-          return resolve('./dist/static/' + input.file + '.css written.');
+          return resolve('./dist/static/css/' + input.file + '.css written.');
         }
       });
     });
@@ -200,16 +201,32 @@ function getFoldCss (input) {
   });
 }
 
+function uglify (filePath, destPath) {
+  let code = fs.readFileSync(filePath).toString();
+  let result = uglifyJS.minify(code, {
+    compress: {
+      drop_console: true
+    },
+    output: {
+      comments: 'some'
+    }
+  });
+  if (result.error) throw result.error;
+  fsExt.ensureDir(path.dirname(destPath), err => {
+    if (err) {
+      throw err;
+    }
+    fs.writeFileSync(destPath, result.code);
+  });
+}
+
 clean();
 
 const files = [
   copyFile('./src/config-example/mainConfig.js', './dist/config/mainConfig.js'),
   copyFile('./src/static/favicon.ico', './dist/static/favicon.ico'),
-  copyFile('./node_modules/prismjs/prism.js', './dist/static/prism.js'),
-  copyFile('./src/static/mdEditor.js', './dist/static/mdEditor.js'),
-  copyFile('./src/static/commonmark.min.js', './dist/static/commonmark.min.js'),
-  copyFile('./src/static/admin.js', './dist/static/admin.js'),
-  copyFile('./src/static/prism.css', './dist/static/prism.css')
+  copyFile('./node_modules/commonmark/dist/commonmark.min.js',
+    './dist/static/js/third-party/commonmark.min.js')
 ];
 
 const dirs = [
@@ -223,7 +240,6 @@ const dirs = [
 
 compileScss('main')
   .then(prefixCss)
-  // .then(getFoldCss)
   .then(cleanCss)
   .then(saveCssMin)
   .then(out => {
@@ -254,9 +270,9 @@ compileScss('admin')
   });
 
 prefixCss({
-  file: 'prism-okaidia',
+  file: 'third-party/prism',
   out: {
-    css: fs.readFileSync('./node_modules/prismjs/themes/prism-okaidia.css')
+    css: fs.readFileSync('./src/static/css/third-party/prism.css')
   }
 })
   .then(cleanCss)
@@ -278,3 +294,7 @@ Promise.all(all)
   .catch(err => {
     console.log(err);
   });
+
+uglify('./node_modules/prismjs/prism.js', './dist/static/js/third-party/prism.min.js');
+uglify('./src/static/js/mdEditor.js', './dist/static/js/mdEditor.js');
+uglify('./src/static/js/admin.js', './dist/static/js/admin.js');

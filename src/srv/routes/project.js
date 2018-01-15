@@ -27,16 +27,6 @@ const auth0Api = require('../../lib/auth0Api');
 const processMarkdown = require('../processMarkdown');
 const querys = require('../../db/querys');
 const validator = require('validator');
-require('prismjs/components/prism-javascript');
-require('prismjs/components/prism-markdown');
-require('prismjs/components/prism-c');
-require('prismjs/components/prism-cpp');
-require('prismjs/components/prism-csharp');
-require('prismjs/components/prism-bash');
-require('prismjs/components/prism-handlebars');
-require('prismjs/components/prism-scss');
-require('prismjs/components/prism-css');
-require('prismjs/components/prism-http');
 
 router.param('project', function (req, res, next, project) {
   if (!validator.matches(project, /^[a-zA-Z0-9_-]+$/g)) {
@@ -97,16 +87,18 @@ router.get('/id/:project', function (req, res, next) {
     err.message = req.originalUrl;
     return next(err);
   }
-  if (!req.context.project.public) {
+  if (req.context.project.public < 1) {
     return res.redirect('/');
   }
-  res.send(HbsViews.project.get.hbs(req.context));
+  req.template = HbsViews.project.get.hbs;
+  next();
 });
 
 router.get('/new', ensureAdmin, function (req, res, next) {
   res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
   req.context.csrfToken = req.csrfToken();
-  res.send(HbsViews.project.new.hbs(req.context));
+  req.template = HbsViews.project.new.hbs;
+  next();
 });
 
 router.get('/edit/:project', ensureAdmin, function (req, res, next) {
@@ -122,7 +114,8 @@ router.get('/edit/:project', ensureAdmin, function (req, res, next) {
     req.context.csrfToken = req.csrfToken();
     req.context.isEdit = true;
 
-    res.send(HbsViews.project.edit.hbs(req.context));
+    req.template = HbsViews.project.edit.hbs;
+    next();
   });
 });
 
@@ -138,10 +131,11 @@ router.post('/edit', ensureAdmin, function (req, res, next) {
       brief: req.body.brief || '',
       indexImageUrl: req.body.indexImg || '',
       indexImageAlt: req.body.indexImgAlt || '',
-      public: (req.body.public === 'true'),
+      public: req.body.public || 0,
       _id: req.body.projectId
     };
-    res.send(HbsViews.project.edit.hbs(req.context));
+    req.template = HbsViews.project.edit.hbs;
+    return next();
   }
 
   let rendered = processMarkdown(req.body.body);
@@ -162,9 +156,7 @@ router.post('/edit', ensureAdmin, function (req, res, next) {
     update.brief = req.body.brief;
   }
   if (req.body.public) {
-    update.public = (req.body.public === 'true');
-  } else {
-    update.public = false;
+    update.public = req.body.public;
   }
 
   models.project.findByIdAndUpdate(req.body.projectId, update, (err, data) => {
@@ -197,7 +189,8 @@ router.post('/new', ensureAdmin, function (req, res, next) {
       indexImageUrl: req.body.indexImg || '',
       indexImageAlt: req.body.indexImgAlt || ''
     };
-    res.send(HbsViews.project.new.hbs(req.context));
+    req.template = HbsViews.project.new.hbs;
+    return next();
   }
   let rendered = processMarkdown(req.body.body);
   let p = (req.body.public === 'true');
@@ -233,7 +226,8 @@ router.get('/delete/:project', ensureAdmin, function (req, res, next) {
 
   req.context.csrfToken = req.csrfToken();
 
-  res.send(HbsViews.project.delete.hbs(req.context));
+  req.template = HbsViews.project.delete.hbs;
+  next();
 });
 
 router.post('/delete', ensureAdmin, function (req, res, next) {

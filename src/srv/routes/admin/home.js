@@ -52,11 +52,13 @@ router.use(function (req, res, next) {
 
 router.get(['', '/dashboard'], ensureAdmin, function (req, res, next) {
   req.context.adminPages['dashboard'].active = true;
-  res.send(HbsViews.admin.dashboard.hbs(req.context));
+  req.template = HbsViews.admin.dashboard.hbs;
+  return next();
 });
 router.get('/statistics', ensureAdmin, function (req, res, next) {
   req.context.adminPages['statistics'].active = true;
-  res.send(HbsViews.admin.statistics.hbs(req.context));
+  req.template = HbsViews.admin.statistics.hbs;
+  return next();
 });
 
 router.get('/manageprojects', ensureAdmin, function (req, res, next) {
@@ -76,7 +78,8 @@ router.get('/manageprojects', ensureAdmin, function (req, res, next) {
           : 'https://i.imgur.com/5Dmkrgz.png';
       });
       req.context.projects = data;
-      res.send(HbsViews.admin.manageProjects.hbs(req.context));
+      req.template = HbsViews.admin.manageProjects.hbs;
+      return next();
     })
     .catch(err => {
       return next(err);

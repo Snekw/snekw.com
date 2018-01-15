@@ -34,7 +34,7 @@ const projectSchema = new mongoose.Schema({
     id: {type: String, required: true},
     username: {type: String, required: false}
   },
-  public: {type: Boolean, default: false}
+  public: {type: Number, default: false} // 0 private, 1 public, 2 not listed
 });
 
 mongoose.model('project', projectSchema);

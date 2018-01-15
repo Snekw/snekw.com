@@ -27,7 +27,8 @@ const normalizeError = require('../Error').normalizeError;
 
 router.get('/update', ensureLoggedIn, function (req, res, next) {
   req.context.csrfToken = req.csrfToken();
-  res.send(HbsViews.user.manage.hbs(req.context));
+  req.template = HbsViews.user.manage.hbs;
+  return next();
 });
 
 router.post('/update/username', ensureLoggedIn, function (req, res, next) {
@@ -35,7 +36,8 @@ router.post('/update/username', ensureLoggedIn, function (req, res, next) {
     res.status(400);
     req.context.csrfToken = req.csrfToken();
     req.context.error = normalizeError(new Error('Bad username'));
-    return res.send(HbsViews.user.manage.hbs(req.context));
+    req.template = HbsViews.user.manage.hbs;
+    return next();
   }
 
   const opts = {
@@ -62,7 +64,8 @@ router.post('/update/picture', ensureLoggedIn, function (req, res, next) {
     res.status(400);
     req.context.csrfToken = req.csrfToken();
     req.context.error = normalizeError(new Error('Bad url'));
-    return res.send(HbsViews.user.manage.hbs(req.context));
+    req.template = HbsViews.user.manage.hbs;
+    return next();
   }
 
   const opts = {

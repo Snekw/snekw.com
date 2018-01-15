@@ -42,8 +42,12 @@
       <input type="text" id="indexImgAlt" name="indexImgAlt" value="{{project.indexImageAlt}}"><br>
       <label for="brief">Brief:</label>
       <textarea id="brief" name="brief">{{project.brief}}</textarea><br>
-      <label for="public">Public</label>
-      <input type="checkbox" id="public" name="public" value="true" {{#if project.public}}checked{{/if}}><br>
+      <label for="public" class="low-margin">Public state:</label>
+      <select id="public" name="public" autocomplete="off">
+        <option value="0" {{#if_eq project.public 0}}selected="selected"{{/if_eq}}>Private</option>
+        <option value="1" {{#if_eq project.public 1}}selected="selected"{{/if_eq}}>Public</option>
+        <option value="2" {{#if_eq project.public 2}}selected="selected"{{/if_eq}}>Link only</option>
+      </select><br>
       <input type="submit">
     </div>
   </form>
