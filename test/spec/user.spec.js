@@ -171,7 +171,7 @@ describe('/user', function () {
                     app_metadata: {
                       username: n.app_metadata.username
                     },
-                    user_metadata:{}
+                    user_metadata: {}
                   });
                 });
 
@@ -225,7 +225,7 @@ describe('/user', function () {
                     app_metadata: {
                       username: n.app_metadata.username
                     },
-                    user_metadata:{}
+                    user_metadata: {}
                   });
                 });
 
