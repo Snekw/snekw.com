@@ -5,8 +5,8 @@
   "license": "GPL-3.0",
   "scripts": {
     "bsync": "browser-sync start --proxy \"dev.local:3000\" --files \"src/static/*.css\"",
-    "scss": "scss src/scss/main.scss src/static/main.css --style expanded",
-    "scss:w": "scss --watch src/scss:src/static --style expanded",
+    "scss": "scss src/scss/main.scss src/static/css/main.css --style expanded",
+    "scss:w": "scss --watch src/scss:src/static/css --style expanded",
     "build": "node tasks/build.js",
     "copyDevConfig": "node tasks/copyDevConfigToDist.js",
     "test": "cross-env NODE_ENV=test mocha --recursive ./test/spec --exit",

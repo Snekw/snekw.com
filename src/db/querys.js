@@ -20,7 +20,7 @@
 'use strict';
 const models = require('./models.js');
 
-const indexProjectsQuery = models.project.find({public: true})
+const indexProjectsQuery = models.project.find({public: 1})
   .select('author brief title indexImageUrl updatedAt postedAt public')
   .sort('-postedAt')
   .limit(10)
@@ -30,7 +30,7 @@ const aboutGetQuery = models.about.findOne({active: true})
   .lean()
   .select('body postedAt');
 
-const getLatestProjects = models.project.find({public: true})
+const getLatestProjects = models.project.find({public: 1})
   .select('author brief body title indexImageUrl updatedAt postedAt public')
   .sort('-postedAt')
   .limit(10)

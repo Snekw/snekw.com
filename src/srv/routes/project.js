@@ -87,7 +87,7 @@ router.get('/id/:project', function (req, res, next) {
     err.message = req.originalUrl;
     return next(err);
   }
-  if (!req.context.project.public) {
+  if (req.context.project.public < 1) {
     return res.redirect('/');
   }
   req.template = HbsViews.project.get.hbs;
@@ -131,7 +131,7 @@ router.post('/edit', ensureAdmin, function (req, res, next) {
       brief: req.body.brief || '',
       indexImageUrl: req.body.indexImg || '',
       indexImageAlt: req.body.indexImgAlt || '',
-      public: (req.body.public === 'true'),
+      public: req.body.public || 0,
       _id: req.body.projectId
     };
     req.template = HbsViews.project.edit.hbs;
@@ -156,9 +156,7 @@ router.post('/edit', ensureAdmin, function (req, res, next) {
     update.brief = req.body.brief;
   }
   if (req.body.public) {
-    update.public = (req.body.public === 'true');
-  } else {
-    update.public = false;
+    update.public = req.body.public;
   }
 
   models.project.findByIdAndUpdate(req.body.projectId, update, (err, data) => {
