@@ -52,7 +52,7 @@ router.get('/edit/:id', ensureAdmin, function (req, res, next) {
     req.context.csrfToken = req.csrfToken();
     req.context.about = about;
     req.context.isEdit = true;
-    req.template = HbsViews.about.get.hbs;
+    req.template = HbsViews.about.edit.hbs;
     return next();
   });
 });
