@@ -48,6 +48,17 @@
         <option value="1" {{#if_eq project.public 1}}selected="selected"{{/if_eq}}>Public</option>
         <option value="2" {{#if_eq project.public 2}}selected="selected"{{/if_eq}}>Link only</option>
       </select><br>
+      {{#if isEdit}}
+        <label for="editUpdatedAt">Edit publishing time:</label>
+        <input type="checkbox" id="editUpdatedAt" name="editUpdatedAt"><br>
+        <span>Published on: </span>
+        <label for="postedAt">Date:</label>
+        <input id="postedAt" name="postedAtDate" type="date" value="{{getDateString project.postedAt}}">
+        <label for="postedAtHours">Time:</label>
+        <input id="postedAtHours" name="postedAtHours" type="time" value="{{getTimeString project.postedAt}}">
+        <label for="timeZone">Timezone:</label>
+        <input id="timeZone" name="timeZone" type="text" readonly value="UTC"><br>
+      {{/if}}
       <input type="submit">
     </div>
   </form>
