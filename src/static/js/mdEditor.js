@@ -65,8 +65,19 @@ onEdit();
 // user to make changes to trigger the confirmation.
 changesMade = false;
 
+function processSubmit () {
+  changesMade = false;
+}
+
 window.onbeforeunload = function () {
   if (changesMade) {
     return 'Are you sure you want to leave?';
+  }
+};
+
+window.onload = function () {
+  var elements = document.getElementsByTagName('form');
+  for (var i = 0; i < elements.length; i++) {
+    elements[i].addEventListener('submit', processSubmit);
   }
 };
