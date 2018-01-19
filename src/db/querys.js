@@ -36,7 +36,7 @@ const getLatestProjects = models.project.find({public: 1})
   .limit(10)
   .lean();
 
-const getProjectCount = models.project.count();
+const getProjectCount = models.project.count({public: 1});
 
 module.exports = {
   indexProjectsQuery,
