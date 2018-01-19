@@ -20,27 +20,33 @@
  */
 }}
 <div class="admin-project">
-  <img src="{{indexImageUrl}}" class="project-img-small">
-  <div class="project-flex-info">
-    <span class="large-text bold">{{title}}</span>
-    <span class="small-text">By: {{author.username}}</span>
+  <div class="project-flex-info project-flex-info-row">
+    <img src="{{indexImageUrl}}" class="project-img-small">
+    <div class="project-flex-info">
+      <a href="/project/id/{{_id}}">
+        <span class="large-text bold">{{title}}</span>
+      </a>
+      <span class="small-text">By: {{author.username}}</span>
+    </div>
   </div>
-  {{#if_eq public 0}}
-    <div class="admin-edit-controls admin-public-false">
-      Private
+  <div class="project-flex-info project-flex-info-row">
+    {{#if_eq public 0}}
+      <div class="admin-edit-controls admin-public-false">
+        Private
+      </div>
+    {{/if_eq}}
+    {{#if_eq public 1}}
+      <div class="admin-edit-controls admin-public-true">
+        Public
+      </div>
+    {{/if_eq}}
+    {{#if_eq public 2}}
+      <div class="admin-edit-controls admin-public-link">
+        Link only
+      </div>
+    {{/if_eq}}
+    <div class="admin-edit-controls">
+      {{>editControls}}
     </div>
-  {{/if_eq}}
-  {{#if_eq public 1}}
-    <div class="admin-edit-controls admin-public-true">
-      Public
-    </div>
-  {{/if_eq}}
-  {{#if_eq public 2}}
-    <div class="admin-edit-controls admin-public-link">
-      Link only
-    </div>
-  {{/if_eq}}
-  <div class="admin-edit-controls">
-    {{>editControls}}
   </div>
 </div>

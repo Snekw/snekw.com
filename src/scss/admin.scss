@@ -92,7 +92,7 @@ $project-img-width: 50px;
 }
 
 .admin-project {
-  flex: 1 1 auto;
+  flex: 1 1 content;
   padding: 1em;
   display: flex;
   justify-content: space-between;
@@ -112,25 +112,33 @@ $project-img-width: 50px;
   order: 1;
   width: $project-img-width;
   height: $project-img-width;
-  display: inline-block !important;
 }
 
 .project-flex-info {
-  flex: 1 1 auto;
+  //flex: 0 0 content;
   order: 2;
   display: flex;
   flex-direction: column;
   padding: 0 1em 0 1em;;
-  //max-width: 80%;
+  align-self: center;
   span {
     padding: 0.1em;
     overflow-wrap: break-word;
   }
+
+  a{
+    text-decoration: none;
+  }
+}
+
+.project-flex-info-row{
+  flex-direction: row;
 }
 
 .admin-edit-controls {
   order: 3;
   border-radius: $general-border-radius;
+  align-self: flex-end;
 }
 
 .admin-public-false {

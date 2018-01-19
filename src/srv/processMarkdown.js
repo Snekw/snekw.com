@@ -33,6 +33,31 @@ require('prismjs/components/prism-scss');
 require('prismjs/components/prism-css');
 require('prismjs/components/prism-http');
 
+function processCodeBlock (node) {
+  let lang = Prism.languages[node.info];
+  let langName = node.info;
+  if (!lang) {
+    langName = 'bash';
+    lang = Prism.languages.bash;
+  }
+  let newNode = new commonmark.Node('html_block');
+  let className = 'language-' + langName;
+  newNode.literal = '<pre class="' + className + '"><code class="' +
+    className + '">' +
+    Prism.highlight(node.literal, lang) + '</code></pre>';
+  node.insertBefore(newNode);
+  node.unlink();
+}
+
+function processImage (node, event) {
+  let newNode = new commonmark.Node('html_block');
+  newNode.literal = '<a href="' + node.destination + '"><img src="' + node.destination + '" alt="' +
+    node.firstChild.literal +
+    '"><img></a>';
+  node.insertBefore(newNode);
+  node.unlink();
+}
+
 function processMarkdown (input) {
   let parsed = cmReader.parse(input);
 
@@ -41,20 +66,22 @@ function processMarkdown (input) {
 
   while ((event = walker.next())) {
     node = event.node;
-    if (event.entering && node.type === 'code_block') {
-      let lang = Prism.languages[node.info];
-      let langName = node.info;
-      if (!lang) {
-        langName = 'bash';
-        lang = Prism.languages.bash;
-      }
-      let newNode = new commonmark.Node('html_block');
-      let className = 'language-' + langName;
-      newNode.literal = '<pre class="' + className + '"><code class="' +
-        className + '">' +
-        Prism.highlight(node.literal, lang) + '</code></pre>';
-      node.insertBefore(newNode);
-      node.unlink();
+
+    switch (node.type) {
+      case 'code_block':
+        if (!event.entering) {
+          break;
+        }
+        processCodeBlock(node);
+        break;
+      case 'image':
+        if (event.entering) {
+          break;
+        }
+        processImage(node, event);
+        break;
+      default:
+        break;
     }
   }
 

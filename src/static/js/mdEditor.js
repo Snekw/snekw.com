@@ -55,7 +55,18 @@ function processMarkdown (input) {
 }
 
 function onEdit () {
+  changesMade = true;
   editorOut.innerHTML = processMarkdown(editor.value);
 }
 
+var changesMade = false;
 onEdit();
+// Set the changes made flag back to false after running the "onEdit" function once to require the
+// user to make changes to trigger the confirmation.
+changesMade = false;
+
+window.onbeforeunload = function () {
+  if (changesMade) {
+    return 'Are you sure you want to leave?';
+  }
+};
