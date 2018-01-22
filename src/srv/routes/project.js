@@ -159,7 +159,12 @@ router.post('/edit', ensureAdmin, function (req, res, next) {
   if (req.body.public) {
     update.public = req.body.public;
   }
-  if (req.body.editUpdatedAt && update.public > 0 && req.body.postedAtHours && req.body.postedAtDate && req.body.timeZone) {
+  if (req.body.editUpdatedAt && req.body.setPublicationTimeToNow) {
+    update.postedAt = Date.now();
+    update.updatedAt = update.postedAt;
+  }
+  if (req.body.editUpdatedAt && update.public > 0 && !req.body.setPublicationTimeToNow &&
+    req.body.postedAtHours && req.body.postedAtDate && req.body.timeZone) {
     let postedAt = moment.utc(req.body.postedAtDate + 'T' + req.body.postedAtHours + 'Z');
     postedAt.utcOffset(-1 * Number(req.body.timeZone), true);
     update.postedAt = postedAt.toISOString();

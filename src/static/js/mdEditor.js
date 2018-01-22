@@ -76,6 +76,7 @@ function updatedTimeControl (e) {
   document.getElementById('postedAt').disabled = !e.checked;
   document.getElementById('postedAtHours').disabled = !e.checked;
   document.getElementById('timeZone').disabled = !e.checked;
+  document.getElementById('setPublicationTime').disabled = !e.checked;
 }
 
 window.onbeforeunload = function () {

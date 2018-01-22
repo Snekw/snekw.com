@@ -51,6 +51,8 @@
       {{#if isEdit}}
         <label for="editUpdatedAt">Edit publishing time:</label>
         <input type="checkbox" id="editUpdatedAt" name="editUpdatedAt"><br>
+        <label for="setPublicationTime">Set publication time to now:</label>
+        <input type="checkbox" id="setPublicationTime" name="setPublicationTimeToNow"><br>
         <span>Published on: </span>
         <label for="postedAt">Date:</label>
         <input id="postedAt" name="postedAtDate" type="date" value="{{getDateString project.postedAt}}">
