@@ -225,6 +225,7 @@ clean();
 const files = [
   copyFile('./src/config-example/mainConfig.js', './dist/config/mainConfig.js'),
   copyFile('./src/static/favicon.ico', './dist/static/favicon.ico'),
+  copyFile('./src/static/favicon.png', './dist/static/favicon.png'),
   copyFile('./node_modules/commonmark/dist/commonmark.min.js',
     './dist/static/js/third-party/commonmark.min.js')
 ];
