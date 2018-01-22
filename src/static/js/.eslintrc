@@ -3,7 +3,7 @@
     "browser": true
   },
   "globals": {
-    "commonmark":true,
+    "commonmark": true,
     "Prism": true
   }
 }

@@ -67,7 +67,7 @@ nav {
   }
 }
 
-#content{
+#content {
   flex: 0 1 91%;
   order: 2;
   align-self: stretch;
@@ -135,11 +135,11 @@ li {
 
 blockquote {
   border-radius: 0 5px 5px 0;
-  border-left: 1em solid $accent-color ;
+  border-left: 1em solid $accent-color;
   margin-left: 1em;
   padding: 0.5em;
   background-color: $secondary-color;
-  p{
+  p {
     margin: 0;
   }
 }

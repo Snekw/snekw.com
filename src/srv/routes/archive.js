@@ -105,7 +105,7 @@ function getArchive (req, res, next) {
       req.context.pagination = req.context.pagination.concat(temp);
     })
     .then(() => {
-      return models.project.find({public: true})
+      return models.project.find({public: 1})
         .skip(req.params.page * req.params.count)
         .limit(req.params.count)
         .sort('-postedAt')

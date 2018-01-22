@@ -21,7 +21,7 @@
 }}
 {{#>layout}}
   <form action="/about/{{#if isEdit}}edit{{else}}new{{/if}}" method="post">
-{{>markdownEditor editorDefault=about.rawBody}}
+    {{>markdownEditor editorDefault=about.rawBody}}
     <input type="hidden" name="_csrf" value="{{csrfToken}}">
     <input type="hidden" name="author" value="{{user.id}}">
     {{#if isEdit}}
