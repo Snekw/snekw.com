@@ -100,6 +100,14 @@ hbs.registerHelper('timeFromNow', function (time) {
   return moment(time).fromNow();
 });
 
+hbs.registerHelper('getDateString', function (mongooseDate) {
+  return moment(mongooseDate).format('YYYY-MM-DD');
+});
+
+hbs.registerHelper('getTimeString', function (mongooseDate) {
+  return moment(mongooseDate).format('hh:mm');
+});
+
 hbs.registerPartial(partials);
 
 recompileAll();
