@@ -38,7 +38,7 @@ function connect () {
 
 function disconnect () {
   debug('Disconnecting from database.');
-  mongoose.disconnect(()=>{
+  mongoose.disconnect(() => {
     console.log('Disconnected from database.');
   });
 }

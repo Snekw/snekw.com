@@ -28,13 +28,13 @@
     background-color: $accent-color;
   }
 
-  &.btn-hide-small{
-    @media screen and (max-width: $break-small){
+  &.btn-hide-small {
+    @media screen and (max-width: $break-small) {
       display: none;
     }
   }
 
-  @media screen and (max-width: $break-800){
+  @media screen and (max-width: $break-800) {
     padding: 0.5em;
   }
 
