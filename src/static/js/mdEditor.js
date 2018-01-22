@@ -69,6 +69,16 @@ function processSubmit () {
   changesMade = false;
 }
 
+function updatedTimeControl (e) {
+  if (e.target) {
+    e = e.target;
+  }
+  document.getElementById('postedAt').disabled = !e.checked;
+  document.getElementById('postedAtHours').disabled = !e.checked;
+  document.getElementById('timeZone').disabled = !e.checked;
+  document.getElementById('setPublicationTime').disabled = !e.checked;
+}
+
 window.onbeforeunload = function () {
   if (changesMade) {
     return 'Are you sure you want to leave?';
@@ -80,4 +90,19 @@ window.onload = function () {
   for (var i = 0; i < elements.length; i++) {
     elements[i].addEventListener('submit', processSubmit);
   }
+
+  document.getElementById('editUpdatedAt').addEventListener('click', updatedTimeControl);
+  updatedTimeControl(document.getElementById('editUpdatedAt'));
+
+  var offset = new Date().getTimezoneOffset();
+  var postedAtHours = document.getElementById('postedAtHours');
+  if (!postedAtHours) {
+    return;
+  }
+  var time = new Date('1970-01-01T' + postedAtHours.value + 'Z');
+  time = new Date(time.getTime() + offset * 60000);
+  postedAtHours.value = (time.getHours().toString().length === 1
+    ? '0' + time.getHours()
+    : time.getHours()) + ':' + time.getMinutes();
+  document.getElementById('timeZone').value = offset;
 };

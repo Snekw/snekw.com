@@ -27,8 +27,8 @@ const projectSchema = new mongoose.Schema({
   body: {type: String, required: true},
   rawBody: {type: String, required: true},
   brief: {type: String, required: true},
-  postedAt: {type: Date, default: Date.now, required: true},
-  updatedAt: {type: Date, default: Date.now},
+  postedAt: {type: Date, default: null},
+  updatedAt: {type: Date, default: null},
   indexImageUrl: {type: String, default: 'https://i.imgur.com/5Dmkrgz.png'},
   author: {
     id: {type: String, required: true},

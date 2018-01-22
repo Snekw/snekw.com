@@ -27,6 +27,7 @@ const auth0Api = require('../../lib/auth0Api');
 const processMarkdown = require('../processMarkdown');
 const querys = require('../../db/querys');
 const validator = require('validator');
+const moment = require('moment');
 
 router.param('project', function (req, res, next, project) {
   if (!validator.matches(project, /^[a-zA-Z0-9_-]+$/g)) {
@@ -158,8 +159,21 @@ router.post('/edit', ensureAdmin, function (req, res, next) {
   if (req.body.public) {
     update.public = req.body.public;
   }
+  if (req.body.editUpdatedAt && req.body.setPublicationTimeToNow) {
+    update.postedAt = Date.now();
+    update.updatedAt = update.postedAt;
+  }
+  if (req.body.editUpdatedAt && update.public > 0 && !req.body.setPublicationTimeToNow &&
+    req.body.postedAtHours && req.body.postedAtDate && req.body.timeZone) {
+    let postedAt = moment.utc(req.body.postedAtDate + 'T' + req.body.postedAtHours + 'Z');
+    postedAt.utcOffset(-1 * Number(req.body.timeZone), true);
+    update.postedAt = postedAt.toISOString();
+    // Set the editedAt time to equal the postedAt time so that the edited on time is
+    // not shown on the project page
+    update.updatedAt = postedAt.toISOString();
+  }
 
-  models.project.findByIdAndUpdate(req.body.projectId, update, (err, data) => {
+  models.project.findByIdAndUpdate(req.body.projectId, {$set: update}, (err, data) => {
     if (err) {
       return next(err);
     }
@@ -207,6 +221,13 @@ router.post('/new', ensureAdmin, function (req, res, next) {
     brief: req.body.brief,
     public: p
   });
+
+  if (newProject.public !== 0) {
+    newProject.postedAt = Date.now();
+    // Set the editedAt time to equal the postedAt time so that the edited on time is
+    // not shown on the project page
+    newProject.updatedAt = newProject.postedAt;
+  }
 
   newProject.save((err, data) => {
     if (err) {
