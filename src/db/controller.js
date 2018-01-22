@@ -26,7 +26,7 @@ const cachedData = require('./CachedData');
 mongoose.Promise = global.Promise;
 
 function connect () {
-  mongoose.connect(config.db.mongo.connectionString, {useMongoClient: true}).then(() => {
+  mongoose.connect(config.db.mongo.connectionString).then(() => {
     console.log('Connected to database: ' + mongoose.connection.db.s.databaseName);
     debug('Connected to database');
     cachedData.setupCache();
