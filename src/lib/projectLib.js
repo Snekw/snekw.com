@@ -1,6 +1,6 @@
 /**
  *  snekw.com,
- *  Copyright (C) 2017 Ilkka Kuosmanen
+ *  Copyright (C) 2018 Ilkka Kuosmanen
  *
  *  This file is part of snekw.com.
  *
@@ -18,32 +18,12 @@
  *  along with snekw.com.  If not, see <http://www.gnu.org/licenses/>.
  */
 'use strict';
+const config = require('../helpers/configStub')('main');
+
+function createTitle (title) {
+  return !title ? config.siteName : title + ' - ' + config.siteName;
+}
+
 module.exports = {
-  DEV: true,
-  devSettings: {
-    recompileHBS: true,
-    invalidateCache: false,
-    useRedisSession: false
-  },
-  server: {
-    useHttps: false,
-    port: 3000,
-    sessionSecret: 'Use your own'
-  },
-  db: {
-    mongo: {
-      connectionString: 'mongodb://localhost/dbhere'
-    },
-    redis: {
-      cacheExpireSeconds: 60 * 60 * 24
-    }
-  },
-  auth: {
-    secret: 'your auth0 secret',
-    id: 'your auth0 id',
-    domain: 'your auth0 domain',
-    apiBaseUrl: 'your auth0 api base url',
-    callback: 'your full callback url'
-  },
-  siteName: 'Your home'
+  createTitle
 };
