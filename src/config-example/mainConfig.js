@@ -44,5 +44,6 @@ module.exports = {
     domain: 'your auth0 domain',
     apiBaseUrl: 'your auth0 api base url',
     callback: 'your full callback url'
-  }
+  },
+  siteName: 'Your home'
 };

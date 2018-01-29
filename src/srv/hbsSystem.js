@@ -114,7 +114,8 @@ recompileAll();
 
 function middleware (req, res, next) {
   req.context = {
-    user: req.user
+    user: req.user,
+    title: config.siteName
   };
 
   next();
