@@ -1,6 +1,6 @@
 /**
  *  snekw.com,
- *  Copyright (C) 2017 Ilkka Kuosmanen
+ *  Copyright (C) 2018 Ilkka Kuosmanen
  *
  *  This file is part of snekw.com.
  *
@@ -18,13 +18,24 @@
  *  along with snekw.com.  If not, see <http://www.gnu.org/licenses/>.
  */
 'use strict';
-const mongoose = require('mongoose');
+const router = require('express').Router();
+const multer = require('multer');
+const models = require('../../db/models.js');
+const ensureAdmin = require('../../lib/ensureAdmin');
+const shortId = require('shortid');
+const path = require('path');
 
-require('./models/article');
-require('./models/about');
-require('./models/image');
+const storage = multer.diskStorage({
+  destination: './static/images',
+  filename: function (req, file, cb) {
+    cb(null, shortId.generate() + path.extname(file.originalname));
+  }
+});
 
-module.exports = {
-  article: mongoose.model('article'),
-  about: mongoose.model('about')
-};
+const upload = multer({storage: storage});
+
+router.post('/new', ensureAdmin, upload.single('image'), function (req, res, next) {
+  res.status(501).json({});
+});
+
+module.exports = router;

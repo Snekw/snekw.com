@@ -1,6 +1,6 @@
 /**
  *  snekw.com,
- *  Copyright (C) 2017 Ilkka Kuosmanen
+ *  Copyright (C) 2018 Ilkka Kuosmanen
  *
  *  This file is part of snekw.com.
  *
@@ -20,11 +20,12 @@
 'use strict';
 const mongoose = require('mongoose');
 
-require('./models/article');
-require('./models/about');
-require('./models/image');
+const imageSchema = new mongoose.Schema({
+  _id: {type: String},
+  title: {type: String},
+  alt: {type: String},
+  uploaded: {type: Date, default: Date.now},
+  fileType: {type: String}
+});
 
-module.exports = {
-  article: mongoose.model('article'),
-  about: mongoose.model('about')
-};
+mongoose.model('image', imageSchema);

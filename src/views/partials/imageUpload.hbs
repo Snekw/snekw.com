@@ -1,6 +1,7 @@
+{{!
 /**
  *  snekw.com,
- *  Copyright (C) 2017 Ilkka Kuosmanen
+ *  Copyright (C) 2018 Ilkka Kuosmanen
  *
  *  This file is part of snekw.com.
  *
@@ -17,14 +18,13 @@
  *  You should have received a copy of the GNU General Public License
  *  along with snekw.com.  If not, see <http://www.gnu.org/licenses/>.
  */
-'use strict';
-const mongoose = require('mongoose');
+}}
 
-require('./models/article');
-require('./models/about');
-require('./models/image');
+<form id="img-upload">
+  <input type="text" name="title">
+  <input type="text" name="alt">
+  <input id="upl_image" type="file" name="image">
+  <button type="submit">Go</button>
+</form>
 
-module.exports = {
-  article: mongoose.model('article'),
-  about: mongoose.model('about')
-};
+<script src="/static/js/imageUpload.js"></script>

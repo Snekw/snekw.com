@@ -1,6 +1,6 @@
 /**
  *  snekw.com,
- *  Copyright (C) 2017 Ilkka Kuosmanen
+ *  Copyright (C) 2018 Ilkka Kuosmanen
  *
  *  This file is part of snekw.com.
  *
@@ -18,13 +18,20 @@
  *  along with snekw.com.  If not, see <http://www.gnu.org/licenses/>.
  */
 'use strict';
-const mongoose = require('mongoose');
 
-require('./models/article');
-require('./models/about');
-require('./models/image');
+document.getElementById('img-upload').addEventListener('submit', processForm);
+var upl_image = document.getElementById('upl_image');
 
-module.exports = {
-  article: mongoose.model('article'),
-  about: mongoose.model('about')
-};
+function processForm (e) {
+  e.preventDefault();
+  var formData = new FormData();
+  formData.append('title', 'test');
+  formData.append('alt', 'test');
+  formData.append('file', upl_image.files[0]);
+
+  var x = new XMLHttpRequest();
+  x.open('POST', '/image/new', true);
+  x.send(formData);
+  console.log(e);
+  return false;
+}

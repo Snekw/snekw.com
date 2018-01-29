@@ -189,7 +189,8 @@ const dirs = [
   utility.copyDir('./src/lib', './dist/lib'),
   utility.copyDir('./src/helpers', './dist/helpers'),
   utility.copyDir('./src/srv', './dist/srv'),
-  utility.copyDir('./src/views', './dist/views')
+  utility.copyDir('./src/views', './dist/views'),
+  utility.copyDir('./src/static/images', './dist/static/images')
 ];
 
 compileScss('main')
@@ -254,3 +255,4 @@ Promise.all(all)
 uglify('./node_modules/prismjs/prism.js', './dist/static/js/third-party/prism.min.js');
 uglify('./src/static/js/mdEditor.js', './dist/static/js/mdEditor.js');
 uglify('./src/static/js/admin.js', './dist/static/js/admin.js');
+uglify('./src/static/js/imageUpload.js', './dist/static/js/imageUpload.js');

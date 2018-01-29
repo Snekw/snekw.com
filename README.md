@@ -2,6 +2,12 @@
 
 A website I have made for myself.
 
+## /routes
+Contains all routes that can be viewed without javascript.
+
+## /api
+Contains routes that are JSON only.
+
 # Contributing
 
 Please read [CONTRIBUTING.md](CONTRIBUTING.md) for more information.
