@@ -28,11 +28,7 @@ const processMarkdown = require('../processMarkdown');
 const querys = require('../../db/querys');
 const validator = require('validator');
 const moment = require('moment');
-const config = require('../../helpers/configStub')('main');
-
-function createTitle (title) {
-  return !title ? config.siteName : title + ' - ' + config.siteName;
-}
+const projectLib = require('../../lib/projectLib');
 
 router.param('project', function (req, res, next, project) {
   if (!validator.matches(project, /^[a-zA-Z0-9_-]+$/g)) {
@@ -48,7 +44,7 @@ router.param('project', function (req, res, next, project) {
         return next();
       }
       req.context.project = data;
-      req.context.title = createTitle(data.title);
+      req.context.title = projectLib.createTitle(data.title);
       let author = data.author;
       if (data.author && typeof data.author !== 'string') {
         author = data.author.id;

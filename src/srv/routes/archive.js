@@ -23,6 +23,7 @@ const HbsViews = require('../hbsSystem').views;
 const models = require('../../db/models.js');
 const cachedData = require('../../db/CachedData');
 const querys = require('../../db/querys');
+const projectLib = require('../../lib/projectLib');
 
 const defaultPage = 0;
 const defaultCount = 10;
@@ -117,6 +118,7 @@ function getArchive (req, res, next) {
       if (data) {
         req.context.projects = data;
         req.template = HbsViews.archive.get.hbs;
+        req.context.title = projectLib.createTitle('Archive');
         return next();
       } else {
         return next(new Error('There seems to be no projects?'));
