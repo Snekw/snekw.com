@@ -89,7 +89,6 @@ if (config.DEV || process.env.NODE_ENV === 'test') {
 }
 
 app.use(session(sessionOpts));
-app.use(csrf({cookie: false}));
 
 // Auth
 auth.setupPassport();
@@ -103,8 +102,11 @@ if (process.env.NODE_ENV !== 'test') {
   }
 }
 
-// API routes
+// API routes - NO CSRF
 app.use('/api/article', require('./api/article'));
+app.use('/api/upload/image', require('./api/image'));
+
+app.use(csrf({cookie: false}));
 
 // Recompile handlebars on each request on developer mode if enabled on devSettings
 if (config.DEV === true && config.devSettings) {
@@ -158,7 +160,7 @@ app.use(favicon(path.join(__dirname, '../static/favicon.ico')));
 
 app.use(hbsSystem.middleware);
 
-// Routing
+// Routing - WITH CSRF
 debug('Routing');
 app.use('', require('./routes/base'));
 app.use('', auth.getRoutes());

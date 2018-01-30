@@ -20,17 +20,17 @@
 'use strict';
 
 document.getElementById('img-upload').addEventListener('submit', processForm);
-var upl_image = document.getElementById('upl_image');
+var uplImage = document.getElementById('upl_image');
 
 function processForm (e) {
   e.preventDefault();
   var formData = new FormData();
   formData.append('title', 'test');
   formData.append('alt', 'test');
-  formData.append('file', upl_image.files[0]);
+  formData.append('image', uplImage.files[0]);
 
   var x = new XMLHttpRequest();
-  x.open('POST', '/image/new', true);
+  x.open('POST', '/api/upload/image/new', true);
   x.send(formData);
   console.log(e);
   return false;
