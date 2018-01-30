@@ -223,6 +223,8 @@ function uglify (filePath, destPath) {
 clean();
 
 const files = [
+  copyFile('./src/package.json', './dist/package.json'),
+  copyFile('./src/package-lock.json', './dist/package-lock.json'),
   copyFile('./src/config-example/mainConfig.js', './dist/config/mainConfig.js'),
   copyFile('./src/static/favicon.ico', './dist/static/favicon.ico'),
   copyFile('./src/static/favicon.png', './dist/static/favicon.png'),

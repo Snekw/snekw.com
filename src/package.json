@@ -1,0 +1,50 @@
+{
+  "name": "snekw.com",
+  "version": "0.3.1",
+  "repository": "https://github.com/Snekw/snekw.com",
+  "license": "GPL-3.0",
+  "scripts": {},
+  "nyc": {
+    "include": [
+      "src/**/*.js"
+    ],
+    "exclude": [
+      "coverage/**",
+      "test/**",
+      "test{,-*}.js",
+      "**/*.test.js",
+      "**/__tests__/**",
+      "**/node_modules/**",
+      "src/config/**",
+      "src/config-example/**",
+      "src/static/**/third-party/**"
+    ]
+  },
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "commonmark": "^0.28.1",
+    "connect-ensure-login": "^0.1.1",
+    "connect-redis": "^3.3.2",
+    "csurf": "^1.9.0",
+    "debug": "^3.1.0",
+    "express": "^4.16.2",
+    "express-session": "^1.15.6",
+    "fs-extra": "^5.0.0",
+    "handlebars": "^4.0.11",
+    "hbs": "^4.0.1",
+    "helmet": "^3.9.0",
+    "moment": "^2.20.1",
+    "mongoose": "^5.0.0",
+    "morgan": "^1.9.0",
+    "multer": "^1.3.0",
+    "passport": "^0.4.0",
+    "passport-auth0": "^0.6.1",
+    "redis": "^2.8.0",
+    "request": "^2.83.0",
+    "rotating-file-stream": "^1.3.4",
+    "serve-favicon": "^2.4.5",
+    "shortid": "^2.2.8",
+    "uglify-js": "^3.2.7",
+    "validator": "^9.2.0"
+  }
+}
