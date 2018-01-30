@@ -25,10 +25,7 @@ let HbsViews = require('./hbsViews');
 const config = require('../helpers/configStub')('main');
 
 function getHbs (path) {
-  let pathStart = './dist/views/';
-  if (config.DEV === true) {
-    pathStart = './src/views/';
-  }
+  let pathStart = './views/';
   return fs.readFileSync(pathStart + path).toString();
 }
 
