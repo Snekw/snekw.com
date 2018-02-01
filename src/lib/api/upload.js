@@ -18,14 +18,24 @@
  *  along with snekw.com.  If not, see <http://www.gnu.org/licenses/>.
  */
 'use strict';
-const mongoose = require('mongoose');
+const multer = require('multer');
+const shortId = require('shortid');
+const path = require('path');
 
-const imageSchema = new mongoose.Schema({
-  _id: {type: String},
-  title: {type: String},
-  alt: {type: String},
-  uploaded: {type: Date, default: Date.now},
-  fileType: {type: String}
+const storage = multer.diskStorage({
+  destination: './static/uploads',
+  filename: function (req, file, cb) {
+    cb(null, shortId.generate() + path.extname(file.originalname));
+  }
 });
 
-mongoose.model('image', imageSchema);
+const upload = multer({storage: storage});
+
+function image (field) {
+  return image[field] || (image[field] = [function (req, res, next) {
+  }]);
+}
+
+module.exports = {
+  image
+};

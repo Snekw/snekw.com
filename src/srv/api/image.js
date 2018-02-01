@@ -19,22 +19,12 @@
  */
 'use strict';
 const router = require('express').Router();
-const multer = require('multer');
 const models = require('../../db/models.js');
 const ensureAdmin = require('../../lib/ensureAdmin');
-const shortId = require('shortid');
-const path = require('path');
+const upload = require('../../lib/api/upload');
 
-const storage = multer.diskStorage({
-  destination: './static/images',
-  filename: function (req, file, cb) {
-    cb(null, shortId.generate() + path.extname(file.originalname));
-  }
-});
+router.post('/new', ensureAdmin, upload.image('image'), function (req, res, next) {
 
-const upload = multer({storage: storage});
-
-router.post('/new', ensureAdmin, upload.single('image'), function (req, res, next) {
   res.status(501).json({});
 });
 

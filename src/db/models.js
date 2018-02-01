@@ -22,7 +22,6 @@ const mongoose = require('mongoose');
 
 require('./models/article');
 require('./models/about');
-require('./models/image');
 
 module.exports = {
   article: mongoose.model('article'),

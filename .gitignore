@@ -55,3 +55,4 @@ nogit
 /src/static/**/*.css
 **/config
 !/src/static/css/third-party/prism.css
+/src/static/uploads

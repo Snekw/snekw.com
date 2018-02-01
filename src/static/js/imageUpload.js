@@ -19,18 +19,18 @@
  */
 'use strict';
 
-document.getElementById('img-upload').addEventListener('submit', processForm);
+var form = document.getElementById('img-upload');
 var uplImage = document.getElementById('upl_image');
+
+form.addEventListener('submit', processForm);
 
 function processForm (e) {
   e.preventDefault();
-  var formData = new FormData();
-  formData.append('title', 'test');
-  formData.append('alt', 'test');
-  formData.append('image', uplImage.files[0]);
+  var formData = new FormData(form);
 
   var x = new XMLHttpRequest();
   x.open('POST', '/api/upload/image/new', true);
+  x.setRequestHeader('csrf-token', formData.get('_csrf'));
   x.send(formData);
   console.log(e);
   return false;

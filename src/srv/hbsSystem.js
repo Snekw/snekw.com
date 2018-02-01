@@ -30,7 +30,7 @@ function getHbs (path) {
 }
 
 function getPartialHbs (partial) {
-  return getHbs('partials/' + partial);
+  return getHbs('./partials/' + partial);
 }
 
 function recompileAll () {

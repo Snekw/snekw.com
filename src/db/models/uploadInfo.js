@@ -1,4 +1,3 @@
-{{!
 /**
  *  snekw.com,
  *  Copyright (C) 2018 Ilkka Kuosmanen
@@ -18,14 +17,14 @@
  *  You should have received a copy of the GNU General Public License
  *  along with snekw.com.  If not, see <http://www.gnu.org/licenses/>.
  */
-}}
+'use strict';
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
-<form id="img-upload">
-  <input type="text" name="title">
-  <input type="text" name="alt">
-  <input type="hidden" name="_csrf" value="{{csrfToken}}">
-  <input id="upl_image" type="file" name="image">
-  <button type="submit">Go</button>
-</form>
+const uploadInfoSchema = new Schema({
+  _id: {type: String},
+  description: {type: String},
+  title: {type: String}
+});
 
-<script src="/static/js/imageUpload.js"></script>
+mongoose.model('uploadInfo', uploadInfoSchema);
