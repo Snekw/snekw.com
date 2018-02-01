@@ -20,15 +20,15 @@
  */
 }}
 {{#> header}}
-  {{#each projects}}
+  {{#each articles}}
     <link rel="preload" as="image" href="{{indexImageUrl}}"/>
   {{/each}}
 {{/header}}
 {{#>layout}}
   <ul>
-    {{#each projects}}
+    {{#each articles}}
       <li>
-        {{>projectBrief}}
+        {{>articleBrief}}
       </li>
     {{/each}}
   </ul>

@@ -19,9 +19,10 @@
  */
 'use strict';
 const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 const shortId = require('shortid');
 
-const aboutSchema = new mongoose.Schema({
+const aboutSchema = new Schema({
   _id: {type: String, default: shortId.generate},
   rawBody: {type: String, required: true},
   body: {type: String, required: true},
@@ -34,16 +35,18 @@ aboutSchema.statics.setActive = function (id) {
     this.model('about')
       .findOneAndUpdate({active: true}, {$set: {active: false}})
       .lean()
-      .exec((err) => {
-        if (err) {
-          return reject(err);
-        }
-        this.model('about').findByIdAndUpdate(id, {$set: {active: true}}).lean().exec((err) => {
-          if (err) {
-            return reject(err);
-          }
-          return resolve();
-        });
+      .exec()
+      .then(() => {
+        return this.model('about')
+          .findByIdAndUpdate(id, {$set: {active: true}})
+          .lean()
+          .exec();
+      })
+      .then(() => {
+        return resolve();
+      })
+      .catch((err) => {
+        return reject(err);
       });
   });
 };

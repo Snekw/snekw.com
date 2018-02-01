@@ -43,19 +43,19 @@ module.exports = {
       path: 'error404.hbs'
     }
   },
-  project: {
-    base: 'project/',
+  article: {
+    base: 'article/',
     get: {
-      path: 'project.hbs'
+      path: 'article.hbs'
     },
     new: {
-      path: 'editProject.hbs'
+      path: 'edit.hbs'
     },
     edit: {
-      path: 'editProject.hbs'
+      path: 'edit.hbs'
     },
     delete: {
-      path: 'deleteProject.hbs'
+      path: 'delete.hbs'
     }
   },
   about: {
@@ -64,13 +64,13 @@ module.exports = {
       path: 'about.hbs'
     },
     new: {
-      path: 'editAbout.hbs'
+      path: 'edit.hbs'
     },
     edit: {
-      path: 'editAbout.hbs'
+      path: 'edit.hbs'
     },
     delete: {
-      path: 'deleteAbout.hbs'
+      path: 'delete.hbs'
     }
   },
   archive: {
@@ -90,10 +90,10 @@ module.exports = {
       icon: 'poll',
       name: 'Statistics'
     },
-    manageProjects: {
-      path: 'manageProjects.hbs',
+    managearticles: {
+      path: 'managearticles.hbs',
       icon: 'list',
-      name: 'Manage projects'
+      name: 'Manage articles'
     }
   }
 };

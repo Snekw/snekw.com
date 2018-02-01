@@ -23,7 +23,7 @@ const HbsViews = require('../hbsSystem').views;
 const models = require('../../db/models.js');
 const cachedData = require('../../db/CachedData');
 const querys = require('../../db/querys');
-const projectLib = require('../../lib/projectLib');
+const articleLib = require('../../lib/articleLib');
 
 const defaultPage = 0;
 const defaultCount = 10;
@@ -42,7 +42,7 @@ function getArchive (req, res, next) {
     req.params.count = parseInt(req.params.count);
   }
 
-  cachedData.getCachedOrDb(cachedData.keys.projectCount, querys.getProjectCount)
+  cachedData.getCachedOrDb(cachedData.keys.articleCount, querys.getArticleCount)
     .then(count => {
       // Pagination
       // Determine needed page numbers
@@ -106,7 +106,7 @@ function getArchive (req, res, next) {
       req.context.pagination = req.context.pagination.concat(temp);
     })
     .then(() => {
-      return models.project.find({public: 1})
+      return models.article.find({public: 1})
         .skip(req.params.page * req.params.count)
         .limit(req.params.count)
         .sort('-postedAt')
@@ -116,12 +116,12 @@ function getArchive (req, res, next) {
     })
     .then(data => {
       if (data) {
-        req.context.projects = data;
+        req.context.articles = data;
         req.template = HbsViews.archive.get.hbs;
-        req.context.title = projectLib.createTitle('Archive');
+        req.context.title = articleLib.createTitle('Archive');
         return next();
       } else {
-        return next(new Error('There seems to be no projects?'));
+        return next(new Error('There seems to be no articles?'));
       }
     })
     .catch(err => {

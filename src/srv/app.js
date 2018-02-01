@@ -168,7 +168,7 @@ app.use(hbsSystem.middleware);
 debug('Routing');
 app.use('', require('./routes/base'));
 app.use('', auth.getRoutes());
-app.use('/project', require('./routes/project'));
+app.use('/article', require('./routes/article'));
 app.use('/user', require('./routes/user'));
 app.use('/archive', require('./routes/archive'));
 app.use('/about', require('./routes/about'));

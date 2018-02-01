@@ -19,9 +19,10 @@
  */
 'use strict';
 const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 const shortId = require('shortid');
 
-const projectSchema = new mongoose.Schema({
+const articleSchema = new Schema({
   _id: {type: String, default: shortId.generate},
   title: {type: String, required: true},
   body: {type: String, required: true},
@@ -37,4 +38,4 @@ const projectSchema = new mongoose.Schema({
   public: {type: Number, default: false} // 0 private, 1 public, 2 not listed
 });
 
-mongoose.model('project', projectSchema);
+mongoose.model('article', articleSchema);

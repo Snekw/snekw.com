@@ -16,7 +16,7 @@
  */
 @import "vars";
 
-$project-img-width: 50px;
+$article-img-width: 50px;
 
 .admin-area {
   margin: 0.7em 0 0 0;
@@ -91,7 +91,7 @@ $project-img-width: 50px;
   }
 }
 
-.admin-project {
+.admin-article {
   flex: 1 1 content;
   padding: 1em;
   display: flex;
@@ -106,15 +106,15 @@ $project-img-width: 50px;
   }
 }
 
-.project-img-small {
-  flex: 0 1 $project-img-width;
+.article-img-small {
+  flex: 0 1 $article-img-width;
   margin: 0;
   order: 1;
-  width: $project-img-width;
-  height: $project-img-width;
+  width: $article-img-width;
+  height: $article-img-width;
 }
 
-.project-flex-info {
+.article-flex-info {
   //flex: 0 0 content;
   order: 2;
   display: flex;
@@ -131,7 +131,7 @@ $project-img-width: 50px;
   }
 }
 
-.project-flex-info-row {
+.article-flex-info-row {
   flex-direction: row;
 }
 
