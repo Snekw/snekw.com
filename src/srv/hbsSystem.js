@@ -57,13 +57,13 @@ function recompileAll () {
 const partials = {
   layout: getPartialHbs('layout.hbs'),
   nav: getPartialHbs('nav.hbs'),
-  projectBrief: getPartialHbs('projectBrief.hbs'),
+  articleBrief: getPartialHbs('articleBrief.hbs'),
   markdownEditor: getPartialHbs('markdownEditor.hbs'),
   editControls: getPartialHbs('editControls.hbs'),
   adminLayout: getPartialHbs('adminLayout.hbs'),
   adminNav: getPartialHbs('adminNav.hbs'),
   adminNavItem: getPartialHbs('adminNavItem.hbs'),
-  adminProject: getPartialHbs('adminProject.hbs')
+  adminarticle: getPartialHbs('adminarticle.hbs')
 };
 
 function reloadPartials () {

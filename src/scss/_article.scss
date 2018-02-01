@@ -1,8 +1,4 @@
-{{!
 /**
- *  snekw.com,
- *  Copyright (C) 2017 Ilkka Kuosmanen
- *
  *  This file is part of snekw.com.
  *
  *  snekw.com is free software: you can redistribute it and/or modify
@@ -18,11 +14,25 @@
  *  You should have received a copy of the GNU General Public License
  *  along with snekw.com.  If not, see <http://www.gnu.org/licenses/>.
  */
-}}
-{{#>adminLayout}}
-  {{#*inline "admin"}}
-    {{#each projects}}
-      {{>adminProject}}
-    {{/each}}
-  {{/inline}}
-{{/adminLayout}}
+@import "vars";
+
+#titleImg {
+  display: block;
+  padding: 5vh 0 0 0;
+}
+
+#articleTitle {
+  text-align: center;
+}
+
+.article {
+  padding: 4px;
+  img {
+    display: inline-block;
+  }
+  ul {
+    list-style: disc;
+    margin: 1em 2em;
+    font-size: large;
+  }
+}

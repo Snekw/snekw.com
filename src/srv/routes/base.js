@@ -29,8 +29,8 @@ const querys = require('../../db/querys');
 auth.setErrorPageFunc(HbsViews.error.get.hbs);
 
 router.get('/', function (req, res, next) {
-  cache.getCachedOrDb(cache.keys.indexProjects, querys.indexProjectsQuery).then(data => {
-    req.context.projects = data;
+  cache.getCachedOrDb(cache.keys.indexArticles, querys.indexArticlesQuery).then(data => {
+    req.context.articles = data;
     req.template = HbsViews.index.get.hbs;
     next();
     // res.send(HbsViews.index.get.hbs(req.context));

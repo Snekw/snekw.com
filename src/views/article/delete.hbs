@@ -19,24 +19,17 @@
  *  along with snekw.com.  If not, see <http://www.gnu.org/licenses/>.
  */
 }}
-{{#> header}}
-  {{#if project.indexImageUrl}}
-    <link rel="preload" as="image" href="{{project.indexImageUrl}}"/>
-  {{/if}}
-{{/header}}
-{{#> layout}}
+{{#>layout}}
   <div class="container">
-    <img id="titleImg" src="{{project.indexImageUrl}}"/>
-    <h1 id="projectTitle">{{project.title}}</h1>
-    <hr/>
-    <div class="project">{{{project.body}}}</div>
-    <hr>
-    <div>
-      <p>Written by: {{project.author.username}}</p>
-      <p>Published: {{formatTime project.postedAt 'DD.MM.YYYY HH:mm'}}</p>
-      {{#if_neq project.postedAt project.updatedAt}}
-        <p>Edited: {{formatTime project.updatedAt 'DD.MM.YYYY HH:mm - '}} {{timeFromNow project.updatedAt}}</p>
-      {{/if_neq}}
-    </div>
-    {{>editControls project}}
-  </div>{{/layout}}
+    <h1>Delete</h1>
+    <h2>Are you sure you want to delete the article?</h2>
+    {{>articleBrief article}}
+    <form action="/article/delete" method="post">
+      <input type="hidden" name="_csrf" value="{{csrfToken}}">
+      <input type="hidden" name="id" value="{{article._id}}">
+      <label for="delete">Delete?</label>
+      <input type="checkbox" id="delete" name="delete">
+      <input type="submit">
+    </form>
+  </div>
+{{/layout}}

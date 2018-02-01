@@ -24,9 +24,9 @@ const debug = require('debug')('App::Cache');
 const querys = require('./querys');
 
 const keys = {
-  indexProjects: 'indexProjects',
+  indexArticles: 'indexArticles',
   about: 'about',
-  projectCount: 'pCount'
+  articleCount: 'aCount'
 };
 
 let redisClientOptions = {
@@ -47,7 +47,7 @@ if (config.DEV === true) {
 
 function setupCache () {
   client.flushdb();
-  querys.getLatestProjects.exec((err, data) => {
+  querys.getLatestArticles.exec((err, data) => {
     if (err) {
       return err;
     }
@@ -55,13 +55,13 @@ function setupCache () {
       client.setex(d._id, config.db.redis.cacheExpireSeconds, JSON.stringify(d));
     });
   });
-  updateCache(keys.indexProjects, querys.indexProjectsQuery).catch(err => {
+  updateCache(keys.indexArticles, querys.indexArticlesQuery).catch(err => {
     console.log(err);
   });
   updateCache(keys.about, querys.aboutGetQuery).catch(err => {
     console.log(err);
   });
-  updateCache(keys.projectCount, querys.getProjectCount).catch(err => {
+  updateCache(keys.articleCount, querys.getArticleCount).catch(err => {
     console.log(err);
   });
 }

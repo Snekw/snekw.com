@@ -25,13 +25,13 @@ const querys = require('../../db/querys');
 const ensureAdmin = require('../../lib/ensureAdmin');
 const processMarkdown = require('../processMarkdown');
 const cachedData = require('../../db/CachedData');
-const projectLib = require('../../lib/projectLib');
+const articleLib = require('../../lib/articleLib');
 
 router.get('/', function (req, res, next) {
   cachedData.getCachedOrDb('about', querys.aboutGetQuery).then(data => {
     req.context.isAbout = true;
     req.context.about = data;
-    req.context.title = projectLib.createTitle('About');
+    req.context.title = articleLib.createTitle('About');
     req.template = HbsViews.about.get.hbs;
     return next();
   }).catch(err => {

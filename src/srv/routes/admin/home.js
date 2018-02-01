@@ -61,10 +61,10 @@ router.get('/statistics', ensureAdmin, function (req, res, next) {
   return next();
 });
 
-router.get('/manageprojects', ensureAdmin, function (req, res, next) {
-  req.context.adminPages['manageProjects'].active = true;
+router.get('/managearticles', ensureAdmin, function (req, res, next) {
+  req.context.adminPages['managearticles'].active = true;
 
-  models.project.find()
+  models.article.find()
     .sort('-postedAt')
     .lean()
     .then(data => {
@@ -77,8 +77,8 @@ router.get('/manageprojects', ensureAdmin, function (req, res, next) {
           ? d.indexImageUrl
           : 'https://i.imgur.com/5Dmkrgz.png';
       });
-      req.context.projects = data;
-      req.template = HbsViews.admin.manageProjects.hbs;
+      req.context.articles = data;
+      req.template = HbsViews.admin.managearticles.hbs;
       return next();
     })
     .catch(err => {

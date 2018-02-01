@@ -28,23 +28,23 @@ const processMarkdown = require('../processMarkdown');
 const querys = require('../../db/querys');
 const validator = require('validator');
 const moment = require('moment');
-const projectLib = require('../../lib/projectLib');
+const articleLib = require('../../lib/articleLib');
 
-router.param('project', function (req, res, next, project) {
-  if (!validator.matches(project, /^[a-zA-Z0-9_-]+$/g)) {
-    let err = new Error('Invalid project id');
+router.param('article', function (req, res, next, article) {
+  if (!validator.matches(article, /^[a-zA-Z0-9_-]+$/g)) {
+    let err = new Error('Invalid article id');
     return next(err);
   }
 
-  let query = models.project.findById(project).lean();
+  let query = models.article.findById(article).lean();
 
-  cachedData.getCachedOrDb(project, query)
+  cachedData.getCachedOrDb(article, query)
     .then((data) => {
       if (!data) {
         return next();
       }
-      req.context.project = data;
-      req.context.title = projectLib.createTitle(data.title);
+      req.context.article = data;
+      req.context.title = articleLib.createTitle(data.title);
       let author = data.author;
       if (data.author && typeof data.author !== 'string') {
         author = data.author.id;
@@ -66,7 +66,7 @@ router.param('project', function (req, res, next, project) {
           return next();
         }
         body = body[0];
-        req.context.project.author = {
+        req.context.article.author = {
           username: body.app_metadata.username,
           id: body.user_id,
           picture: body.picture,
@@ -82,62 +82,62 @@ router.param('project', function (req, res, next, project) {
     });
 });
 
-router.get('/id/:project', function (req, res, next) {
-  if (!req.context.project) {
+router.get('/id/:article', function (req, res, next) {
+  if (!req.context.article) {
     res.status(404);
     let err = new Error(404);
     err.status = 404;
     err.message = req.originalUrl;
     return next(err);
   }
-  if (req.context.project.public < 1) {
+  if (req.context.article.public < 1) {
     return res.redirect('/');
   }
-  req.template = HbsViews.project.get.hbs;
+  req.template = HbsViews.article.get.hbs;
   next();
 });
 
 router.get('/new', ensureAdmin, function (req, res, next) {
   res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
   req.context.csrfToken = req.csrfToken();
-  req.template = HbsViews.project.new.hbs;
+  req.template = HbsViews.article.new.hbs;
   next();
 });
 
-router.get('/edit/:project', ensureAdmin, function (req, res, next) {
+router.get('/edit/:article', ensureAdmin, function (req, res, next) {
   res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
 
-  // Load the project from the database ignoring the cached version
-  models.project.findById(req.params.project).lean().exec((err, data) => {
+  // Load the article from the database ignoring the cached version
+  models.article.findById(req.params.article).lean().exec((err, data) => {
     if (err) {
       return next(err);
     }
 
-    req.context.project = data;
+    req.context.article = data;
     req.context.csrfToken = req.csrfToken();
     req.context.isEdit = true;
 
-    req.template = HbsViews.project.edit.hbs;
+    req.template = HbsViews.article.edit.hbs;
     next();
   });
 });
 
 router.post('/edit', ensureAdmin, function (req, res, next) {
-  if (!req.body.title || !req.body.body || !req.body.projectId) {
+  if (!req.body.title || !req.body.body || !req.body.articleId) {
     res.status(400);
     req.context.csrfToken = req.csrfToken();
     req.context.bad = 'Title, body or brief is missing!';
     req.context.isEdit = true;
-    req.context.project = {
+    req.context.article = {
       rawBody: req.body.body || '',
       title: req.body.title || '',
       brief: req.body.brief || '',
       indexImageUrl: req.body.indexImg || '',
       indexImageAlt: req.body.indexImgAlt || '',
       public: req.body.public || 0,
-      _id: req.body.projectId
+      _id: req.body.articleId
     };
-    req.template = HbsViews.project.edit.hbs;
+    req.template = HbsViews.article.edit.hbs;
     return next();
   }
 
@@ -171,20 +171,20 @@ router.post('/edit', ensureAdmin, function (req, res, next) {
     postedAt.utcOffset(-1 * Number(req.body.timeZone), true);
     update.postedAt = postedAt.toISOString();
     // Set the editedAt time to equal the postedAt time so that the edited on time is
-    // not shown on the project page
+    // not shown on the article page
     update.updatedAt = postedAt.toISOString();
   }
 
-  models.project.findByIdAndUpdate(req.body.projectId, {$set: update}, (err, data) => {
+  models.article.findByIdAndUpdate(req.body.articleId, {$set: update}, (err, data) => {
     if (err) {
       return next(err);
     }
-    cachedData.updateCache(data._id, models.project.findById(data._id).lean())
+    cachedData.updateCache(data._id, models.article.findById(data._id).lean())
       .then(() => {
-        return cachedData.updateCache(cachedData.keys.indexProjects, querys.indexProjectsQuery);
+        return cachedData.updateCache(cachedData.keys.indexArticles, querys.indexArticlesQuery);
       })
       .then(() => {
-        return res.redirect('/project/id/' + req.body.projectId);
+        return res.redirect('/article/id/' + req.body.articleId);
       })
       .catch(err => {
         return next(err);
@@ -198,20 +198,20 @@ router.post('/new', ensureAdmin, function (req, res, next) {
     res.status(400);
     req.context.csrfToken = req.csrfToken();
     req.context.bad = 'Title, body or brief is missing!';
-    req.context.project = {
+    req.context.article = {
       rawBody: req.body.body || '',
       title: req.body.title || '',
       brief: req.body.brief || '',
       indexImageUrl: req.body.indexImg || '',
       indexImageAlt: req.body.indexImgAlt || ''
     };
-    req.template = HbsViews.project.new.hbs;
+    req.template = HbsViews.article.new.hbs;
     return next();
   }
   let rendered = processMarkdown(req.body.body);
   let p = (req.body.public === 'true');
   // eslint-disable-next-line
-  let newProject = new models.project({
+  let newarticle = new models.article({
     title: req.body.title,
     body: rendered,
     rawBody: req.body.body,
@@ -224,32 +224,32 @@ router.post('/new', ensureAdmin, function (req, res, next) {
     public: p
   });
 
-  if (newProject.public !== 0) {
-    newProject.postedAt = Date.now();
+  if (newarticle.public !== 0) {
+    newarticle.postedAt = Date.now();
     // Set the editedAt time to equal the postedAt time so that the edited on time is
-    // not shown on the project page
-    newProject.updatedAt = newProject.postedAt;
+    // not shown on the article page
+    newarticle.updatedAt = newarticle.postedAt;
   }
 
-  newProject.save((err, data) => {
+  newarticle.save((err, data) => {
     if (err) {
       res.status(500);
       return next(err);
     }
-    cachedData.updateCache(cachedData.keys.indexProjects, querys.indexProjectsQuery).then(() => {
-      return res.redirect('/project/id/' + data._id);
+    cachedData.updateCache(cachedData.keys.indexArticles, querys.indexArticlesQuery).then(() => {
+      return res.redirect('/article/id/' + data._id);
     }).catch(err => {
       return next(err);
     });
   });
 });
 
-router.get('/delete/:project', ensureAdmin, function (req, res, next) {
+router.get('/delete/:article', ensureAdmin, function (req, res, next) {
   res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
 
   req.context.csrfToken = req.csrfToken();
 
-  req.template = HbsViews.project.delete.hbs;
+  req.template = HbsViews.article.delete.hbs;
   next();
 });
 
@@ -258,11 +258,11 @@ router.post('/delete', ensureAdmin, function (req, res, next) {
     return res.redirect('/');
   }
 
-  models.project.findByIdAndRemove(req.body.id).exec((err) => {
+  models.article.findByIdAndRemove(req.body.id).exec((err) => {
     if (err) {
       return next(err);
     }
-    cachedData.updateCache(cachedData.keys.indexProjects, querys.indexProjectsQuery).then(() => {
+    cachedData.updateCache(cachedData.keys.indexArticles, querys.indexArticlesQuery).then(() => {
       return res.redirect('/');
     }).catch(err => {
       return next(err);

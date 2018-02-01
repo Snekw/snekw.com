@@ -20,10 +20,10 @@
 'use strict';
 const mongoose = require('mongoose');
 
-require('./models/project');
+require('./models/article');
 require('./models/about');
 
 module.exports = {
-  project: mongoose.model('project'),
+  article: mongoose.model('article'),
   about: mongoose.model('about')
 };

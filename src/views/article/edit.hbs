@@ -25,28 +25,28 @@
       <span class="error-text">{{bad}}</span>
     </div>
   {{/if}}
-  <form action="/project/{{#if isEdit}}edit{{else}}new{{/if}}" method="post">
-    <div>{{>markdownEditor editorDefault=project.rawBody}}</div>
+  <form action="/article/{{#if isEdit}}edit{{else}}new{{/if}}" method="post">
+    <div>{{>markdownEditor editorDefault=article.rawBody}}</div>
     <div class="container">
       <input type="hidden" name="_csrf" value="{{csrfToken}}">
       <input type="hidden" name="postedById" value="{{user.id}}">
       <input type="hidden" name="postedByName" value="{{user.username}}">
       {{#if isEdit}}
-        <input type="hidden" name="projectId" value="{{project._id}}">
+        <input type="hidden" name="articleId" value="{{article._id}}">
       {{/if}}
       <label for="title">Title:</label>
-      <input type="text" id="title" name="title" value="{{project.title}}"><br>
+      <input type="text" id="title" name="title" value="{{article.title}}"><br>
       <label for="indexImg">Index img url:</label>
-      <input type="text" id="indexImg" name="indexImg" value="{{project.indexImageUrl}}"><br>
+      <input type="text" id="indexImg" name="indexImg" value="{{article.indexImageUrl}}"><br>
       <label for="indexImgAlt">Index img alt text:</label>
-      <input type="text" id="indexImgAlt" name="indexImgAlt" value="{{project.indexImageAlt}}"><br>
+      <input type="text" id="indexImgAlt" name="indexImgAlt" value="{{article.indexImageAlt}}"><br>
       <label for="brief">Brief:</label>
-      <textarea id="brief" name="brief">{{project.brief}}</textarea><br>
+      <textarea id="brief" name="brief">{{article.brief}}</textarea><br>
       <label for="public" class="low-margin">Public state:</label>
       <select id="public" name="public" autocomplete="off">
-        <option value="0" {{#if_eq project.public 0}}selected="selected"{{/if_eq}}>Private</option>
-        <option value="1" {{#if_eq project.public 1}}selected="selected"{{/if_eq}}>Public</option>
-        <option value="2" {{#if_eq project.public 2}}selected="selected"{{/if_eq}}>Link only</option>
+        <option value="0" {{#if_eq article.public 0}}selected="selected"{{/if_eq}}>Private</option>
+        <option value="1" {{#if_eq article.public 1}}selected="selected"{{/if_eq}}>Public</option>
+        <option value="2" {{#if_eq article.public 2}}selected="selected"{{/if_eq}}>Link only</option>
       </select><br>
       {{#if isEdit}}
         <label for="editUpdatedAt">Edit publishing time:</label>
@@ -55,9 +55,9 @@
         <input type="checkbox" id="setPublicationTime" name="setPublicationTimeToNow"><br>
         <span>Published on: </span>
         <label for="postedAt">Date:</label>
-        <input id="postedAt" name="postedAtDate" type="date" value="{{getDateString project.postedAt}}">
+        <input id="postedAt" name="postedAtDate" type="date" value="{{getDateString article.postedAt}}">
         <label for="postedAtHours">Time:</label>
-        <input id="postedAtHours" name="postedAtHours" type="time" value="{{getTimeString project.postedAt}}">
+        <input id="postedAtHours" name="postedAtHours" type="time" value="{{getTimeString article.postedAt}}">
         <label for="timeZone">Timezone:</label>
         <input id="timeZone" name="timeZone" type="text" readonly value="UTC"><br>
       {{/if}}
