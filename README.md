@@ -1,12 +1,13 @@
 # Snekw.com website
 
-A website I have made for myself.
+A blog platform. Created as an blog platform for myself.
 
 ## /routes
 Contains all routes that can be viewed without javascript.
 
 ## /api
-Contains routes that are JSON only.
+Contains routes that are meant to be used with XMLHttpRequests. Using these routes requires
+client side javascript.
 
 # Contributing
 
