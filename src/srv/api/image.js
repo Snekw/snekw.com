@@ -24,6 +24,14 @@ const ensureAdmin = require('../../lib/ensureAdmin');
 const upload = require('../../lib/api/upload');
 
 router.post('/new', ensureAdmin, upload.image('image'), function (req, res, next) {
+  if (!req.snw || !req.snw.image) {
+    return res.status(400).json({
+      err: {
+        id: 'ERR_FILE_REJECTED',
+        message: 'File rejected.'
+      }
+    });
+  }
   req.snw.image.save((err) => {
     if (err) {
       return next(err);

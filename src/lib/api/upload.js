@@ -72,6 +72,9 @@ function image (field) {
       if (err) {
         return next(err);
       }
+      if (!req.file) {
+        return next();
+      }
       req.snw = req.snw || {};
       // eslint-disable-next-line new-cap
       req.snw.image = new models.upload({
