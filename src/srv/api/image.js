@@ -24,8 +24,24 @@ const ensureAdmin = require('../../lib/ensureAdmin');
 const upload = require('../../lib/api/upload');
 
 router.post('/new', ensureAdmin, upload.image('image'), function (req, res, next) {
-
-  res.status(501).json({});
+  req.snw.image.save((err) => {
+    if (err) {
+      return next(err);
+    }
+    let ret = {
+      data: {
+        path: req.snw.image.path,
+        size: req.snw.image.size
+      }
+    };
+    if (req.snw.image.info) {
+      ret.data.info = {
+        title: req.snw.image.info.title,
+        alt: req.snw.image.info.alt
+      };
+    }
+    return res.status(200).json(ret);
+  });
 });
 
 module.exports = router;

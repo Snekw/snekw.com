@@ -22,11 +22,17 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const uploadSchema = new Schema({
-  _id: Schema.Types.ObjectId,
-  name: {type: String},
+  name: {type: String, required: true},
   uploaded: {type: Date, default: Date.now},
-  fileType: {type: String},
-  info: {type: Schema.Types.ObjectId, ref: 'uploadInfo'}
+  mimeType: {type: String, required: true},
+  path: {type: String, required: true},
+  size: {type: Number, required: true},
+  encoding: {type: String, required: true},
+  info: {
+    title: {type: String},
+    alt: {type: String},
+    description: {type: String}
+  }
 });
 
 mongoose.model('upload', uploadSchema);

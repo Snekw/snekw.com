@@ -21,19 +21,73 @@
 const multer = require('multer');
 const shortId = require('shortid');
 const path = require('path');
+const fsExt = require('fs-extra');
+const models = require('../../db/models');
+
+const imageMimes = [
+  'image/jpeg',
+  'image/png',
+  'image/gif',
+  'image/bmp',
+  'image/webp'
+];
+
+function imageFilter (req, file, cb) {
+  if (imageMimes.indexOf(file.mimetype) > -1) {
+    return cb(null, true);
+  }
+  return cb(null, false);
+}
 
 const storage = multer.diskStorage({
-  destination: './static/uploads',
+  destination: function (req, file, cb) {
+    let dest = './static/uploads/rnd';
+    if (imageMimes.indexOf(file.mimetype) > -1) {
+      dest = './static/uploads/images';
+    }
+    fsExt.ensureDir(dest);
+    return cb(null, dest);
+  },
   filename: function (req, file, cb) {
-    cb(null, shortId.generate() + path.extname(file.originalname));
+    if (imageMimes.indexOf(file.mimeType) > -1) {
+      return cb(null, shortId.generate() + path.extname(file.originalname));
+    }
+    return cb(null, shortId.generate() +
+      path.basename(file.originalname, path.extname(file.originalname)) +
+      path.extname(file.originalname));
   }
 });
 
-const upload = multer({storage: storage});
+const imgUpload = multer({storage: storage, fileFilter: imageFilter});
 
+/**
+ * Image upload middleware
+ * @param field - Field name
+ * @returns {Function} - Adds upload info to req.snw.image
+ */
 function image (field) {
-  return image[field] || (image[field] = [function (req, res, next) {
-  }]);
+  return function (req, res, next) {
+    let u = imgUpload.single(field);
+    u(req, res, function (err) {
+      if (err) {
+        return next(err);
+      }
+      req.snw = req.snw || {};
+      // eslint-disable-next-line new-cap
+      req.snw.image = new models.upload({
+        name: req.file.filename,
+        mimeType: req.file.mimetype,
+        path: req.file.path,
+        size: req.file.size,
+        encoding: req.file.encoding,
+        info: {
+          title: req.body.title,
+          alt: req.body.alt
+        }
+      });
+      return next();
+    });
+  };
 }
 
 module.exports = {

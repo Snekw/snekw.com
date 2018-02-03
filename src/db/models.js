@@ -22,8 +22,10 @@ const mongoose = require('mongoose');
 
 require('./models/article');
 require('./models/about');
+require('./models/upload');
 
 module.exports = {
   article: mongoose.model('article'),
-  about: mongoose.model('about')
+  about: mongoose.model('about'),
+  upload: mongoose.model('upload')
 };
