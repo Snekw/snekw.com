@@ -28,6 +28,7 @@ const uploadSchema = new Schema({
   path: {type: String, required: true},
   size: {type: Number, required: true},
   encoding: {type: String, required: true},
+  type: {type: String, required: true},
   info: {
     title: {type: String},
     alt: {type: String},

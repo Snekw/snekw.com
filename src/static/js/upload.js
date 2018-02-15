@@ -1,4 +1,3 @@
-{{!
 /**
  *  snekw.com,
  *  Copyright (C) 2018 Ilkka Kuosmanen
@@ -18,14 +17,20 @@
  *  You should have received a copy of the GNU General Public License
  *  along with snekw.com.  If not, see <http://www.gnu.org/licenses/>.
  */
-}}
+'use strict';
 
-<form id="img-upload">
-  <input type="text" name="title">
-  <input type="text" name="alt">
-  <input type="hidden" name="_csrf" value="{{csrfToken}}">
-  <input id="upl_image" type="file" name="image">
-  <button type="submit">Go</button>
-</form>
+var form = document.getElementById('upload');
 
-<script src="/static/js/imageUpload.js"></script>
+form.addEventListener('submit', processForm);
+
+function processForm (e) {
+  e.preventDefault();
+  var formData = new FormData(form);
+
+  var x = new XMLHttpRequest();
+  x.open('POST', '/api/upload/new', true);
+  x.setRequestHeader('csrf-token', formData.get('_csrf'));
+  x.send(formData);
+  console.log(e);
+  return false;
+}

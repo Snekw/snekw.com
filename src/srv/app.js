@@ -191,6 +191,11 @@ function error404 (req, res, next) {
   if (process.env.NODE_ENV === 'test') {
     return res.json({context: req.context, user: req.user});
   }
+  if (req.originalUrl.startsWith('/api/')) {
+    return res.status(err.status).json({
+      error: req.context.error
+    });
+  }
   req.context.meta = Object.assign({}, HbsViews.error404.get.meta, req.context.meta);
   res.send(HbsViews.error404.get.hbs(req.context));
 }
@@ -204,6 +209,11 @@ function errorHandler (err, req, res, next) {
 
   if (process.env.NODE_ENV === 'test') {
     return res.json({context: req.context, user: req.user});
+  }
+  if (req.originalUrl.startsWith('/api/')) {
+    return res.status(status).json({
+      error: req.context.error
+    });
   }
   req.context.meta = Object.assign({}, HbsViews.error.get.meta, req.context.meta);
   res.send(HbsViews.error.get.hbs(req.context));

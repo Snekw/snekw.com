@@ -32,33 +32,94 @@ const imageMimes = [
   'image/webp'
 ];
 
-function imageFilter (req, file, cb) {
-  if (imageMimes.indexOf(file.mimetype) > -1) {
-    return cb(null, true);
+const zipMimes = [
+  'application/zip',
+  'application/x-rar-compressed'
+];
+
+const codeMimes = [
+  'text/plain'
+];
+
+const audioMimes = [
+  'audio/midi',
+  'audio/mpeg',
+  'audio/webm',
+  'audio/ogg',
+  'audio/wav'
+];
+
+function checkUploadFields (req) {
+  let errs = [];
+  if (!req.body.type) {
+    errs.push('NO TYPE');
   }
-  return cb(null, false);
+  if (!req.body.alt) {
+    errs.push('NO ALT');
+  }
+  if (!req.body.title) {
+    errs.push('NO TITLE');
+  }
+  if (!req.body.description) {
+    errs.push('NO DESCRIPTION');
+  }
+
+  return errs;
 }
 
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    let dest = './static/uploads/rnd';
-    if (imageMimes.indexOf(file.mimetype) > -1) {
-      dest = './static/uploads/images';
+function createFilter (mimes) {
+  return function (req, file, cb) {
+    let errs = checkUploadFields(req);
+    if (errs.length > 0) {
+      return cb(errs);
     }
-    fsExt.ensureDir(dest);
-    return cb(null, dest);
-  },
-  filename: function (req, file, cb) {
-    if (imageMimes.indexOf(file.mimeType) > -1) {
-      return cb(null, shortId.generate() + path.extname(file.originalname));
+
+    if (mimes.indexOf(file.mimetype) > -1) {
+      return cb(null, true);
     }
-    return cb(null, shortId.generate() +
-      path.basename(file.originalname, path.extname(file.originalname)) +
-      path.extname(file.originalname));
-  }
+    return cb(null, false);
+  };
+}
+
+function createStorage (dest, filenamegen) {
+  return multer.diskStorage({
+    destination: function (req, file, cb) {
+      fsExt.ensureDir(dest);
+      return cb(null, dest);
+    },
+    filename: function (req, file, cb) {
+      return cb(null, filenamegen(file));
+    }
+  });
+}
+
+function imgFilenameGen (file) {
+  return shortId.generate() + path.extname(file.originalname);
+}
+
+function zipFilenameGen (file) {
+  return shortId.generate() + file.originalname;
+}
+
+const imgUpload = multer({
+  storage: createStorage('./static/uploads/images', imgFilenameGen),
+  fileFilter: createFilter(imageMimes)
 });
 
-const imgUpload = multer({storage: storage, fileFilter: imageFilter});
+const zipUpload = multer({
+  storage: createStorage('./static/uploads/zip', zipFilenameGen),
+  fileFilter: createFilter(zipMimes)
+});
+
+const codeUpload = multer({
+  storage: createStorage('./static/uploads/code', zipFilenameGen),
+  fileFilter: createFilter(codeMimes)
+});
+
+const audioUpload = multer({
+  storage: createStorage('./static/uploads/audio', zipFilenameGen),
+  fileFilter: createFilter(audioMimes)
+});
 
 /**
  * Image upload middleware
@@ -67,32 +128,68 @@ const imgUpload = multer({storage: storage, fileFilter: imageFilter});
  */
 function image (field) {
   return function (req, res, next) {
-    let u = imgUpload.single(field);
-    u(req, res, function (err) {
-      if (err) {
-        return next(err);
-      }
-      if (!req.file) {
-        return next();
-      }
-      req.snw = req.snw || {};
-      // eslint-disable-next-line new-cap
-      req.snw.image = new models.upload({
-        name: req.file.filename,
-        mimeType: req.file.mimetype,
-        path: req.file.path,
-        size: req.file.size,
-        encoding: req.file.encoding,
-        info: {
-          title: req.body.title,
-          alt: req.body.alt
-        }
-      });
-      return next();
+    let up = imgUpload.single(field);
+    up(req, res, function (err) {
+      uploadCallback(err, req, res, next);
     });
   };
 }
 
+function zip (field) {
+  return function (req, res, next) {
+    let up = zipUpload.array(field);
+    up(req, res, function (err) {
+      uploadCallback(err, req, res, next);
+    });
+  };
+}
+
+function code (field) {
+  return function (req, res, next) {
+    let up = codeUpload.array(field);
+    up(req, res, function (err) {
+      uploadCallback(err, req, res, next);
+    });
+  };
+}
+
+function audio (field) {
+  return function (req, res, next) {
+    let up = audioUpload.array(field);
+    up(req, res, function (err) {
+      uploadCallback(err, req, res, next);
+    });
+  };
+}
+
+function uploadCallback (err, req, res, next) {
+  if (err) {
+    return next(err);
+  }
+  if (!req.file) {
+    return next();
+  }
+  req.snw = req.snw || {};
+  // eslint-disable-next-line new-cap
+  req.snw.upload = new models.upload({
+    name: req.file.filename,
+    mimeType: req.file.mimetype,
+    path: req.file.path,
+    size: req.file.size,
+    encoding: req.file.encoding,
+    type: req.body.type,
+    info: {
+      title: req.body.title,
+      alt: req.body.alt,
+      description: req.body.description
+    }
+  });
+  return next();
+}
+
 module.exports = {
-  image
+  image,
+  zip,
+  code,
+  audio
 };
