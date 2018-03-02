@@ -91,8 +91,11 @@ window.onload = function () {
     elements[i].addEventListener('submit', processSubmit);
   }
 
-  document.getElementById('editUpdatedAt').addEventListener('click', updatedTimeControl);
-  updatedTimeControl(document.getElementById('editUpdatedAt'));
+  var updateTimeControl = document.getElementById('editUpdatedAt');
+  if (updateTimeControl) {
+    updateTimeControl.addEventListener('click', updatedTimeControl);
+    updatedTimeControl(document.getElementById('editUpdatedAt'));
+  }
 
   var offset = new Date().getTimezoneOffset();
   var postedAtHours = document.getElementById('postedAtHours');

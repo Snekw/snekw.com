@@ -20,6 +20,8 @@
 'use strict';
 
 var form = document.getElementById('upload');
+var submit = document.getElementById('upl_submit');
+var progress = document.getElementById('upl_progress');
 
 form.addEventListener('submit', processForm);
 
@@ -27,10 +29,15 @@ function processForm (e) {
   e.preventDefault();
   var formData = new FormData(form);
 
+  if (document.getElementById('upl_image').files.length < 1) {
+    return;
+  }
+
+  submit.disabled = true;
   var x = new XMLHttpRequest();
   var uploadEndPoint = 'image';
 
-  switch (formData.get('type')){
+  switch (formData.get('type')) {
     case 'image':
       uploadEndPoint = 'image';
       break;
@@ -47,9 +54,19 @@ function processForm (e) {
       uploadEndPoint = 'image';
   }
 
+  x.onload = function (ev) {
+    submit.disabled = false;
+  };
+
+  x.upload.addEventListener('progress', function (ev) {
+    if (ev.lengthComputable) {
+      progress.value = ev.loaded / ev.total;
+    }
+  }, false);
+
   x.open('POST', '/api/upload/' + uploadEndPoint, true);
   x.setRequestHeader('csrf-token', formData.get('_csrf'));
   x.send(formData);
-  console.log(e);
+  progress.value = 0;
   return false;
 }
