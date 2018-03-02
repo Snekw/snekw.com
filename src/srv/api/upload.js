@@ -21,35 +21,68 @@
 const router = require('express').Router();
 const ensureAdmin = require('../../lib/ensureAdmin');
 const upload = require('../../lib/api/upload');
+const image = require('../../lib/api/image');
+const errors = require('../Error');
 
-router.post('/new', ensureAdmin, upload.image('upload'), function (req, res, next) {
+function createUploadReturnData (upload) {
+  let data = {
+    path: upload.path,
+    size: upload.size
+  };
+  if (upload.info) {
+    data.info = {
+      title: upload.info.title,
+      description: upload.info.description,
+      alt: upload.info.alt
+    };
+  }
+  return data;
+}
+
+function uploadResponse (req, res, next) {
   if (!req.snw || !req.snw.upload) {
-    return res.status(400).json({
-      err: {
-        id: 'ERR_FILE_REJECTED',
-        message: 'File rejected.'
+    return next(new errors.ErrorUploadRejected());
+  }
+  if (req.snw.upload.length > 1) {
+    let errors = [];
+    let promises = [];
+    for (let i = 0; i < req.snw.upload.length; i++) {
+      promises.push(req.snw.upload[i].save());
+    }
+    Promise.all(promises).then(data => {
+      let d = [];
+      for (let i = 0; i < data.length; i++) {
+        d.push(createUploadReturnData(data[i]));
       }
+      return res.status(200).json({data: d});
+    }).catch(err => {
+      return next(new errors.ErrorDatabaseError(err, 'SAVE'));
+    });
+  } else {
+    req.snw.upload.save((err) => {
+      if (err) {
+        return next(new errors.ErrorDatabaseError(err, 'SAVE'));
+      }
+      let data = createUploadReturnData(req.snw.upload);
+      return res.status(200).json(data);
     });
   }
-  req.snw.upload.save((err) => {
-    if (err) {
-      return next(err);
-    }
-    let ret = {
-      data: {
-        path: req.snw.upload.path,
-        size: req.snw.upload.size
-      }
-    };
-    if (req.snw.upload.info) {
-      ret.data.info = {
-        title: req.snw.upload.info.title,
-        description: req.snw.upload.info.description,
-        alt: req.snw.upload.info.alt
-      };
-    }
-    return res.status(200).json(ret);
-  });
+}
+
+router.post('/image', ensureAdmin, upload.image('upload'), function (req, res, next) {
+  return uploadResponse(req, res, next);
+});
+
+router.post('/zip', ensureAdmin, upload.zip('upload'), function (req, res, next) {
+  return uploadResponse(req, res, next);
+});
+
+router.post('/code', ensureAdmin, upload.code('upload'), function (req, res, next) {
+  return uploadResponse(req, res, next);
+});
+
+router.post('/audio', ensureAdmin, upload.audio('upload'), function (req, res, next) {
+  return uploadResponse(req, res, next);
 });
 
 module.exports = router;

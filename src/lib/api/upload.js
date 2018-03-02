@@ -23,6 +23,7 @@ const shortId = require('shortid');
 const path = require('path');
 const fsExt = require('fs-extra');
 const models = require('../../db/models');
+const errors = require('../../srv/Error');
 
 const imageMimes = [
   'image/jpeg',
@@ -34,7 +35,8 @@ const imageMimes = [
 
 const zipMimes = [
   'application/zip',
-  'application/x-rar-compressed'
+  'application/x-rar-compressed',
+  'application/x-zip-compressed'
 ];
 
 const codeMimes = [
@@ -52,16 +54,16 @@ const audioMimes = [
 function checkUploadFields (req) {
   let errs = [];
   if (!req.body.type) {
-    errs.push('NO TYPE');
+    errs.push(new errors.ErrorUploadMissingParameter('TYPE'));
   }
   if (!req.body.alt) {
-    errs.push('NO ALT');
+    errs.push(new errors.ErrorUploadMissingParameter('ALT'));
   }
   if (!req.body.title) {
-    errs.push('NO TITLE');
+    errs.push(new errors.ErrorUploadMissingParameter('TITLE'));
   }
   if (!req.body.description) {
-    errs.push('NO DESCRIPTION');
+    errs.push(new errors.ErrorUploadMissingParameter('DESCRIPTION'));
   }
 
   return errs;
@@ -77,7 +79,7 @@ function createFilter (mimes) {
     if (mimes.indexOf(file.mimetype) > -1) {
       return cb(null, true);
     }
-    return cb(null, false);
+    return cb(new errors.ErrorUploadMimeType(file.mimetype));
   };
 }
 
@@ -98,7 +100,7 @@ function imgFilenameGen (file) {
 }
 
 function zipFilenameGen (file) {
-  return shortId.generate() + file.originalname;
+  return shortId.generate() + '||' + file.originalname;
 }
 
 const imgUpload = multer({
@@ -128,7 +130,7 @@ const audioUpload = multer({
  */
 function image (field) {
   return function (req, res, next) {
-    let up = imgUpload.single(field);
+    let up = imgUpload.array(field);
     up(req, res, function (err) {
       uploadCallback(err, req, res, next);
     });
@@ -162,28 +164,44 @@ function audio (field) {
   };
 }
 
-function uploadCallback (err, req, res, next) {
-  if (err) {
-    return next(err);
-  }
-  if (!req.file) {
-    return next();
-  }
-  req.snw = req.snw || {};
+function createUploadModel (file, body) {
   // eslint-disable-next-line new-cap
-  req.snw.upload = new models.upload({
-    name: req.file.filename,
-    mimeType: req.file.mimetype,
-    path: req.file.path,
-    size: req.file.size,
-    encoding: req.file.encoding,
-    type: req.body.type,
+  return new models.upload({
+    name: file.filename,
+    mimeType: file.mimetype,
+    path: file.path,
+    size: file.size,
+    encoding: file.encoding,
+    type: body.type,
     info: {
-      title: req.body.title,
-      alt: req.body.alt,
-      description: req.body.description
+      title: body.title,
+      alt: body.alt,
+      description: body.description
     }
   });
+}
+
+function uploadCallback (err, req, res, next) {
+  if (err) {
+    return next(new errors.ErrorUploadRejected(err));
+  }
+  if (!req.file && !req.files) {
+    return next(new errors.ErrorUploadRejected());
+  }
+  req.snw = req.snw || {};
+  if (req.file) {
+    req.snw.upload = createUploadModel(req.file, req.body);
+  } else if (req.files) {
+    if (req.files.length === 1) {
+      req.snw.upload = createUploadModel(req.files[0], req.body);
+    } else {
+      let files = [];
+      for (let i = 0; i < req.files.length; i++) {
+        files.push(createUploadModel(req.files[i], req.body));
+      }
+      req.snw.upload = files;
+    }
+  }
   return next();
 }
 

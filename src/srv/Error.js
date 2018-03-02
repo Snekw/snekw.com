@@ -20,10 +20,72 @@
 'use strict';
 const config = require('../helpers/configStub')('main');
 
+class ErrorSNW extends Error {
+  constructor (message) {
+    super(message);
+    this.name = this.constructor.name;
+    this.status = 500;
+    this.data = {};
+    if (typeof Error.captureStackTrace === 'function') {
+      Error.captureStackTrace(this, this.constructor);
+    } else {
+      this.stack = (new Error(message)).stack;
+    }
+  }
+}
+
+class ErrorUploadMissingParameter extends ErrorSNW {
+  constructor (message) {
+    super(message);
+    this.message = 'Missing parameter: ' + message;
+    this.id = 'ERR_FILE_NO_' + message.toUpperCase();
+    this.data = message.toUpperCase();
+    this.status = 400;
+  }
+}
+
+class ErrorUploadRejected extends ErrorSNW {
+  constructor (err) {
+    super('');
+    this.message = 'Upload rejected';
+    this.data = [];
+    if (!err.length && err) {
+      this.data.push(normalizeError(err));
+    }
+    for (let i = 0; i < err.length; i++) {
+      this.data.push(normalizeError(err[i]));
+    }
+    this.id = 'ERR_FILE_REJECTED';
+    this.inner = err;
+    this.status = 400;
+  }
+}
+
+class ErrorUploadMimeType extends ErrorSNW {
+  constructor (mime) {
+    super('');
+    this.message = 'Invalid mimetype.';
+    this.data = mime;
+    this.id = 'ERR_FILE_MIME';
+    this.status = 400;
+  }
+}
+
+class ErrorDatabaseError extends ErrorSNW {
+  constructor (inner, id) {
+    super('Database error');
+    this.message = 'Database error: ' + id;
+    this.id = 'ERR_DB_' + id.toUpperCase();
+    this.inner = inner;
+    this.status = 400;
+  }
+}
+
 function normalizeError (err) {
   let ret = {
     status: err.status || 500,
-    message: err.message
+    message: err.message,
+    data: err.data || {}
   };
   // Return stack and full error object if in developer mode
   if (config.DEV === true && process.env.NODE_ENV !== 'production') {
@@ -35,5 +97,9 @@ function normalizeError (err) {
 }
 
 module.exports = {
-  normalizeError: normalizeError
+  normalizeError,
+  ErrorUploadRejected,
+  ErrorUploadMissingParameter,
+  ErrorDatabaseError,
+  ErrorUploadMimeType
 };

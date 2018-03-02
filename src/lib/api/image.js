@@ -18,38 +18,10 @@
  *  along with snekw.com.  If not, see <http://www.gnu.org/licenses/>.
  */
 'use strict';
+const fs = require('fs');
+const fsExt = require('fs-extra');
+const path = require('path');
 
-var form = document.getElementById('upload');
+module.exports = {
 
-form.addEventListener('submit', processForm);
-
-function processForm (e) {
-  e.preventDefault();
-  var formData = new FormData(form);
-
-  var x = new XMLHttpRequest();
-  var uploadEndPoint = 'image';
-
-  switch (formData.get('type')){
-    case 'image':
-      uploadEndPoint = 'image';
-      break;
-    case 'zip':
-      uploadEndPoint = 'zip';
-      break;
-    case 'code':
-      uploadEndPoint = 'code';
-      break;
-    case 'audio':
-      uploadEndPoint = 'audio';
-      break;
-    default:
-      uploadEndPoint = 'image';
-  }
-
-  x.open('POST', '/api/upload/' + uploadEndPoint, true);
-  x.setRequestHeader('csrf-token', formData.get('_csrf'));
-  x.send(formData);
-  console.log(e);
-  return false;
-}
+};
