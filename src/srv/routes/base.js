@@ -33,7 +33,6 @@ router.get('/', function (req, res, next) {
     req.context.articles = data;
     req.template = HbsViews.index.get.hbs;
     next();
-    // res.send(HbsViews.index.get.hbs(req.context));
   }).catch(err => {
     return next(err);
   });
@@ -41,7 +40,6 @@ router.get('/', function (req, res, next) {
 
 router.get('/user', ensureLoggedIn, function (req, res, next) {
   res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
-  // res.send(HbsViews.user.get.hbs(req.context));
   req.template = HbsViews.user.get.hbs;
   next();
 });
