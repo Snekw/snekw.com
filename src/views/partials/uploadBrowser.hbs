@@ -1,3 +1,4 @@
+{{!
 /**
  *  snekw.com,
  *  Copyright (C) 2018 Ilkka Kuosmanen
@@ -17,24 +18,9 @@
  *  You should have received a copy of the GNU General Public License
  *  along with snekw.com.  If not, see <http://www.gnu.org/licenses/>.
  */
-'use strict';
-const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
-
-const uploadSchema = new Schema({
-  name: {type: String, required: true},
-  uploaded: {type: Date, default: Date.now},
-  mimeType: {type: String, required: true},
-  path: {type: String, required: true},
-  size: {type: Number, required: true},
-  encoding: {type: String, required: true},
-  type: {type: String, required: true},
-  info: {
-    title: {type: String},
-    alt: {type: String},
-    description: {type: String}
-  },
-  articles: [{type: String, ref: 'article'}]
-});
-
-mongoose.model('upload', uploadSchema);
+}}
+<div class="container">
+  <p>Available uploads</p>
+  <div id="upload-browser-target"></div>
+</div>
+<script src="/static/js/uploadBrowser.js"></script>

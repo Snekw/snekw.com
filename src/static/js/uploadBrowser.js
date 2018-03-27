@@ -18,23 +18,17 @@
  *  along with snekw.com.  If not, see <http://www.gnu.org/licenses/>.
  */
 'use strict';
-const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
 
-const uploadSchema = new Schema({
-  name: {type: String, required: true},
-  uploaded: {type: Date, default: Date.now},
-  mimeType: {type: String, required: true},
-  path: {type: String, required: true},
-  size: {type: Number, required: true},
-  encoding: {type: String, required: true},
-  type: {type: String, required: true},
-  info: {
-    title: {type: String},
-    alt: {type: String},
-    description: {type: String}
-  },
-  articles: [{type: String, ref: 'article'}]
-});
+var uploadBrowser = document.getElementById('upload-browser-target');
 
-mongoose.model('upload', uploadSchema);
+function addToBrowser (image) {
+  var containter = document.createElement('div');
+  var title = document.createElement('p');
+  var img = document.createElement('img');
+  title.innerText = image.info.title;
+  img.src = image.path;
+  img.alt = image.info.alt;
+  containter.appendChild(img);
+  containter.appendChild(title);
+  uploadBrowser.appendChild(containter);
+}

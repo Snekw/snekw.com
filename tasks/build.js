@@ -256,3 +256,4 @@ uglify('./node_modules/prismjs/prism.js', './dist/static/js/third-party/prism.mi
 uglify('./src/static/js/mdEditor.js', './dist/static/js/mdEditor.js');
 uglify('./src/static/js/admin.js', './dist/static/js/admin.js');
 uglify('./src/static/js/upload.js', './dist/static/js/upload.js');
+uglify('./src/static/js/uploadBrowser.js', './dist/static/js/uploadBrowser.js');

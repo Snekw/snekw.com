@@ -24,9 +24,13 @@ const upload = require('../../lib/api/upload');
 const image = require('../../lib/api/image');
 const errors = require('../Error');
 
+function fixPath (path) {
+  return '/' + path.replace(/\\/g, '/');
+}
+
 function createUploadReturnData (upload) {
   let data = {
-    path: upload.path,
+    path: fixPath(upload.path),
     size: upload.size
   };
   if (upload.info) {
