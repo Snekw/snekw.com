@@ -63,8 +63,7 @@ const partials = {
   adminLayout: getPartialHbs('adminLayout.hbs'),
   adminNav: getPartialHbs('adminNav.hbs'),
   adminNavItem: getPartialHbs('adminNavItem.hbs'),
-  adminArticle: getPartialHbs('adminArticle.hbs'),
-  imageUpload: getPartialHbs('imageUpload.hbs')
+  adminArticle: getPartialHbs('adminArticle.hbs')
 };
 
 function reloadPartials () {
