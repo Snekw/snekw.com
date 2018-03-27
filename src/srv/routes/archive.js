@@ -106,12 +106,16 @@ function getArchive (req, res, next) {
       req.context.pagination = req.context.pagination.concat(temp);
     })
     .then(() => {
-      return models.article.find({public: 1})
+      let q = {public: 1};
+      if ( req.user && req.user.app_metadata && req.user.app_metadata.admin === true) {
+        q = {$or: [{public: 1}, {public: 2}]};
+      }
+      return models.article.find(q)
         .skip(req.params.page * req.params.count)
         .limit(req.params.count)
         .sort('-postedAt')
         .lean()
-        .select('postedAt updatedAt author brief title indexImageUrl')
+        .select('postedAt updatedAt author brief title indexImageUrl public')
         .exec();
     })
     .then(data => {
