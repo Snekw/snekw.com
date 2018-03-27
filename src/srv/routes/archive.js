@@ -107,7 +107,7 @@ function getArchive (req, res, next) {
     })
     .then(() => {
       let q = {public: 1};
-      if (req.user.app_metadata.admin === true) {
+      if ( req.user && req.user.app_metadata && req.user.app_metadata.admin === true) {
         q = {$or: [{public: 1}, {public: 2}]};
       }
       return models.article.find(q)
