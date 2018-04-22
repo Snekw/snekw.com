@@ -91,7 +91,7 @@ module.exports = {
       name: 'Statistics'
     },
     managearticles: {
-      path: 'managearticles.hbs',
+      path: 'manageArticles.hbs',
       icon: 'list',
       name: 'Manage articles'
     }
