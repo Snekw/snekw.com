@@ -32,7 +32,7 @@ router.get('/', function (req, res, next) {
     req.context.isAbout = true;
     req.context.about = data;
     req.context.title = articleLib.createTitle('About');
-    req.template = HbsViews.about.get.hbs;
+    req.template = HbsViews.about.get;
     return next();
   }).catch(err => {
     return next(err);
@@ -42,7 +42,7 @@ router.get('/', function (req, res, next) {
 router.get('/new', ensureAdmin, function (req, res, next) {
   res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
   req.context.csrfToken = req.csrfToken();
-  req.template = HbsViews.about.new.hbs;
+  req.template = HbsViews.about.new;
   return next();
 });
 
@@ -54,7 +54,7 @@ router.get('/edit/:id', ensureAdmin, function (req, res, next) {
     req.context.csrfToken = req.csrfToken();
     req.context.about = about;
     req.context.isEdit = true;
-    req.template = HbsViews.about.edit.hbs;
+    req.template = HbsViews.about.edit;
     return next();
   });
 });
@@ -94,7 +94,7 @@ router.post('/new', ensureAdmin, function (req, res, next) {
   res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
   if (!req.body.author || !req.body.body) {
     req.context.error = new Error('Bad arguments');
-    req.template = HbsViews.error.get.hbs;
+    req.template = HbsViews.error.get;
     return next();
   }
 
@@ -136,7 +136,7 @@ router.get('/delete/:id', ensureAdmin, function (req, res, next) {
     req.context.about = data;
     res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
     req.context.csrfToken = req.csrfToken();
-    req.template = HbsViews.about.delete.hbs;
+    req.template = HbsViews.about.delete;
     return next();
   });
 });

@@ -26,6 +26,9 @@ module.exports = {
     }
   },
   user: {
+    meta: {
+      robots: 'noindex, nofollow, nosnippet, noarchive, noimageindex'
+    },
     get: {
       path: 'user.hbs'
     },
@@ -35,12 +38,18 @@ module.exports = {
   },
   error: {
     get: {
-      path: 'error.hbs'
+      path: 'error.hbs',
+      meta: {
+        robots: 'noindex, nofollow, nosnippet, noarchive, noimageindex'
+      }
     }
   },
   error404: {
     get: {
-      path: 'error404.hbs'
+      path: 'error404.hbs',
+      meta: {
+        robots: 'noindex, nofollow, nosnippet, noarchive, noimageindex'
+      }
     }
   },
   article: {
@@ -49,13 +58,22 @@ module.exports = {
       path: 'article.hbs'
     },
     new: {
-      path: 'edit.hbs'
+      path: 'edit.hbs',
+      meta: {
+        robots: 'noindex, nofollow, nosnippet, noarchive, noimageindex'
+      }
     },
     edit: {
-      path: 'edit.hbs'
+      path: 'edit.hbs',
+      meta: {
+        robots: 'noindex, nofollow, nosnippet, noarchive, noimageindex'
+      }
     },
     delete: {
-      path: 'delete.hbs'
+      path: 'delete.hbs',
+      meta: {
+        robots: 'noindex, nofollow, nosnippet, noarchive, noimageindex'
+      }
     }
   },
   about: {
@@ -64,13 +82,22 @@ module.exports = {
       path: 'about.hbs'
     },
     new: {
-      path: 'edit.hbs'
+      path: 'edit.hbs',
+      meta: {
+        robots: 'noindex, nofollow, nosnippet, noarchive, noimageindex'
+      }
     },
     edit: {
-      path: 'edit.hbs'
+      path: 'edit.hbs',
+      meta: {
+        robots: 'noindex, nofollow, nosnippet, noarchive, noimageindex'
+      }
     },
     delete: {
-      path: 'delete.hbs'
+      path: 'delete.hbs',
+      meta: {
+        robots: 'noindex, nofollow, nosnippet, noarchive, noimageindex'
+      }
     }
   },
   archive: {
@@ -80,6 +107,9 @@ module.exports = {
   },
   admin: {
     base: 'admin/',
+    meta: {
+      robots: 'noindex, nofollow, nosnippet, noarchive, noimageindex'
+    },
     dashboard: {
       path: 'dashboard.hbs',
       icon: 'dashboard',

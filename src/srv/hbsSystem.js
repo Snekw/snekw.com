@@ -40,7 +40,7 @@ function recompileAll () {
     }
     if (HbsViews.hasOwnProperty(view)) {
       for (let inner in HbsViews[view]) {
-        if (inner === 'base') {
+        if (inner === 'base' || inner === 'meta') {
           continue;
         }
         if (HbsViews[view].hasOwnProperty(inner)) {
@@ -48,6 +48,10 @@ function recompileAll () {
           HbsViews[view][inner].hbs = hbs.compile(
             getHbs(HbsViews[view].base + HbsViews[view][inner].path)
           );
+          HbsViews[view].meta = HbsViews[view].meta || {};
+          HbsViews[view][inner].meta = HbsViews[view][inner].meta || {};
+          HbsViews[view][inner].meta = Object.assign({}, HbsViews[view].meta,
+            HbsViews[view][inner].meta);
         }
       }
     }
@@ -112,7 +116,10 @@ recompileAll();
 function middleware (req, res, next) {
   req.context = {
     user: req.user,
-    title: config.siteName
+    title: config.siteName,
+    meta: {
+      description: ''
+    }
   };
 
   next();

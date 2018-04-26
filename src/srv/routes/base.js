@@ -31,7 +31,7 @@ auth.setErrorPageFunc(HbsViews.error.get.hbs);
 router.get('/', function (req, res, next) {
   cache.getCachedOrDb(cache.keys.indexArticles, querys.indexArticlesQuery).then(data => {
     req.context.articles = data;
-    req.template = HbsViews.index.get.hbs;
+    req.template = HbsViews.index.get;
     next();
   }).catch(err => {
     return next(err);
@@ -40,7 +40,7 @@ router.get('/', function (req, res, next) {
 
 router.get('/user', ensureLoggedIn, function (req, res, next) {
   res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
-  req.template = HbsViews.user.get.hbs;
+  req.template = HbsViews.user.get;
   next();
 });
 
@@ -48,7 +48,7 @@ router.get('/user', ensureLoggedIn, function (req, res, next) {
 if (config.DEV === true) {
   router.get('/err', function (req, res, next) {
     req.context.error = normalizeError(new Error('Test'));
-    req.template = HbsViews.error.get.hbs;
+    req.template = HbsViews.error.get;
     next();
   });
 }

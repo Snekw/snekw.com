@@ -28,7 +28,7 @@ const auth0Api = require('../../../lib/auth0Api');
 let adminPages = {};
 
 for (let item in HbsViews.admin) {
-  if (item === 'base') {
+  if (item === 'base' || item === 'meta') {
     continue;
   }
   if (HbsViews.admin.hasOwnProperty(item)) {
@@ -52,12 +52,12 @@ router.use(function (req, res, next) {
 
 router.get(['', '/dashboard'], ensureAdmin, function (req, res, next) {
   req.context.adminPages['dashboard'].active = true;
-  req.template = HbsViews.admin.dashboard.hbs;
+  req.template = HbsViews.admin.dashboard;
   return next();
 });
 router.get('/statistics', ensureAdmin, function (req, res, next) {
   req.context.adminPages['statistics'].active = true;
-  req.template = HbsViews.admin.statistics.hbs;
+  req.template = HbsViews.admin.statistics;
   return next();
 });
 
@@ -78,7 +78,7 @@ router.get('/managearticles', ensureAdmin, function (req, res, next) {
           : 'https://i.imgur.com/5Dmkrgz.png';
       });
       req.context.articles = data;
-      req.template = HbsViews.admin.managearticles.hbs;
+      req.template = HbsViews.admin.managearticles;
       return next();
     })
     .catch(err => {

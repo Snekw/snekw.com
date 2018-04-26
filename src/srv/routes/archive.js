@@ -121,7 +121,7 @@ function getArchive (req, res, next) {
     .then(data => {
       if (data) {
         req.context.articles = data;
-        req.template = HbsViews.archive.get.hbs;
+        req.template = HbsViews.archive.get;
         req.context.title = articleLib.createTitle('Archive');
         return next();
       } else {
