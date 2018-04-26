@@ -87,8 +87,8 @@
 
     &.active {
       background-color: $secondary-color;
-      color: $accent-color;
-    }
+      color: $text-color-primary;
+    } 
 
     &:hover:not(.active) {
       background-color: $accent-color;
