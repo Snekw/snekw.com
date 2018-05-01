@@ -24,6 +24,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="Description" content="{{@root.meta.description}}">
+  {{#if @root.meta.robots}}
+    <meta name="robots" content="{{@root.meta.robots}}">
+  {{/if}}
   <title>{{@root.title}}</title>
   <link rel="preload" href="/static/css/main.css" as="style"/>
   <link rel="preload" href="/static/css/third-party/prism.css" as="style"/>

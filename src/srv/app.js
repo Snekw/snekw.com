@@ -182,7 +182,8 @@ app.use(function (req, res, next) {
   if (!req.template) {
     return next(new Error('Missing template for route: ' + res.originalUrl));
   }
-  return res.send(req.template(req.context));
+  req.context.meta = Object.assign({}, req.template.meta, req.context.meta);
+  return res.send(req.template.hbs(req.context));
 });
 
 function error404 (req, res, next) {
@@ -195,6 +196,7 @@ function error404 (req, res, next) {
   if (process.env.NODE_ENV === 'test') {
     return res.json({context: req.context, user: req.user});
   }
+  req.context.meta = Object.assign({}, HbsViews.error404.get.meta, req.context.meta);
   res.send(HbsViews.error404.get.hbs(req.context));
 }
 
@@ -208,6 +210,7 @@ function errorHandler (err, req, res, next) {
   if (process.env.NODE_ENV === 'test') {
     return res.json({context: req.context, user: req.user});
   }
+  req.context.meta = Object.assign({}, HbsViews.error.get.meta, req.context.meta);
   res.send(HbsViews.error.get.hbs(req.context));
 }
 

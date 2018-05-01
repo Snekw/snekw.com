@@ -93,14 +93,15 @@ router.get('/id/:article', function (req, res, next) {
   if (req.context.article.public < 1) {
     return res.redirect('/');
   }
-  req.template = HbsViews.article.get.hbs;
+  req.context.meta.description = req.context.article.brief;
+  req.template = HbsViews.article.get;
   next();
 });
 
 router.get('/new', ensureAdmin, function (req, res, next) {
   res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
   req.context.csrfToken = req.csrfToken();
-  req.template = HbsViews.article.new.hbs;
+  req.template = HbsViews.article.new;
   next();
 });
 
@@ -117,7 +118,7 @@ router.get('/edit/:article', ensureAdmin, function (req, res, next) {
     req.context.csrfToken = req.csrfToken();
     req.context.isEdit = true;
 
-    req.template = HbsViews.article.edit.hbs;
+    req.template = HbsViews.article.edit;
     next();
   });
 });
@@ -137,7 +138,7 @@ router.post('/edit', ensureAdmin, function (req, res, next) {
       public: req.body.public || 0,
       _id: req.body.articleId
     };
-    req.template = HbsViews.article.edit.hbs;
+    req.template = HbsViews.article.edit;
     return next();
   }
 
@@ -205,7 +206,7 @@ router.post('/new', ensureAdmin, function (req, res, next) {
       indexImageUrl: req.body.indexImg || '',
       indexImageAlt: req.body.indexImgAlt || ''
     };
-    req.template = HbsViews.article.new.hbs;
+    req.template = HbsViews.article.new;
     return next();
   }
   let rendered = processMarkdown(req.body.body);
@@ -249,7 +250,7 @@ router.get('/delete/:article', ensureAdmin, function (req, res, next) {
 
   req.context.csrfToken = req.csrfToken();
 
-  req.template = HbsViews.article.delete.hbs;
+  req.template = HbsViews.article.delete;
   next();
 });
 
