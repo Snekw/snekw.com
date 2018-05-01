@@ -46,5 +46,6 @@ module.exports = {
     callback: 'your full callback url'
   },
   siteName: 'Your home',
-  siteBrief: 'A brief description of the site.'
+  siteBrief: 'A brief description of the site.',
+  siteArchiveBrief: 'A brief description for the archive page'
 };

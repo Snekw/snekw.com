@@ -24,6 +24,7 @@ const models = require('../../db/models.js');
 const cachedData = require('../../db/CachedData');
 const querys = require('../../db/querys');
 const articleLib = require('../../lib/articleLib');
+const config = require('../../helpers/configStub')('main');
 
 const defaultPage = 0;
 const defaultCount = 10;
@@ -123,6 +124,7 @@ function getArchive (req, res, next) {
         req.context.articles = data;
         req.template = HbsViews.archive.get;
         req.context.title = articleLib.createTitle('Archive');
+        req.context.meta.description = config.siteArchiveBrief || '';
         return next();
       } else {
         return next(new Error('There seems to be no articles?'));
