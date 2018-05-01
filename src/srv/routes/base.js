@@ -32,6 +32,7 @@ router.get('/', function (req, res, next) {
   cache.getCachedOrDb(cache.keys.indexArticles, querys.indexArticlesQuery).then(data => {
     req.context.articles = data;
     req.template = HbsViews.index.get;
+    req.context.meta.description = config.siteBrief || '';
     next();
   }).catch(err => {
     return next(err);

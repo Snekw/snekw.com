@@ -93,6 +93,7 @@ router.get('/id/:article', function (req, res, next) {
   if (req.context.article.public < 1) {
     return res.redirect('/');
   }
+  req.context.meta.description = req.context.article.brief;
   req.template = HbsViews.article.get;
   next();
 });
