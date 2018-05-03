@@ -26,7 +26,7 @@ const CleanCss = require('clean-css');
 const path = require('path');
 const css = require('css');
 const uglifyJS = require('uglify-js');
-const utility = require('./utility');
+const utility = require('../src/helpers/fs-utility');
 
 // Build functions
 

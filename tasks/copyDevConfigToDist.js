@@ -18,7 +18,7 @@
  *  along with snekw.com.  If not, see <http://www.gnu.org/licenses/>.
  */
 'use strict';
-const utility = require('./utility');
+const utility = require('../src/helpers/fs-utility');
 
 utility.copyFile('./src/config/mainConfigDev.js', './dist/config/mainConfigDev.js')
   .then(() => {
