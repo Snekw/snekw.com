@@ -23,11 +23,12 @@ const postcss = require('postcss');
 const sass = require('node-sass');
 const fs = require('fs');
 const CleanCss = require('clean-css');
-const fsExt = require('fs-extra');
 const path = require('path');
-const rimraf = require('rimraf');
 const css = require('css');
 const uglifyJS = require('uglify-js');
+const utility = require('../src/helpers/fs-utility');
+
+// Build functions
 
 function compileScss (file, style) {
   return new Promise((resolve, reject) => {
@@ -68,7 +69,7 @@ function cleanCss (input) {
 
 function saveCssMin (input) {
   return new Promise((resolve, reject) => {
-    fsExt.ensureDir('./dist/static/css/third-party', err => {
+    utility.ensureDir('./dist/static/css/third-party', err => {
       if (err) {
         return reject(err);
       }
@@ -81,64 +82,6 @@ function saveCssMin (input) {
       });
     });
   });
-}
-
-function copyFile (source, target) {
-  return new Promise((resolve, reject) => {
-    fsExt.ensureDir(path.dirname(target), err => {
-      if (err && err.code !== 'EEXIST') {
-        return reject(err);
-      }
-
-      let rd = fs.createReadStream(source);
-      rd.on('error', function (err) {
-        return reject(err);
-      });
-      let wr = fs.createWriteStream(target);
-      wr.on('error', function (err) {
-        return reject(err);
-      });
-      wr.on('close', function (ex) {
-        return resolve();
-      });
-      rd.pipe(wr);
-    });
-  });
-}
-
-function copyDir (source, target) {
-  return new Promise((resolve, reject) => {
-    let promises = [];
-    fs.readdir(source, (err, items) => {
-      if (err) {
-        return reject(err);
-      }
-      for (let i = 0; i < items.length; i++) {
-        let stat = fs.statSync(path.join(source, items[i]));
-        if (stat.isFile()) {
-          promises.push(copyFile(path.join(source, items[i]), path.join(target, items[i])));
-        } else if (stat.isDirectory()) {
-          promises.push(copyDir(path.join(source, items[i]), path.join(target, items[i])));
-        }
-      }
-      Promise.all(promises).then(() => {
-        return resolve();
-      }).catch(err => {
-        return reject(err);
-      });
-    });
-  });
-}
-
-function clean () {
-  rimraf.sync('./dist');
-}
-
-// Save the previously used config file
-let previousConfig;
-let prevConfigPath = './dist/config/mainConfig.js';
-if (fs.existsSync(prevConfigPath)) {
-  previousConfig = fs.readFileSync(prevConfigPath);
 }
 
 function getFoldCss (input) {
@@ -196,7 +139,6 @@ function getFoldCss (input) {
       }).catch(err => {
         return reject(err);
       });
-
     });
   });
 }
@@ -212,7 +154,7 @@ function uglify (filePath, destPath) {
     }
   });
   if (result.error) throw result.error;
-  fsExt.ensureDir(path.dirname(destPath), err => {
+  utility.ensureDir(path.dirname(destPath), err => {
     if (err) {
       throw err;
     }
@@ -220,25 +162,34 @@ function uglify (filePath, destPath) {
   });
 }
 
-clean();
+// Start of actual build
+
+// Save the previously used config file
+let previousConfig;
+let prevConfigPath = './dist/config/mainConfig.js';
+if (fs.existsSync(prevConfigPath)) {
+  previousConfig = fs.readFileSync(prevConfigPath);
+}
+
+utility.clean('./dist');
 
 const files = [
-  copyFile('./src/package.json', './dist/package.json'),
-  copyFile('./src/package-lock.json', './dist/package-lock.json'),
-  copyFile('./src/config-example/mainConfig.js', './dist/config/mainConfig.js'),
-  copyFile('./src/static/favicon.ico', './dist/static/favicon.ico'),
-  copyFile('./src/static/favicon.png', './dist/static/favicon.png'),
-  copyFile('./node_modules/commonmark/dist/commonmark.min.js',
+  utility.copyFile('./src/package.json', './dist/package.json'),
+  utility.copyFile('./src/package-lock.json', './dist/package-lock.json'),
+  utility.copyFile('./src/config-example/mainConfig.js', './dist/config/mainConfig.js'),
+  utility.copyFile('./src/static/favicon.ico', './dist/static/favicon.ico'),
+  utility.copyFile('./src/static/favicon.png', './dist/static/favicon.png'),
+  utility.copyFile('./node_modules/commonmark/dist/commonmark.min.js',
     './dist/static/js/third-party/commonmark.min.js')
 ];
 
 const dirs = [
-  copyDir('./src/db', './dist/db'),
-  copyDir('./src/helpers', './dist/helpers'),
-  copyDir('./src/lib', './dist/lib'),
-  copyDir('./src/helpers', './dist/helpers'),
-  copyDir('./src/srv', './dist/srv'),
-  copyDir('./src/views', './dist/views')
+  utility.copyDir('./src/db', './dist/db'),
+  utility.copyDir('./src/helpers', './dist/helpers'),
+  utility.copyDir('./src/lib', './dist/lib'),
+  utility.copyDir('./src/helpers', './dist/helpers'),
+  utility.copyDir('./src/srv', './dist/srv'),
+  utility.copyDir('./src/views', './dist/views')
 ];
 
 compileScss('main')
@@ -251,6 +202,7 @@ compileScss('main')
   .catch(err => {
     console.log(err);
   });
+
 compileScss('mdEditor')
   .then(prefixCss)
   .then(cleanCss)
@@ -261,6 +213,7 @@ compileScss('mdEditor')
   .catch(err => {
     console.log(err);
   });
+
 compileScss('admin')
   .then(prefixCss)
   .then(cleanCss)

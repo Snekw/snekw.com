@@ -1,6 +1,6 @@
 /**
  *  snekw.com,
- *  Copyright (C) 2017 Ilkka Kuosmanen
+ *  Copyright (C) 2018 Ilkka Kuosmanen
  *
  *  This file is part of snekw.com.
  *
@@ -18,15 +18,12 @@
  *  along with snekw.com.  If not, see <http://www.gnu.org/licenses/>.
  */
 'use strict';
-const ensureLoggedIn = require('./ensureLoggedIn');
-module.exports = [
-  ensureLoggedIn,
-  function (req, res, next) {
-    if (!req.user.app_metadata.admin) {
-      let err = new Error('Admin rights required');
-      err.status = 403;
-      return next(err);
+module.exports = function (req, res, next) {
+  if (!req.isAuthenticated || !req.isAuthenticated()) {
+    if (req.session) {
+      req.session.returnTo = req.originalUrl || req.url;
     }
-    next();
+    return res.redirect('/login');
   }
-];
+  next();
+};
