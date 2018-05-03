@@ -19,7 +19,7 @@
  */
 'use strict';
 const router = require('express').Router();
-const ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn();
+const ensureLoggedIn = require('../../lib/ensureLoggedIn');
 const HbsViews = require('../hbsSystem').views;
 const auth = require('../../lib/auth');
 const cache = require('../../db/CachedData');

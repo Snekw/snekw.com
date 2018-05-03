@@ -19,7 +19,7 @@
  */
 'use strict';
 const auth0Api = require('../../lib/auth0Api');
-const ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn();
+const ensureLoggedIn = require('../../lib/ensureLoggedIn');
 const HbsViews = require('../hbsSystem').views;
 const router = require('express').Router();
 const validator = require('validator');
