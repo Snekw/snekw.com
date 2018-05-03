@@ -24,11 +24,17 @@ const sass = require('node-sass');
 const fs = require('fs');
 const CleanCss = require('clean-css');
 const path = require('path');
-const rimraf = require('rimraf');
 const css = require('css');
 const uglifyJS = require('uglify-js');
 
 // Utility functions
+
+/**
+ * Ensure that a directory exists
+ * @param dir Path to a directory
+ * @param cb Callback
+ * @returns {*} Error code or null
+ */
 function ensureDir (dir, cb) {
   let normalizedPath = path.normalize(path.resolve(dir));
   let split = normalizedPath.split(path.sep);
@@ -52,6 +58,34 @@ function ensureDir (dir, cb) {
   }
   return cb(null);
 }
+
+/**
+ * Delete a directory.
+ * @param dir Path to the directory
+ */
+function clean (dir) {
+  let normalizedPath = path.normalize(path.resolve(dir));
+  let parsed = path.parse(normalizedPath);
+
+  // Don't try to delete root
+  if (parsed.root === normalizedPath) {
+    return;
+  }
+
+  if (fs.existsSync(normalizedPath)) {
+    fs.readdirSync(normalizedPath).forEach(entry => {
+      let entryPath = path.join(normalizedPath, entry);
+      if (fs.lstatSync(entryPath).isDirectory()) {
+        clean(entryPath);
+      } else {
+        fs.unlinkSync(entryPath);
+      }
+    });
+    fs.rmdirSync(normalizedPath);
+  }
+}
+
+// Build functions
 
 function compileScss (file, style) {
   return new Promise((resolve, reject) => {
@@ -154,17 +188,6 @@ function copyDir (source, target) {
   });
 }
 
-function clean () {
-  rimraf.sync('./dist');
-}
-
-// Save the previously used config file
-let previousConfig;
-let prevConfigPath = './dist/config/mainConfig.js';
-if (fs.existsSync(prevConfigPath)) {
-  previousConfig = fs.readFileSync(prevConfigPath);
-}
-
 function getFoldCss (input) {
   return new Promise((resolve, reject) => {
     fs.readFile('./src/views/partials/layout.hbs', 'utf8', (err, data) => {
@@ -220,7 +243,6 @@ function getFoldCss (input) {
       }).catch(err => {
         return reject(err);
       });
-
     });
   });
 }
@@ -244,7 +266,16 @@ function uglify (filePath, destPath) {
   });
 }
 
-clean();
+// Start of actual build
+
+// Save the previously used config file
+let previousConfig;
+let prevConfigPath = './dist/config/mainConfig.js';
+if (fs.existsSync(prevConfigPath)) {
+  previousConfig = fs.readFileSync(prevConfigPath);
+}
+
+clean('./dist');
 
 const files = [
   copyFile('./src/package.json', './dist/package.json'),
@@ -275,6 +306,7 @@ compileScss('main')
   .catch(err => {
     console.log(err);
   });
+
 compileScss('mdEditor')
   .then(prefixCss)
   .then(cleanCss)
@@ -285,6 +317,7 @@ compileScss('mdEditor')
   .catch(err => {
     console.log(err);
   });
+
 compileScss('admin')
   .then(prefixCss)
   .then(cleanCss)
