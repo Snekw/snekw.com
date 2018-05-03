@@ -26,123 +26,7 @@ const CleanCss = require('clean-css');
 const path = require('path');
 const css = require('css');
 const uglifyJS = require('uglify-js');
-
-// Utility functions
-
-/**
- * Ensure that a directory exists
- * @param dir Path to a directory
- * @param cb Callback
- * @returns {*} Error code or null
- */
-function ensureDir (dir, cb) {
-  let normalizedPath = path.normalize(path.resolve(dir));
-  let split = normalizedPath.split(path.sep);
-  let parsed = path.parse(normalizedPath);
-
-  // Set the root to be the base string
-  let ensuredPath = parsed.root;
-  for (let i = 1; i < split.length; i++) {
-    ensuredPath = path.join(ensuredPath, split[i]);
-
-    // Ensure the directory exists
-    if (!fs.existsSync(ensuredPath)) {
-      try {
-        fs.mkdirSync(ensuredPath);
-      } catch (err) {
-        if (err.code !== 'EEXIST') {
-          return cb(err);
-        }
-      }
-    }
-  }
-  return cb(null);
-}
-
-/**
- * Delete a directory.
- * @param dir Path to the directory
- */
-function clean (dir) {
-  let normalizedPath = path.normalize(path.resolve(dir));
-  let parsed = path.parse(normalizedPath);
-
-  // Don't try to delete root
-  if (parsed.root === normalizedPath) {
-    return;
-  }
-
-  if (fs.existsSync(normalizedPath)) {
-    fs.readdirSync(normalizedPath).forEach(entry => {
-      let entryPath = path.join(normalizedPath, entry);
-      if (fs.lstatSync(entryPath).isDirectory()) {
-        clean(entryPath);
-      } else {
-        fs.unlinkSync(entryPath);
-      }
-    });
-    fs.rmdirSync(normalizedPath);
-  }
-}
-
-/**
- * Create a copy of a file.
- * @param source Path to the file to be copied.
- * @param target Path to where to copy the file.
- * @returns {Promise<any>} Error code or null.
- */
-function copyFile (source, target) {
-  return new Promise((resolve, reject) => {
-    ensureDir(path.dirname(target), err => {
-      if (err && err.code !== 'EEXIST') {
-        return reject(err);
-      }
-
-      let rd = fs.createReadStream(source);
-      rd.on('error', function (err) {
-        return reject(err);
-      });
-      let wr = fs.createWriteStream(target);
-      wr.on('error', function (err) {
-        return reject(err);
-      });
-      wr.on('close', function (ex) {
-        return resolve();
-      });
-      rd.pipe(wr);
-    });
-  });
-}
-
-/**
- * Create a copy of a directory
- * @param source Path to the directory to copy.
- * @param target Path to the destination directory.
- * @returns {Promise<any>} Error code or null.
- */
-function copyDir (source, target) {
-  return new Promise((resolve, reject) => {
-    let promises = [];
-    fs.readdir(source, (err, items) => {
-      if (err) {
-        return reject(err);
-      }
-      for (let i = 0; i < items.length; i++) {
-        let stat = fs.statSync(path.join(source, items[i]));
-        if (stat.isFile()) {
-          promises.push(copyFile(path.join(source, items[i]), path.join(target, items[i])));
-        } else if (stat.isDirectory()) {
-          promises.push(copyDir(path.join(source, items[i]), path.join(target, items[i])));
-        }
-      }
-      Promise.all(promises).then(() => {
-        return resolve();
-      }).catch(err => {
-        return reject(err);
-      });
-    });
-  });
-}
+const utility = require('./utility');
 
 // Build functions
 
@@ -185,7 +69,7 @@ function cleanCss (input) {
 
 function saveCssMin (input) {
   return new Promise((resolve, reject) => {
-    ensureDir('./dist/static/css/third-party', err => {
+    utility.ensureDir('./dist/static/css/third-party', err => {
       if (err) {
         return reject(err);
       }
@@ -270,7 +154,7 @@ function uglify (filePath, destPath) {
     }
   });
   if (result.error) throw result.error;
-  ensureDir(path.dirname(destPath), err => {
+  utility.ensureDir(path.dirname(destPath), err => {
     if (err) {
       throw err;
     }
@@ -287,25 +171,25 @@ if (fs.existsSync(prevConfigPath)) {
   previousConfig = fs.readFileSync(prevConfigPath);
 }
 
-clean('./dist');
+utility.clean('./dist');
 
 const files = [
-  copyFile('./src/package.json', './dist/package.json'),
-  copyFile('./src/package-lock.json', './dist/package-lock.json'),
-  copyFile('./src/config-example/mainConfig.js', './dist/config/mainConfig.js'),
-  copyFile('./src/static/favicon.ico', './dist/static/favicon.ico'),
-  copyFile('./src/static/favicon.png', './dist/static/favicon.png'),
-  copyFile('./node_modules/commonmark/dist/commonmark.min.js',
+  utility.copyFile('./src/package.json', './dist/package.json'),
+  utility.copyFile('./src/package-lock.json', './dist/package-lock.json'),
+  utility.copyFile('./src/config-example/mainConfig.js', './dist/config/mainConfig.js'),
+  utility.copyFile('./src/static/favicon.ico', './dist/static/favicon.ico'),
+  utility.copyFile('./src/static/favicon.png', './dist/static/favicon.png'),
+  utility.copyFile('./node_modules/commonmark/dist/commonmark.min.js',
     './dist/static/js/third-party/commonmark.min.js')
 ];
 
 const dirs = [
-  copyDir('./src/db', './dist/db'),
-  copyDir('./src/helpers', './dist/helpers'),
-  copyDir('./src/lib', './dist/lib'),
-  copyDir('./src/helpers', './dist/helpers'),
-  copyDir('./src/srv', './dist/srv'),
-  copyDir('./src/views', './dist/views')
+  utility.copyDir('./src/db', './dist/db'),
+  utility.copyDir('./src/helpers', './dist/helpers'),
+  utility.copyDir('./src/lib', './dist/lib'),
+  utility.copyDir('./src/helpers', './dist/helpers'),
+  utility.copyDir('./src/srv', './dist/srv'),
+  utility.copyDir('./src/views', './dist/views')
 ];
 
 compileScss('main')

@@ -18,31 +18,13 @@
  *  along with snekw.com.  If not, see <http://www.gnu.org/licenses/>.
  */
 'use strict';
-const fs = require('fs');
-const fsExt = require('fs-extra');
-const path = require('path');
+const utility = require('./utility');
 
-function copyFile (source, target) {
-  return new Promise((resolve, reject) => {
-    fsExt.ensureDir(path.dirname(target), err => {
-      if (err && err.code !== 'EEXIST') {
-        return reject(err);
-      }
-
-      let rd = fs.createReadStream(source);
-      rd.on('error', function (err) {
-        return reject(err);
-      });
-      let wr = fs.createWriteStream(target);
-      wr.on('error', function (err) {
-        return reject(err);
-      });
-      wr.on('close', function (ex) {
-        return resolve();
-      });
-      rd.pipe(wr);
-    });
+utility.copyFile('./src/config/mainConfigDev.js', './dist/config/mainConfigDev.js')
+  .then(() => {
+    console.log('Config copied!');
+  })
+  .catch(err => {
+    console.log(err);
+    return 1;
   });
-}
-
-copyFile('./src/config/mainConfigDev.js', './dist/config/mainConfigDev.js');
