@@ -23,11 +23,35 @@ const postcss = require('postcss');
 const sass = require('node-sass');
 const fs = require('fs');
 const CleanCss = require('clean-css');
-const fsExt = require('fs-extra');
 const path = require('path');
 const rimraf = require('rimraf');
 const css = require('css');
 const uglifyJS = require('uglify-js');
+
+// Utility functions
+function ensureDir (dir, cb) {
+  let normalizedPath = path.normalize(path.resolve(dir));
+  let split = normalizedPath.split(path.sep);
+  let parsed = path.parse(normalizedPath);
+
+  // Set the root to be the base string
+  let ensuredPath = parsed.root;
+  for (let i = 1; i < split.length; i++) {
+    ensuredPath = path.join(ensuredPath, split[i]);
+
+    // Ensure the directory exists
+    if (!fs.existsSync(ensuredPath)) {
+      try {
+        fs.mkdirSync(ensuredPath);
+      } catch (err) {
+        if (err.code !== 'EEXIST') {
+          return cb(err);
+        }
+      }
+    }
+  }
+  return cb(null);
+}
 
 function compileScss (file, style) {
   return new Promise((resolve, reject) => {
@@ -68,7 +92,7 @@ function cleanCss (input) {
 
 function saveCssMin (input) {
   return new Promise((resolve, reject) => {
-    fsExt.ensureDir('./dist/static/css/third-party', err => {
+    ensureDir('./dist/static/css/third-party', err => {
       if (err) {
         return reject(err);
       }
@@ -85,7 +109,7 @@ function saveCssMin (input) {
 
 function copyFile (source, target) {
   return new Promise((resolve, reject) => {
-    fsExt.ensureDir(path.dirname(target), err => {
+    ensureDir(path.dirname(target), err => {
       if (err && err.code !== 'EEXIST') {
         return reject(err);
       }
@@ -212,7 +236,7 @@ function uglify (filePath, destPath) {
     }
   });
   if (result.error) throw result.error;
-  fsExt.ensureDir(path.dirname(destPath), err => {
+  ensureDir(path.dirname(destPath), err => {
     if (err) {
       throw err;
     }
