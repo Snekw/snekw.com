@@ -24,5 +24,16 @@
     {{#each articles}}
       {{>adminArticle}}
     {{/each}}
+    <div id="multi-edit" class="container border bottom-dock flex-wrapper">
+      <div class="hide" id="_csrf">{{csrfToken}}</div>
+      <div class="flex">Selected %n items.</div>
+      <select class="flex-right" id="public" name="public" autocomplete="off">
+        <option value="0" {{#if_eq article.public 0}}selected="selected"{{/if_eq}}>Private</option>
+        <option value="1" {{#if_eq article.public 1}}selected="selected"{{/if_eq}}>Public</option>
+        <option value="2" {{#if_eq article.public 2}}selected="selected"{{/if_eq}}>Link only</option>
+      </select>
+      <button id="apply-public-state" class="flex-right">Apply</button>
+      <button class="flex-right">Delete</button>
+    </div>
   {{/inline}}
 {{/adminLayout}}

@@ -44,6 +44,12 @@
   h2 {
     word-wrap: break-word;
   }
+
+  &.border {
+    border-style: solid;
+    border-color: $accent-color;
+    border-bottom: 0;
+  }
 }
 
 .right {
@@ -88,7 +94,7 @@
     &.active {
       background-color: $secondary-color;
       color: $text-color-primary;
-    } 
+    }
 
     &:hover:not(.active) {
       background-color: $accent-color;
@@ -141,4 +147,28 @@
 
 .link-only {
   background-color: $secondary-color;
+}
+
+.bottom-dock {
+  position: sticky;
+  bottom: 0;
+}
+
+.hide {
+  display: none;
+}
+
+.flex-wrapper {
+  display: flex;
+  flex-flow: row wrap;
+}
+
+.flex {
+  flex: 1;
+}
+
+.flex-right {
+  flex: 0;
+  align-self: flex-end;
+  margin-right: 10px;
 }

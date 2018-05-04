@@ -26,6 +26,60 @@ var nav = document.getElementById('admin-nav-container');
 var adminNavKey = 'admin-nav';
 var toggleClass = 'toggle-hide';
 
+// Multi-edit
+var articles = document.getElementsByClassName('admin-article');
+document.getElementById('apply-public-state').addEventListener('click', applyPublicState);
+
+function toggleSelectArticle (e) {
+  e.target.classList.toggle('admin-article-selected');
+}
+
+function reqComplete (e) {
+  console.log(e);
+}
+
+function reqAbort (e) {
+  console.log('Article publicity state change aborted!');
+}
+
+function reqError (e) {
+  console.log('Article publicity state change error!');
+  console.error(e);
+}
+
+function applyPublicState () {
+  var selectedArticles = document.getElementsByClassName('admin-article-selected');
+  if (selectedArticles.length < 1) {
+    return alert('No selected articles!');
+  }
+  var confim = confirm('Press OK to proceed with applying changes.');
+  if (!confim) {
+    return;
+  }
+
+  for (var i = 0; i < selectedArticles.length; i++) {
+    var id = selectedArticles[i].dataset.id;
+    var state = document.getElementById('public').value || 0;
+    var x = new XMLHttpRequest();
+    x.open('POST', '/api/article/public-state');
+    x.setRequestHeader('csrf-token', document.getElementById('_csrf').innerText);
+    x.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
+    x.onload = reqComplete;
+    x.onerror = reqError;
+    x.onabort = reqAbort;
+    x.send(JSON.stringify({
+      id: id,
+      state: state
+    }));
+  }
+}
+
+for (var i = 0; i < articles.length; i++) {
+  articles[i].addEventListener('click', toggleSelectArticle);
+}
+
+// Admin navigation
+
 function updateNavState () {
   if (JSON.parse(window.localStorage.getItem(adminNavKey)) === false) {
     nav.classList.remove(toggleClass);

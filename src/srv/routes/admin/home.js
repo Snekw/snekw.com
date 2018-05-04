@@ -63,6 +63,7 @@ router.get('/statistics', ensureAdmin, function (req, res, next) {
 
 router.get('/managearticles', ensureAdmin, function (req, res, next) {
   req.context.adminPages['managearticles'].active = true;
+  req.context.csrfToken = req.csrfToken();
 
   models.article.find()
     .sort('-postedAt')
