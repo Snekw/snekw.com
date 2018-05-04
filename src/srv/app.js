@@ -105,7 +105,7 @@ if (process.env.NODE_ENV !== 'test') {
 
 // API routes - NO CSRF
 app.use('/api/article', require('./api/article'));
-app.use('/api/upload/image', require('./api/image'));
+app.use('/api/upload', require('./api/upload'));
 
 // Recompile handlebars on each request on developer mode if enabled on devSettings
 if (config.DEV === true && config.devSettings) {

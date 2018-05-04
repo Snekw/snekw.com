@@ -21,7 +21,7 @@
 const multer = require('multer');
 const shortId = require('shortid');
 const path = require('path');
-const fsExt = require('fs-extra');
+const utility = require('../../helpers/fs-utility');
 const models = require('../../db/models');
 const errors = require('../../srv/Error');
 
@@ -86,8 +86,13 @@ function createFilter (mimes) {
 function createStorage (dest, filenamegen) {
   return multer.diskStorage({
     destination: function (req, file, cb) {
-      fsExt.ensureDir(dest);
-      return cb(null, dest);
+      utility.ensureDir(dest, err => {
+        if (err) {
+          return cb(err);
+        } else {
+          return cb(null, dest);
+        }
+      });
     },
     filename: function (req, file, cb) {
       return cb(null, filenamegen(file));

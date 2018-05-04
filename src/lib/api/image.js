@@ -19,7 +19,6 @@
  */
 'use strict';
 const fs = require('fs');
-const fsExt = require('fs-extra');
 const path = require('path');
 
 module.exports = {
