@@ -25,7 +25,7 @@
   <div class="articleContainer indexarticleClickArea">
     <h1>{{title}}</h1>
     {{brief}}<br/>
-    <p>Published: {{formatTime article.postedAt 'LLLL'}}</p>
+    <p>Published: {{formatTime this.postedAt 'LLLL'}}</p>
     <p>By: {{author.username}}</p>
     <a href="/article/id/{{_id}}">Read more...</a>
     {{>editControls}}
