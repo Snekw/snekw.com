@@ -35,7 +35,27 @@ function toggleSelectArticle (e) {
 }
 
 function reqComplete (e) {
-  console.log(e);
+  var response = JSON.parse(e.target.responseText);
+  var q = '[data-id=' + response.id + ']';
+  var element = document.querySelector(q);
+  var publicElement = element.querySelector('[class*=" admin-public-"]');
+  publicElement.classList.remove('admin-public-false');
+  publicElement.classList.remove('admin-public-true');
+  publicElement.classList.remove('admin-public-link');
+  switch (response.state){
+    case '0':
+      publicElement.classList.add('admin-public-false');
+      publicElement.innerHTML = 'Private';
+      break;
+    case '1':
+      publicElement.classList.add('admin-public-true');
+      publicElement.innerHTML = 'Public';
+      break;
+    case '2':
+      publicElement.classList.add('admin-public-link');
+      publicElement.innerHTML = 'Link Only';
+      break;
+  }
 }
 
 function reqAbort (e) {
@@ -64,7 +84,11 @@ function applyPublicState () {
     x.open('POST', '/api/article/public-state');
     x.setRequestHeader('csrf-token', document.getElementById('_csrf').innerText);
     x.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
-    x.onload = reqComplete;
+    x.onreadystatechange = function (ev) {
+      if (x.readyState === XMLHttpRequest.DONE) {
+        reqComplete(ev);
+      }
+    };
     x.onerror = reqError;
     x.onabort = reqAbort;
     x.send(JSON.stringify({
