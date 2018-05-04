@@ -35,6 +35,8 @@
         <option value="1" {{#if_eq article.public 1}}selected="selected"{{/if_eq}}>Public</option>
         <option value="2" {{#if_eq article.public 2}}selected="selected"{{/if_eq}}>Link only</option>
       </select>
+      <label for="updatePostedAt">Update publication time:</label>
+      <input type="checkbox" id="updatePostedAt"/>
       <button id="apply-public-state" class="flex-right">Apply</button>
     </div>
   {{/inline}}

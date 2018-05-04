@@ -38,7 +38,11 @@ router.post('/public-state', ensureAdmin, function (req, res, next) {
   if (!req.body || !req.body.id || !req.body.state) {
     return next(new Error('Missing parameters'));
   }
-  models.article.findByIdAndUpdate(req.body.id, {public: req.body.state})
+  let update = {public: req.body.state};
+  if (req.body.state === '1' && req.body.updatePostedAt) {
+    update.postedAt = Date.now();
+  }
+  models.article.findByIdAndUpdate(req.body.id, update)
     .lean()
     .exec((err, doc) => {
       if (err) {

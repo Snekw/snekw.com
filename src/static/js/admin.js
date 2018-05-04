@@ -96,6 +96,7 @@ function applyPublicState () {
   for (var i = 0; i < selectedArticles.length; i++) {
     var id = selectedArticles[i].dataset.id;
     var state = document.getElementById('public').value || 0;
+    var updatePostedAt = document.getElementById('updatePostedAt').checked;
     var x = new XMLHttpRequest();
     x.open('POST', '/api/article/public-state');
     x.setRequestHeader('csrf-token', document.getElementById('_csrf').innerText);
@@ -109,7 +110,8 @@ function applyPublicState () {
     x.onabort = reqAbort;
     x.send(JSON.stringify({
       id: id,
-      state: state
+      state: state,
+      updatePostedAt: updatePostedAt
     }));
   }
 }
