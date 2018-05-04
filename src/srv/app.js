@@ -61,6 +61,7 @@ app.use(bodyParser.urlencoded({
   extended: true,
   limit: '5mb'
 }));
+app.use('/api', bodyParser.json());
 
 // Max age of 7 days
 const sessionCookieTTL = 1000 * 60 * 60 * 24 * 7;
@@ -101,6 +102,9 @@ if (process.env.NODE_ENV !== 'test') {
     app.use(logger('dev'));
   }
 }
+
+// API routes
+app.use('/api/article', require('./api/article'));
 
 // Recompile handlebars on each request on developer mode if enabled on devSettings
 if (config.DEV === true && config.devSettings) {

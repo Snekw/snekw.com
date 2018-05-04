@@ -237,11 +237,8 @@ router.post('/new', ensureAdmin, function (req, res, next) {
       res.status(500);
       return next(err);
     }
-    cachedData.updateCache(cachedData.keys.indexArticles, querys.indexArticlesQuery).then(() => {
-      return res.redirect('/article/id/' + data._id);
-    }).catch(err => {
-      return next(err);
-    });
+    cachedData.setupCache();
+    return res.redirect('/article/id/' + data._id);
   });
 });
 
@@ -263,11 +260,8 @@ router.post('/delete', ensureAdmin, function (req, res, next) {
     if (err) {
       return next(err);
     }
-    cachedData.updateCache(cachedData.keys.indexArticles, querys.indexArticlesQuery).then(() => {
-      return res.redirect('/');
-    }).catch(err => {
-      return next(err);
-    });
+    cachedData.setupCache();
+    return res.redirect('/');
   });
 });
 
