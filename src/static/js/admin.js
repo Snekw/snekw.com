@@ -88,8 +88,8 @@ function applyPublicState () {
   if (selectedArticles.length < 1) {
     return alert('No selected articles!');
   }
-  var confim = confirm('Press OK to proceed with applying changes.');
-  if (!confim) {
+  var _confirm = confirm('Press OK to proceed with applying changes.');
+  if (!_confirm) {
     return;
   }
 
