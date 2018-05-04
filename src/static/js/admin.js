@@ -53,6 +53,7 @@ function reqComplete (e) {
   var response = JSON.parse(e.target.responseText);
   var q = '[data-id=' + response.id + ']';
   var element = document.querySelector(q);
+  // Update the article publicity state
   var publicElement = element.querySelector('[class*=" admin-public-"]');
   publicElement.classList.remove('admin-public-false');
   publicElement.classList.remove('admin-public-true');
@@ -100,7 +101,7 @@ function applyPublicState () {
     x.setRequestHeader('csrf-token', document.getElementById('_csrf').innerText);
     x.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
     x.onreadystatechange = function (ev) {
-      if (x.readyState === XMLHttpRequest.DONE) {
+      if (this.readyState === XMLHttpRequest.DONE) {
         reqComplete(ev);
       }
     };
