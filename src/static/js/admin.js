@@ -28,10 +28,25 @@ var toggleClass = 'toggle-hide';
 
 // Multi-edit
 var articles = document.getElementsByClassName('admin-article');
+var multiEdit = document.getElementById('multi-edit');
+var nSelected = document.getElementById('nSelected');
+var selectAll = document.getElementById('selectAll');
+var deselectAll = document.getElementById('deselectAll');
 document.getElementById('apply-public-state').addEventListener('click', applyPublicState);
+selectAll.addEventListener('click', selectAllF);
+deselectAll.addEventListener('click', deselectAllF);
 
 function toggleSelectArticle (e) {
   e.target.classList.toggle('admin-article-selected');
+  var _selected = document.getElementsByClassName('admin-article-selected').length;
+  if (_selected > 0) {
+    multiEdit.classList.remove('hide');
+    nSelected.innerText = _selected.toString();
+  } else {
+    if (!multiEdit.classList.contains('hide')) {
+      multiEdit.classList.add('hide');
+    }
+  }
 }
 
 function reqComplete (e) {
@@ -42,7 +57,7 @@ function reqComplete (e) {
   publicElement.classList.remove('admin-public-false');
   publicElement.classList.remove('admin-public-true');
   publicElement.classList.remove('admin-public-link');
-  switch (response.state){
+  switch (response.state) {
     case '0':
       publicElement.classList.add('admin-public-false');
       publicElement.innerHTML = 'Private';
@@ -96,6 +111,24 @@ function applyPublicState () {
       state: state
     }));
   }
+}
+
+function selectAllF () {
+  for (var i = 0; i < articles.length; i++) {
+    if (articles[i].classList.contains('admin-article-selected')) {
+      continue;
+    }
+    articles[i].classList.add('admin-article-selected');
+  }
+  nSelected.innerText = articles.length.toString();
+}
+
+function deselectAllF () {
+  var selected = document.getElementsByClassName('admin-article-selected');
+  while (selected.length > 0) {
+    selected[0].classList.remove('admin-article-selected');
+  }
+  nSelected.innerText = selected.length.toString();
 }
 
 for (var i = 0; i < articles.length; i++) {

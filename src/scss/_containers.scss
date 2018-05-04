@@ -155,7 +155,7 @@
 }
 
 .hide {
-  display: none;
+  display: none !important;
 }
 
 .flex-wrapper {
@@ -165,6 +165,12 @@
 
 .flex {
   flex: 1;
+}
+
+.flex-left {
+  flex: 0;
+  align-self: flex-start;
+  margin-left: 10px;
 }
 
 .flex-right {
