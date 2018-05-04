@@ -21,6 +21,18 @@
 const router = require('express').Router();
 const ensureAdmin = require('../../lib/ensureAdmin');
 const models = require('../../db/models');
+const cachedData = require('../../db/CachedData');
+const querys = require('../../db/querys');
+
+let timeStampLastFrontPageUpdate = 0;
+
+function updateFrontPage () {
+  if (timeStampLastFrontPageUpdate > Date.now() - 4000) {
+    return;
+  }
+  timeStampLastFrontPageUpdate = Date.now();
+  cachedData.updateCache(cachedData.keys.indexArticles, querys.indexArticlesQuery);
+}
 
 router.post('/public-state', ensureAdmin, function (req, res, next) {
   if (!req.body || !req.body.id || !req.body.state) {
@@ -34,6 +46,7 @@ router.post('/public-state', ensureAdmin, function (req, res, next) {
       }
       return res.status(200).json({id: req.body.id, state: req.body.state});
     });
+  setTimeout(updateFrontPage, 5000);
 });
 
 module.exports = router;
