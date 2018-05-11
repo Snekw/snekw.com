@@ -25,6 +25,7 @@
     {{article.uploads}}
   </script>
   <div id="attached-uploads-target"></div>
+  <button id="attached-uploads-save">Save</button>
 </div>
 <div class="container">
   <p>Available uploads</p>
@@ -32,7 +33,7 @@
   <div id="available-uploads-target"></div>
 </div>
 <template id="upload-template">
-  <div class="flex-wrapper">
+  <div class="flex-wrapper" draggable="true" ondragstart="onDragStart(event)">
     <img class="flex-left upl-browser-img">
     <p class="flex">Title: <span data-title></span> Size: <span data-size></span> B</p>
   </div>

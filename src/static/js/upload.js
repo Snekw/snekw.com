@@ -55,12 +55,16 @@ function processForm (e) {
   }
 
   x.onload = function (ev) {
-    var resp = JSON.parse(ev.target.responseText);
-    addToAttached(resp);
     submit.disabled = false;
+    var resp = JSON.parse(ev.target.responseText);
+    addToAvailable(resp);
   };
 
   x.onerror = function (ev) {
+    submit.disabled = false;
+  };
+
+  x.onabort = function (ev) {
     submit.disabled = false;
   };
 

@@ -32,7 +32,8 @@ function createUploadReturnData (upload) {
   let data = {
     path: fixPath(upload.path),
     size: upload.size,
-    type: upload.type
+    type: upload.type,
+    id: upload._id
   };
   if (upload.info) {
     data.info = {

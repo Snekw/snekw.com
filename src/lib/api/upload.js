@@ -106,7 +106,7 @@ function imgFilenameGen (file) {
 }
 
 function zipFilenameGen (file) {
-  return shortId.generate() + '--' + file.originalname;
+  return shortId.generate() + '@-@' + file.originalname;
 }
 
 const imgUpload = multer({

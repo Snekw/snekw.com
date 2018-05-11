@@ -25,7 +25,7 @@ var template = document.getElementById('upload-template');
 
 function fillTemplate (image) {
   var imgPath;
-  switch (image.type){
+  switch (image.type) {
     case 'zip':
       imgPath = '/static/uploads/images/rklJd-QAz.png';
       break;
@@ -42,6 +42,7 @@ function fillTemplate (image) {
       // Upload type that doesn't have a default image
       imgPath = '/static/uploads/images/rklJd-QAz.png';
   }
+  template.content.querySelector('div').id = image.id;
   template.content.querySelector('img').src = imgPath;
   template.content.querySelector('span[data-title]').innerText = image.info.title;
   template.content.querySelector('span[data-size]').innerText = image.size;
@@ -55,3 +56,29 @@ function addToAttached (image) {
 function addToAvailable (image) {
   availableUploads.appendChild(fillTemplate(image));
 }
+
+function onDrop (ev) {
+  ev.preventDefault();
+  var data = ev.dataTransfer.getData('text');
+  ev.target.appendChild(document.getElementById(data));
+  console.log(ev);
+}
+
+function allowDrop (ev) {
+  ev.preventDefault();
+}
+
+function onDragStart (ev) {
+  console.log(ev);
+  ev.dataTransfer.setData('text', ev.target.id);
+}
+
+function onAttachedSave (ev) {
+  console.log(ev);
+}
+
+attachedUploads.addEventListener('drop', onDrop);
+attachedUploads.addEventListener('dragover', allowDrop);
+availableUploads.addEventListener('drop', onDrop);
+availableUploads.addEventListener('dragover', allowDrop);
+document.getElementById('attached-uploads-save').addEventListener('click', onAttachedSave);
