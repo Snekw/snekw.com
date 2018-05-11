@@ -22,7 +22,7 @@ const router = require('express').Router();
 const ensureAdmin = require('../../lib/ensureAdmin');
 const upload = require('../../lib/api/upload');
 const image = require('../../lib/api/image');
-const errors = require('../Error');
+const errors = require('../ErrorJSONAPI');
 
 function fixPath (path) {
   return '/' + path.replace(/\\/g, '/');
@@ -31,7 +31,8 @@ function fixPath (path) {
 function createUploadReturnData (upload) {
   let data = {
     path: fixPath(upload.path),
-    size: upload.size
+    size: upload.size,
+    type: upload.type
   };
   if (upload.info) {
     data.info = {

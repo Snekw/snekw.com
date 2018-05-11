@@ -36,7 +36,7 @@ const articleSchema = new Schema({
     username: {type: String, required: false}
   },
   public: {type: Number, default: false}, // 0 private, 1 public, 2 not listed
-  usedUploads: [{type: Schema.Types.ObjectId, ref: 'upload'}]
+  uploads: [{type: Schema.Types.ObjectId, ref: 'upload'}]
 });
 
 mongoose.model('article', articleSchema);

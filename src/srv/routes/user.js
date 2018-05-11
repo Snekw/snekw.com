@@ -23,7 +23,7 @@ const ensureLoggedIn = require('../../lib/ensureLoggedIn');
 const HbsViews = require('../hbsSystem').views;
 const router = require('express').Router();
 const validator = require('validator');
-const normalizeError = require('../Error').normalizeError;
+const normalizeError = require('../ErrorJSONAPI').normalizeError;
 
 router.get('/update', ensureLoggedIn, function (req, res, next) {
   req.context.csrfToken = req.csrfToken();

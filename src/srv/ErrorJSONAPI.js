@@ -21,40 +21,42 @@
 const config = require('../helpers/configStub')('main');
 
 class ErrorSNW extends Error {
-  constructor (message) {
-    super(message);
+  constructor () {
+    super();
     this.name = this.constructor.name;
     this.status = 500;
     this.data = {};
     if (typeof Error.captureStackTrace === 'function') {
       Error.captureStackTrace(this, this.constructor);
     } else {
-      this.stack = (new Error(message)).stack;
+      this.stack = (new Error()).stack;
     }
   }
 }
 
-class ErrorUploadMissingParameter extends ErrorSNW {
-  constructor (message) {
-    super(message);
-    this.message = 'Missing parameter: ' + message;
-    this.id = 'ERR_FILE_NO_' + message.toUpperCase();
-    this.data = message.toUpperCase();
+class ErrorMissingParameters extends ErrorSNW {
+  _getParamsString (parameters) {
+    let s = '';
+    parameters.map(p => {
+      s += p + ' ';
+    });
+    return s;
+  }
+
+  constructor (parameters) {
+    super();
+    this.message = 'Missing parameters: ' + this._getParamsString(parameters);
+    this.id = 'ERR_MISSING_PARAMETER';
+    this.data = parameters;
     this.status = 400;
   }
 }
 
 class ErrorUploadRejected extends ErrorSNW {
   constructor (err) {
-    super('');
+    super();
     this.message = 'Upload rejected';
-    this.data = [];
-    if (!err.length && err) {
-      this.data.push(normalizeError(err));
-    }
-    for (let i = 0; i < err.length; i++) {
-      this.data.push(normalizeError(err[i]));
-    }
+    this.data = normalizeError(err);
     this.id = 'ERR_FILE_REJECTED';
     this.inner = err;
     this.status = 400;
@@ -63,7 +65,7 @@ class ErrorUploadRejected extends ErrorSNW {
 
 class ErrorUploadMimeType extends ErrorSNW {
   constructor (mime) {
-    super('');
+    super();
     this.message = 'Invalid mimetype.';
     this.data = mime;
     this.id = 'ERR_FILE_MIME';
@@ -73,11 +75,29 @@ class ErrorUploadMimeType extends ErrorSNW {
 
 class ErrorDatabaseError extends ErrorSNW {
   constructor (inner, id) {
-    super('Database error');
+    super();
     this.message = 'Database error: ' + id;
     this.id = 'ERR_DB_' + id.toUpperCase();
     this.inner = inner;
     this.status = 400;
+  }
+}
+
+class ErrorAlreadyExists extends ErrorSNW {
+  constructor (what) {
+    super();
+    this.message = what;
+    this.id = 'ERR_ALREADY_EXISTS';
+    this.status = 200;
+  }
+}
+
+class ErrorMissing extends ErrorSNW {
+  constructor (what) {
+    super();
+    this.message = what;
+    this.id = 'ERR_MISSING';
+    this.status = 200;
   }
 }
 
@@ -99,7 +119,9 @@ function normalizeError (err) {
 module.exports = {
   normalizeError,
   ErrorUploadRejected,
-  ErrorUploadMissingParameter,
+  ErrorMissingParameters,
   ErrorDatabaseError,
-  ErrorUploadMimeType
+  ErrorUploadMimeType,
+  ErrorAlreadyExists,
+  ErrorMissing
 };

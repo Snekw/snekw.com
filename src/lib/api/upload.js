@@ -23,7 +23,7 @@ const shortId = require('shortid');
 const path = require('path');
 const utility = require('../../helpers/fs-utility');
 const models = require('../../db/models');
-const errors = require('../../srv/Error');
+const errors = require('../../srv/ErrorJSONAPI');
 
 const imageMimes = [
   'image/jpeg',
@@ -36,7 +36,8 @@ const imageMimes = [
 const zipMimes = [
   'application/zip',
   'application/x-rar-compressed',
-  'application/x-zip-compressed'
+  'application/x-zip-compressed',
+  'application/octet-stream'
 ];
 
 const codeMimes = [
@@ -54,16 +55,16 @@ const audioMimes = [
 function checkUploadFields (req) {
   let errs = [];
   if (!req.body.type) {
-    errs.push(new errors.ErrorUploadMissingParameter('TYPE'));
+    errs.push('type');
   }
   if (!req.body.alt) {
-    errs.push(new errors.ErrorUploadMissingParameter('ALT'));
+    errs.push('alt');
   }
   if (!req.body.title) {
-    errs.push(new errors.ErrorUploadMissingParameter('TITLE'));
+    errs.push('title');
   }
   if (!req.body.description) {
-    errs.push(new errors.ErrorUploadMissingParameter('DESCRIPTION'));
+    errs.push('description');
   }
 
   return errs;
@@ -73,7 +74,7 @@ function createFilter (mimes) {
   return function (req, file, cb) {
     let errs = checkUploadFields(req);
     if (errs.length > 0) {
-      return cb(errs);
+      return cb(new errors.ErrorMissingParameters(errs));
     }
 
     if (mimes.indexOf(file.mimetype) > -1) {
@@ -105,7 +106,7 @@ function imgFilenameGen (file) {
 }
 
 function zipFilenameGen (file) {
-  return shortId.generate() + '||' + file.originalname;
+  return shortId.generate() + '--' + file.originalname;
 }
 
 const imgUpload = multer({

@@ -19,16 +19,39 @@
  */
 'use strict';
 
-var uploadBrowser = document.getElementById('upload-browser-target');
+var attachedUploads = document.getElementById('attached-uploads-target');
+var availableUploads = document.getElementById('available-uploads-target');
+var template = document.getElementById('upload-template');
 
-function addToBrowser (image) {
-  var containter = document.createElement('div');
-  var title = document.createElement('p');
-  var img = document.createElement('img');
-  title.innerText = image.info.title;
-  img.src = image.path;
-  img.alt = image.info.alt;
-  containter.appendChild(img);
-  containter.appendChild(title);
-  uploadBrowser.appendChild(containter);
+function fillTemplate (image) {
+  var imgPath;
+  switch (image.type){
+    case 'zip':
+      imgPath = '/static/uploads/images/rklJd-QAz.png';
+      break;
+    case 'audio':
+      imgPath = '/static/uploads/images/rklJd-QAz.png';
+      break;
+    case 'code':
+      imgPath = '/static/uploads/images/rklJd-QAz.png';
+      break;
+    case 'img':
+      imgPath = image.path;
+      break;
+    default:
+      // Upload type that doesn't have a default image
+      imgPath = '/static/uploads/images/rklJd-QAz.png';
+  }
+  template.content.querySelector('img').src = imgPath;
+  template.content.querySelector('span[data-title]').innerText = image.info.title;
+  template.content.querySelector('span[data-size]').innerText = image.size;
+  return document.importNode(template.content, true);
+}
+
+function addToAttached (image) {
+  attachedUploads.appendChild(fillTemplate(image));
+}
+
+function addToAvailable (image) {
+  availableUploads.appendChild(fillTemplate(image));
 }

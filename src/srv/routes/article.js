@@ -109,12 +109,13 @@ router.get('/edit/:article', ensureAdmin, function (req, res, next) {
   res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
 
   // Load the article from the database ignoring the cached version
-  models.article.findById(req.params.article).lean().exec((err, data) => {
+  models.article.findById(req.params.article).populate('uploads').lean().exec((err, data) => {
     if (err) {
       return next(err);
     }
 
     req.context.article = data;
+    req.context.article.uploads = JSON.stringify(data.uploads) || '';
     req.context.csrfToken = req.csrfToken();
     req.context.isEdit = true;
 

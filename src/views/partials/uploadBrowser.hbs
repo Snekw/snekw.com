@@ -20,7 +20,21 @@
  */
 }}
 <div class="container">
-  <p>Available uploads</p>
-  <div id="upload-browser-target"></div>
+  <p>Attached uploads</p>
+  <script type="application/json" id="attached-uploads-data">
+    {{article.uploads}}
+  </script>
+  <div id="attached-uploads-target"></div>
 </div>
+<div class="container">
+  <p>Available uploads</p>
+  <script type="application/json" id="available-uploads-data"></script>
+  <div id="available-uploads-target"></div>
+</div>
+<template id="upload-template">
+  <div class="flex-wrapper">
+    <img class="flex-left upl-browser-img">
+    <p class="flex">Title: <span data-title></span> Size: <span data-size></span> B</p>
+  </div>
+</template>
 <script src="/static/js/uploadBrowser.js"></script>
