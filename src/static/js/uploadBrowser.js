@@ -61,7 +61,6 @@ function onDrop (ev) {
   ev.preventDefault();
   var data = ev.dataTransfer.getData('text');
   ev.target.appendChild(document.getElementById(data));
-  console.log(ev);
 }
 
 function allowDrop (ev) {
@@ -69,12 +68,35 @@ function allowDrop (ev) {
 }
 
 function onDragStart (ev) {
-  console.log(ev);
   ev.dataTransfer.setData('text', ev.target.id);
 }
 
 function onAttachedSave (ev) {
   console.log(ev);
+}
+
+function onUploadDelete (ev) {
+  var confimation = confirm('Are you sure you want to delete upload: ' +
+    ev.target.parentElement.querySelector('[data-title]').innerText + '?');
+  if (!confimation) {
+    return;
+  }
+
+  ajaxRequest('DELETE', '/api/upload/delete',
+    {_csrf: document.getElementById('upload').querySelector('input[name="_csrf"]').value},
+    {id: ev.target.parentElement.id}
+  )
+    .then(function (resp) {
+      if (resp.request.target.status !== 200) {
+        alert('Failed to delete.');
+      } else {
+        ev.target.parentElement.parentElement.remove();
+      }
+    })
+    .catch(function (err) {
+      console.log(err);
+      alert('Failed to delete.');
+    });
 }
 
 attachedUploads.addEventListener('drop', onDrop);

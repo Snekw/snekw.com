@@ -35,7 +35,11 @@
 <template id="upload-template">
   <div class="flex-wrapper" draggable="true" ondragstart="onDragStart(event)">
     <img class="flex-left upl-browser-img">
-    <p class="flex">Title: <span data-title></span> Size: <span data-size></span> B</p>
+    <p class="flex">
+      Title: <span data-title></span> Size: <span data-size></span> B
+      <button onclick="onUploadDelete(event)">Delete</button>
+    </p>
   </div>
 </template>
+<script src="/static/js/request.js"></script>
 <script src="/static/js/uploadBrowser.js"></script>

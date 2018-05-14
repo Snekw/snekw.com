@@ -91,4 +91,8 @@ router.post('/audio', ensureAdmin, upload.audio('upload'), function (req, res, n
   return uploadResponse(req, res, next);
 });
 
+router.delete('/delete', ensureAdmin, function (req, res, next) {
+  return res.status(500).json({error: 'Not implemented'});
+});
+
 module.exports = router;
