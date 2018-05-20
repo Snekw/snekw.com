@@ -207,6 +207,8 @@ function uploadCallback (err, req, res, next) {
       }
       req.snw.upload = files;
     }
+  } else {
+    return next(new errors.ErrorNoFiles());
   }
   return next();
 }

@@ -101,6 +101,15 @@ class ErrorMissing extends ErrorSNW {
   }
 }
 
+class ErrorNoFiles extends ErrorSNW {
+  constructor (message) {
+    super();
+    this.message = 'Request didn\'t contain any files';
+    this.id = 'ERR_NO_FILES';
+    this.status = 200;
+  }
+}
+
 function normalizeError (err) {
   let ret = {
     status: err.status || 500,

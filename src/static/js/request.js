@@ -64,7 +64,11 @@ function ajaxRequest (method, url, options, data) {
     if (options && options._csrf) {
       x.setRequestHeader('csrf-token', options._csrf);
     }
-    x.setRequestHeader('Content-Type', 'application/json; charset=utf-8');
-    x.send(JSON.stringify(data));
+    if (options.form === true) {
+      x.send(data);
+    } else {
+      x.setRequestHeader('Content-Type', 'application/json; charset=utf-8');
+      x.send(JSON.stringify(data));
+    }
   });
 }

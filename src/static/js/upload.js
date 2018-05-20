@@ -34,7 +34,6 @@ function processForm (e) {
   }
 
   submit.disabled = true;
-  var x = new XMLHttpRequest();
   var uploadEndPoint = 'image';
 
   switch (formData.get('type')) {
@@ -54,29 +53,26 @@ function processForm (e) {
       uploadEndPoint = 'image';
   }
 
-  x.onload = function (ev) {
-    submit.disabled = false;
-    var resp = JSON.parse(ev.target.responseText);
-    addToAvailable(resp);
-  };
-
-  x.onerror = function (ev) {
-    submit.disabled = false;
-  };
-
-  x.onabort = function (ev) {
-    submit.disabled = false;
-  };
-
-  x.upload.addEventListener('progress', function (ev) {
-    if (ev.lengthComputable) {
-      progress.value = ev.loaded / ev.total;
+  var fData = {};
+  formData.forEach(function (value, key) {
+    if (key !== '_csrf') {
+      fData[key] = value;
     }
-  }, false);
-
-  x.open('POST', '/api/upload/' + uploadEndPoint, true);
-  x.setRequestHeader('csrf-token', formData.get('_csrf'));
-  x.send(formData);
-  progress.value = 0;
+  });
+  ajaxRequest('POST', '/api/upload/' + uploadEndPoint,
+    {
+      _csrf: formData.get('_csrf'),
+      progress: progress,
+      form: true
+    },
+    formData)
+    .then(function (resp) {
+      submit.disabled = false;
+      addToAvailable(resp.data);
+    })
+    .catch(function (err) {
+      submit.disabled = false;
+      console.log(err);
+    });
   return false;
 }

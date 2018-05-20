@@ -57,10 +57,29 @@ function addToAvailable (image) {
   availableUploads.appendChild(fillTemplate(image));
 }
 
+function isDescendant (parent, child) {
+  var node = child;
+  while (node != null) {
+    if (node === parent) {
+      return true;
+    }
+    node = node.parentNode;
+  }
+  return false;
+}
+
 function onDrop (ev) {
   ev.preventDefault();
   var data = ev.dataTransfer.getData('text');
-  ev.target.appendChild(document.getElementById(data));
+  var node = document.getElementById(data);
+  if (!node) {
+    return;
+  }
+  if (isDescendant(attachedUploads, ev.target)) {
+    attachedUploads.appendChild(node);
+  } else {
+    availableUploads.appendChild(node);
+  }
 }
 
 function allowDrop (ev) {
@@ -69,6 +88,11 @@ function allowDrop (ev) {
 
 function onDragStart (ev) {
   ev.dataTransfer.setData('text', ev.target.id);
+  if (isDescendant(attachedUploads, ev.target)) {
+    ev.dataTransfer.setData('source', attachedUploads.id);
+  } else {
+    ev.dataTransfer.setData('source', availableUploads.id);
+  }
 }
 
 function onAttachedSave (ev) {
@@ -84,8 +108,7 @@ function onUploadDelete (ev) {
 
   ajaxRequest('DELETE', '/api/upload/delete',
     {_csrf: document.getElementById('upload').querySelector('input[name="_csrf"]').value},
-    {id: ev.target.parentElement.id}
-  )
+    {id: ev.target.parentElement.id})
     .then(function (resp) {
       if (resp.request.target.status !== 200) {
         alert('Failed to delete.');
