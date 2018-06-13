@@ -22,23 +22,23 @@
 
 document.getElementById('admin-nav-toggle').addEventListener('click', doAdminNavToggle);
 
-var nav = document.getElementById('admin-nav-container');
-var adminNavKey = 'admin-nav';
-var toggleClass = 'toggle-hide';
+const nav = document.getElementById('admin-nav-container');
+const adminNavKey = 'admin-nav';
+const toggleClass = 'toggle-hide';
 
 // Multi-edit
-var articles = document.getElementsByClassName('admin-article');
-var multiEdit = document.getElementById('multi-edit');
-var nSelected = document.getElementById('nSelected');
-var selectAll = document.getElementById('selectAll');
-var deselectAll = document.getElementById('deselectAll');
+const articles = document.getElementsByClassName('admin-article');
+const multiEdit = document.getElementById('multi-edit');
+const nSelected = document.getElementById('nSelected');
+const selectAll = document.getElementById('selectAll');
+const deselectAll = document.getElementById('deselectAll');
 document.getElementById('apply-public-state').addEventListener('click', applyPublicState);
 selectAll.addEventListener('click', selectAllF);
 deselectAll.addEventListener('click', deselectAllF);
 
 function toggleSelectArticle (e) {
   e.target.classList.toggle('admin-article-selected');
-  var _selected = document.getElementsByClassName('admin-article-selected').length;
+  const _selected = document.getElementsByClassName('admin-article-selected').length;
   if (_selected > 0) {
     multiEdit.classList.remove('hide');
     nSelected.innerText = _selected.toString();
@@ -50,11 +50,11 @@ function toggleSelectArticle (e) {
 }
 
 function reqComplete (e) {
-  var response = JSON.parse(e.target.responseText);
-  var q = '[data-id=' + response.id + ']';
-  var element = document.querySelector(q);
+  let response = JSON.parse(e.target.responseText);
+  const q = '[data-id=' + response.id + ']';
+  const element = document.querySelector(q);
   // Update the article publicity state
-  var publicElement = element.querySelector('[class*=" admin-public-"]');
+  const publicElement = element.querySelector('[class*=" admin-public-"]');
   publicElement.classList.remove('admin-public-false');
   publicElement.classList.remove('admin-public-true');
   publicElement.classList.remove('admin-public-link');
@@ -84,20 +84,20 @@ function reqError (e) {
 }
 
 function applyPublicState () {
-  var selectedArticles = document.getElementsByClassName('admin-article-selected');
+  const selectedArticles = document.getElementsByClassName('admin-article-selected');
   if (selectedArticles.length < 1) {
     return alert('No selected articles!');
   }
-  var _confirm = confirm('Press OK to proceed with applying changes.');
+  let _confirm = confirm('Press OK to proceed with applying changes.');
   if (!_confirm) {
     return;
   }
 
-  for (var i = 0; i < selectedArticles.length; i++) {
-    var id = selectedArticles[i].dataset.id;
-    var state = document.getElementById('public').value || 0;
-    var updatePostedAt = document.getElementById('updatePostedAt').checked;
-    var x = new XMLHttpRequest();
+  for (let i = 0; i < selectedArticles.length; i++) {
+    let id = selectedArticles[i].dataset.id;
+    let state = document.getElementById('public').value || 0;
+    let updatePostedAt = document.getElementById('updatePostedAt').checked;
+    let x = new XMLHttpRequest();
     x.open('POST', '/api/article/public-state');
     x.setRequestHeader('csrf-token', document.getElementById('_csrf').innerText);
     x.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
@@ -117,7 +117,7 @@ function applyPublicState () {
 }
 
 function selectAllF () {
-  for (var i = 0; i < articles.length; i++) {
+  for (let i = 0; i < articles.length; i++) {
     if (articles[i].classList.contains('admin-article-selected')) {
       continue;
     }
@@ -127,14 +127,14 @@ function selectAllF () {
 }
 
 function deselectAllF () {
-  var selected = document.getElementsByClassName('admin-article-selected');
+  const selected = document.getElementsByClassName('admin-article-selected');
   while (selected.length > 0) {
     selected[0].classList.remove('admin-article-selected');
   }
   nSelected.innerText = selected.length.toString();
 }
 
-for (var i = 0; i < articles.length; i++) {
+for (let i = 0; i < articles.length; i++) {
   articles[i].addEventListener('click', toggleSelectArticle);
 }
 

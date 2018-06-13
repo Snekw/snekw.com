@@ -65,45 +65,4 @@ router.post('/public-state', ensureAdmin, function (req, res, next) {
   setTimeout(updateFrontPage, 5000);
 });
 
-router.post('/attach-upload', ensureAdmin, function (req, res, next) {
-  let paramsMissing = [];
-  if (!req.body) {
-    paramsMissing.push('body');
-  }
-  if (!req.body.id) {
-    paramsMissing.push('id');
-  }
-  if (!req.body.uploadId) {
-    paramsMissing.push('uploadId');
-  }
-  if (paramsMissing.length > 0) {
-    return next(new errors.ErrorMissingParameters(paramsMissing));
-  }
-
-  models.article.findById(req.body.id)
-    .exec()
-    .then(doc => {
-      if (doc.uploads.contains(req.body.uploadId)) {
-        return res.status(200).json(new errors.ErrorAlreadyExists('uploadId'));
-      }
-
-      models.upload.count({_id: req.body.uploadId}, function (err, count) {
-        if (err) {
-          throw err;
-        }
-        if (count === 1) {
-          doc.uploads.push(req.body.uploadId);
-          return doc.save();
-        }
-        return res.status(200).json(new errors.ErrorMissing('uploadId'));
-      });
-    })
-    .then(doc => {
-      return res.status(200).json({id: doc._id, path: doc.path, name: doc.name});
-    })
-    .catch(err => {
-      return next(new errors.ErrorDatabaseError(err));
-    });
-});
-
 module.exports = router;

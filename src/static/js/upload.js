@@ -19,22 +19,22 @@
  */
 'use strict';
 
-var form = document.getElementById('upload');
-var submit = document.getElementById('upl_submit');
-var progress = document.getElementById('upl_progress');
+const form = document.getElementById('upload');
+const submit = document.getElementById('upl_submit');
+const progress = document.getElementById('upl_progress');
 
 form.addEventListener('submit', processForm);
 
 function processForm (e) {
   e.preventDefault();
-  var formData = new FormData(form);
+  const formData = new FormData(form);
 
   if (document.getElementById('upl_image').files.length < 1) {
     return;
   }
 
   submit.disabled = true;
-  var uploadEndPoint = 'image';
+  let uploadEndPoint = 'image';
 
   switch (formData.get('type')) {
     case 'image':
@@ -53,7 +53,7 @@ function processForm (e) {
       uploadEndPoint = 'image';
   }
 
-  var fData = {};
+  let fData = {};
   formData.forEach(function (value, key) {
     if (key !== '_csrf') {
       fData[key] = value;

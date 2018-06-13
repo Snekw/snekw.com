@@ -19,12 +19,12 @@
  */
 'use strict';
 
-var attachedUploads = document.getElementById('attached-uploads-target');
-var availableUploads = document.getElementById('available-uploads-target');
-var template = document.getElementById('upload-template');
+let attachedUploads = document.getElementById('attached-uploads-target');
+let availableUploads = document.getElementById('available-uploads-target');
+let template = document.getElementById('upload-template');
 
 function fillTemplate (image) {
-  var imgPath;
+  let imgPath;
   switch (image.type) {
     case 'zip':
       imgPath = '/static/uploads/images/rklJd-QAz.png';
@@ -58,7 +58,7 @@ function addToAvailable (image) {
 }
 
 function isDescendant (parent, child) {
-  var node = child;
+  let node = child;
   while (node != null) {
     if (node === parent) {
       return true;
@@ -70,14 +70,25 @@ function isDescendant (parent, child) {
 
 function onDrop (ev) {
   ev.preventDefault();
-  var data = ev.dataTransfer.getData('text');
-  var node = document.getElementById(data);
+  let data = ev.dataTransfer.getData('text');
+  let node = document.getElementById(data);
   if (!node) {
     return;
   }
+  let attachedInput = node.querySelector('input[name="attachedUploads[]"]');
   if (isDescendant(attachedUploads, ev.target)) {
+    if (!attachedInput) {
+      let newInput = document.createElement('input');
+      newInput.type = 'hidden';
+      newInput.name = 'attachedUploads[]';
+      newInput.value = data;
+      node.appendChild(newInput);
+    }
     attachedUploads.appendChild(node);
   } else {
+    if (attachedInput) {
+      node.removeChild(attachedInput);
+    }
     availableUploads.appendChild(node);
   }
 }
@@ -95,14 +106,11 @@ function onDragStart (ev) {
   }
 }
 
-function onAttachedSave (ev) {
-  console.log(ev);
-}
-
 function onUploadDelete (ev) {
-  var confimation = confirm('Are you sure you want to delete upload: ' +
+  ev.preventDefault();
+  let confirmation = confirm('Are you sure you want to delete upload: ' +
     ev.target.parentElement.querySelector('[data-title]').innerText + '?');
-  if (!confimation) {
+  if (!confirmation) {
     return;
   }
 
@@ -126,4 +134,3 @@ attachedUploads.addEventListener('drop', onDrop);
 attachedUploads.addEventListener('dragover', allowDrop);
 availableUploads.addEventListener('drop', onDrop);
 availableUploads.addEventListener('dragover', allowDrop);
-document.getElementById('attached-uploads-save').addEventListener('click', onAttachedSave);

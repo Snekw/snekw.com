@@ -102,26 +102,36 @@ router.get('/new', ensureAdmin, function (req, res, next) {
   res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
   req.context.csrfToken = req.csrfToken();
   req.template = HbsViews.article.new;
-  next();
+  models.upload.find({articles: {$exists: false}}).lean().exec()
+    .then(data => {
+      req.context.availableUploads = data;
+      return next();
+    });
 });
 
 router.get('/edit/:article', ensureAdmin, function (req, res, next) {
   res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
 
-  // Load the article from the database ignoring the cached version
-  models.article.findById(req.params.article).populate('uploads').lean().exec((err, data) => {
-    if (err) {
+  Promise.all([
+    models.article.findById(req.params.article).populate('uploads').lean().exec(),
+    models.upload.find({articles: {$exists: false}}).lean().exec()
+  ])
+    .then(data => {
+      const article = data[0];
+      const availableUploads = data[1];
+      req.context.article = article;
+      req.context.article.uploads = article.uploads;
+      req.context.csrfToken = req.csrfToken();
+      req.context.isEdit = true;
+
+      req.context.availableUploads = availableUploads;
+
+      req.template = HbsViews.article.edit;
+      return next();
+    })
+    .catch(err => {
       return next(err);
-    }
-
-    req.context.article = data;
-    req.context.article.uploads = JSON.stringify(data.uploads) || '';
-    req.context.csrfToken = req.csrfToken();
-    req.context.isEdit = true;
-
-    req.template = HbsViews.article.edit;
-    next();
-  });
+    });
 });
 
 router.post('/edit', ensureAdmin, function (req, res, next) {
@@ -151,6 +161,8 @@ router.post('/edit', ensureAdmin, function (req, res, next) {
     updatedAt: Date.now()
   };
 
+  let remove = {};
+
   if (req.body.title) {
     update.title = req.body.title;
   }
@@ -176,22 +188,37 @@ router.post('/edit', ensureAdmin, function (req, res, next) {
     // not shown on the article page
     update.updatedAt = postedAt.toISOString();
   }
+  if (req.body.attachedUploads) {
+    update.uploads = req.body.attachedUploads;
+  } else {
+    remove.uploads = 1;
+  }
 
-  models.article.findByIdAndUpdate(req.body.articleId, {$set: update}, (err, data) => {
-    if (err) {
-      return next(err);
-    }
-    cachedData.updateCache(data._id, models.article.findById(data._id).lean())
-      .then(() => {
-        return cachedData.updateCache(cachedData.keys.indexArticles, querys.indexArticlesQuery);
-      })
-      .then(() => {
-        return res.redirect('/article/id/' + req.body.articleId);
-      })
-      .catch(err => {
+  let operations = {};
+
+  if (Object.keys(remove).length > 0) {
+    operations.$unset = remove;
+  }
+  if (Object.keys(update).length > 0) {
+    operations.$set = update;
+  }
+
+  models.article.findByIdAndUpdate(req.body.articleId, operations,
+    (err, data) => {
+      if (err) {
         return next(err);
-      });
-  });
+      }
+      cachedData.updateCache(data._id, models.article.findById(data._id).lean())
+        .then(() => {
+          return cachedData.updateCache(cachedData.keys.indexArticles, querys.indexArticlesQuery);
+        })
+        .then(() => {
+          return res.redirect('/article/id/' + req.body.articleId);
+        })
+        .catch(err => {
+          return next(err);
+        });
+    });
 });
 
 router.post('/new', ensureAdmin, function (req, res, next) {

@@ -29,7 +29,7 @@
  */
 function ajaxRequest (method, url, options, data) {
   return new Promise(function (resolve, reject) {
-    var x = new XMLHttpRequest();
+    let x = new XMLHttpRequest();
 
     if (options && options.progress) {
       options.progress.value = 0;
@@ -45,7 +45,7 @@ function ajaxRequest (method, url, options, data) {
 
     x.onload = function (ev) {
       try {
-        var data = JSON.parse(ev.target.responseText);
+        const data = JSON.parse(ev.target.responseText);
         return resolve({request: ev, data: data});
       } catch (e) {
         return reject(e);

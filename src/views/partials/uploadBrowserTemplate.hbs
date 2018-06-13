@@ -19,24 +19,13 @@
  *  along with snekw.com.  If not, see <http://www.gnu.org/licenses/>.
  */
 }}
-<div class="container">
-  <p>Attached uploads</p>
-  <div id="attached-uploads-target">
-    {{#each article.uploads}}
-      {{>uploadBrowserTemplate attached=true}}
-    {{/each}}
-  </div>
+<div id="{{_id}}" class="flex-wrapper" draggable="true" ondragstart="onDragStart(event)">
+  {{#if attached}}
+    <input type="hidden" name="attachedUploads[]" value="{{_id}}">
+  {{/if}}
+  <img class="flex-left upl-browser-img" src="/{{path}}">
+  <p class="flex">
+    Title: <span data-title>{{info.title}}</span> Size: <span data-size>{{size}}</span> B
+    <button onclick="onUploadDelete(event)">Delete</button>
+  </p>
 </div>
-<div class="container">
-  <p>Available uploads</p>
-  <div id="available-uploads-target">
-    {{#each availableUploads}}
-      {{>uploadBrowserTemplate}}
-    {{/each}}
-  </div>
-</div>
-<template id="upload-template">
-  {{>uploadBrowserTemplate}}
-</template>
-<script src="/static/js/request.js"></script>
-<script src="/static/js/uploadBrowser.js"></script>

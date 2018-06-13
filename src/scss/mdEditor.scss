@@ -72,6 +72,8 @@
 
 #attached-uploads-target, #available-uploads-target{
   min-height: 40px;
+  max-height: 60vh;
+  overflow-y: scroll;
   border: solid $background-color;
   :hover{
     background-color: $accent-color;
