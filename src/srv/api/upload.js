@@ -23,6 +23,7 @@ const ensureAdmin = require('../../lib/ensureAdmin');
 const upload = require('../../lib/api/upload');
 const image = require('../../lib/api/image');
 const errors = require('../ErrorJSONAPI');
+const models = require('../../db/models');
 
 function fixPath (path) {
   return '/' + path.replace(/\\/g, '/');
@@ -92,7 +93,28 @@ router.post('/audio', ensureAdmin, upload.audio('upload'), function (req, res, n
 });
 
 router.delete('/delete', ensureAdmin, function (req, res, next) {
-  return res.status(500).json({error: 'Not implemented'});
+  if (!req.body.id) {
+    return next(new errors.ErrorMissingParameters(['id']));
+  }
+
+  models.upload.findByIdAndRemove(req.body.id).lean().exec()
+    .then(deleted => {
+      if (!deleted) {
+        return res.status(400).json({
+          error: {
+            message: 'No upload found with ID.',
+            data: req.body.id
+          }
+        });
+      }
+
+      return res.status(200).json({
+        data: req.body.id
+      });
+    })
+    .catch(err => {
+      return next(new errors.ErrorDatabaseError(err));
+    });
 });
 
 module.exports = router;

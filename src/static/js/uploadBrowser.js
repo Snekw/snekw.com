@@ -108,15 +108,16 @@ function onDragStart (ev) {
 
 function onUploadDelete (ev) {
   ev.preventDefault();
+  const id = ev.target.dataset.id;
   let confirmation = confirm('Are you sure you want to delete upload: ' +
-    ev.target.parentElement.querySelector('[data-title]').innerText + '?');
+    id + '?');
   if (!confirmation) {
     return;
   }
 
   ajaxRequest('DELETE', '/api/upload/delete',
     {_csrf: document.getElementById('upload').querySelector('input[name="_csrf"]').value},
-    {id: ev.target.parentElement.id})
+    {id: id})
     .then(function (resp) {
       if (resp.request.target.status !== 200) {
         alert('Failed to delete.');
