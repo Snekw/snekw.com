@@ -195,9 +195,7 @@ router.post('/edit', ensureAdmin, function (req, res, next) {
     .then((uploads) => {
       // Attach articles
       for (const upload of uploads) {
-        if (upload.articles.indexOf(req.body.articleId) === -1) {
-          upload.articles.push(req.body.articleId);
-        }
+        upload.attachArticle(req.body.articleId);
       }
       return Promise.all(uploads.map((upload) => upload.save()));
     })
@@ -274,11 +272,17 @@ router.post('/new', ensureAdmin, function (req, res, next) {
     newarticle.updatedAt = newarticle.postedAt;
   }
 
+  const attached = req.body.attachedUploads || [];
+
   newarticle.save((err, data) => {
     if (err) {
       res.status(500);
       return next(err);
     }
+    models.upload.find({_id: {$in: attached.map((a) => new ObjectId(a))}}).exec()
+      .then((uploads) => {
+        return uploads.map((upload) => upload.attachArticle(data._id, true));
+      });
     cachedData.setupCache();
     return res.redirect('/article/id/' + data._id);
   });

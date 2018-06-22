@@ -37,4 +37,13 @@ const uploadSchema = new Schema({
   articles: [{type: String, ref: 'article', index: true}]
 });
 
+uploadSchema.methods.attachArticle = function (articleId, save = false) {
+  if (this.articles.indexOf(articleId) === -1) {
+    this.articles.push(articleId);
+  }
+  if (save) {
+    return this.save();
+  }
+};
+
 mongoose.model('upload', uploadSchema);
