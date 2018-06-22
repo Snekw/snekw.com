@@ -46,4 +46,11 @@ uploadSchema.methods.attachArticle = function (articleId, save = false) {
   }
 };
 
+uploadSchema.methods.detachArticle = function (articleId, save = false) {
+  this.articles = this.articles.filter((a) => a !== articleId);
+  if (save) {
+    return this.save();
+  }
+};
+
 mongoose.model('upload', uploadSchema);

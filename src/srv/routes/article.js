@@ -207,7 +207,7 @@ router.post('/edit', ensureAdmin, function (req, res, next) {
       // Detach articles that aren't attached anymore
       for (const article of articles) {
         if (!attached.includes(article._id.toString())) {
-          article.articles = article.articles.filter((a) => a !== req.body.articleId);
+          article.detachArticle(req.body.articleId);
         }
       }
       return Promise.all(articles.map((article) => article.save()));
@@ -282,9 +282,14 @@ router.post('/new', ensureAdmin, function (req, res, next) {
     models.upload.find({_id: {$in: attached.map((a) => new ObjectId(a))}}).exec()
       .then((uploads) => {
         return uploads.map((upload) => upload.attachArticle(data._id, true));
+      })
+      .then(() => {
+        cachedData.setupCache();
+        return res.redirect('/article/id/' + data._id);
+      })
+      .catch((err) => {
+        return next(err);
       });
-    cachedData.setupCache();
-    return res.redirect('/article/id/' + data._id);
   });
 });
 
@@ -302,12 +307,21 @@ router.post('/delete', ensureAdmin, function (req, res, next) {
     return res.redirect('/');
   }
 
-  models.article.findByIdAndRemove(req.body.id).exec((err) => {
+  models.article.findByIdAndRemove(req.body.id).exec((err, old) => {
     if (err) {
       return next(err);
     }
-    cachedData.setupCache();
-    return res.redirect('/');
+    models.upload.find({articles: old._id}).exec()
+      .then((data) => {
+        return Promise.all(data.map((d) => d.detachArticle(old._id, true)));
+      })
+      .then(() => {
+        cachedData.setupCache();
+        return res.redirect('/');
+      })
+      .catch((err) => {
+        return next(err);
+      });
   });
 });
 
