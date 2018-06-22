@@ -111,7 +111,9 @@ app.use('/api/upload', require('./api/upload'));
 if (config.DEV === true && config.devSettings) {
   if (config.devSettings.recompileHBS === true) {
     app.use(function (req, res, next) {
-      if (req.originalUrl.indexOf('.css') > -1 || req.originalUrl.indexOf('.ico') > -1) {
+      if (req.originalUrl.indexOf('.css') > -1 ||
+        req.originalUrl.indexOf('.ico') > -1 ||
+        req.originalUrl.indexOf('/static/') > -1) {
         return next();
       }
       hbsSystem.reloadPartials();

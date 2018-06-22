@@ -35,8 +35,7 @@ const articleSchema = new Schema({
     id: {type: String, required: true},
     username: {type: String, required: false}
   },
-  public: {type: Number, default: false}, // 0 private, 1 public, 2 not listed
-  uploads: [{type: Schema.Types.ObjectId, ref: 'upload'}]
+  public: {type: Number, default: false} // 0 private, 1 public, 2 not listed
 });
 
 mongoose.model('article', articleSchema);

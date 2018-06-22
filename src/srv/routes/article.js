@@ -29,6 +29,7 @@ const querys = require('../../db/querys');
 const validator = require('validator');
 const moment = require('moment');
 const articleLib = require('../../lib/articleLib');
+const ObjectId = require('mongoose').Types.ObjectId;
 
 router.param('article', function (req, res, next, article) {
   if (!validator.matches(article, /^[a-zA-Z0-9_-]+$/g)) {
@@ -113,14 +114,16 @@ router.get('/edit/:article', ensureAdmin, function (req, res, next) {
   res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
 
   Promise.all([
-    models.article.findById(req.params.article).populate('uploads').lean().exec(),
-    models.upload.find({articles: {$exists: false}}).lean().exec()
+    models.article.findById(req.params.article).lean().exec(),
+    models.upload.find({'articles.0': {$exists: false}}).lean().exec(),
+    models.upload.find({articles: req.params.article}).lean().exec()
   ])
     .then(data => {
       const article = data[0];
       const availableUploads = data[1];
+      const attachedUploads = data[2];
       req.context.article = article;
-      req.context.article.uploads = article.uploads;
+      req.context.article.uploads = attachedUploads;
       req.context.csrfToken = req.csrfToken();
       req.context.isEdit = true;
 
@@ -153,15 +156,13 @@ router.post('/edit', ensureAdmin, function (req, res, next) {
     return next();
   }
 
-  let rendered = processMarkdown(req.body.body);
+  const rendered = processMarkdown(req.body.body);
 
-  let update = {
+  const update = {
     rawBody: req.body.body,
     body: rendered,
     updatedAt: Date.now()
   };
-
-  let remove = {};
 
   if (req.body.title) {
     update.title = req.body.title;
@@ -188,36 +189,49 @@ router.post('/edit', ensureAdmin, function (req, res, next) {
     // not shown on the article page
     update.updatedAt = postedAt.toISOString();
   }
-  if (req.body.attachedUploads) {
-    update.uploads = req.body.attachedUploads;
-  } else {
-    remove.uploads = 1;
-  }
 
-  let operations = {};
-
-  if (Object.keys(remove).length > 0) {
-    operations.$unset = remove;
-  }
-  if (Object.keys(update).length > 0) {
-    operations.$set = update;
-  }
-
-  models.article.findByIdAndUpdate(req.body.articleId, operations,
-    (err, data) => {
-      if (err) {
-        return next(err);
+  const attached = req.body.attachedUploads || [];
+  Promise.all(attached.map((attach) => models.upload.findById(new ObjectId(attach)).exec()))
+    .then((uploads) => {
+      // Attach articles
+      for (const upload of uploads) {
+        if (upload.articles.indexOf(req.body.articleId) === -1) {
+          upload.articles.push(req.body.articleId);
+        }
       }
-      cachedData.updateCache(data._id, models.article.findById(data._id).lean())
-        .then(() => {
-          return cachedData.updateCache(cachedData.keys.indexArticles, querys.indexArticlesQuery);
-        })
-        .then(() => {
-          return res.redirect('/article/id/' + req.body.articleId);
-        })
-        .catch(err => {
-          return next(err);
-        });
+      return Promise.all(uploads.map((upload) => upload.save()));
+    })
+    .then(() => {
+      // Find all uploads that are attached to the article
+      return models.upload.find({articles: req.body.articleId}).exec();
+    })
+    .then((articles) => {
+      // Detach articles that aren't attached anymore
+      for (const article of articles) {
+        if (!attached.includes(article._id.toString())) {
+          article.articles = article.articles.filter((a) => a !== req.body.articleId);
+        }
+      }
+      return Promise.all(articles.map((article) => article.save()));
+    })
+    // Update the article
+    .then(() => models.article.findByIdAndUpdate(req.body.articleId, update).lean().exec())
+    .then(
+      (data) => {
+        // Update caches and return the response.
+        cachedData.updateCache(data._id, models.article.findById(data._id).lean())
+          .then(() => {
+            return cachedData.updateCache(cachedData.keys.indexArticles, querys.indexArticlesQuery);
+          })
+          .then(() => {
+            return res.redirect('/article/id/' + req.body.articleId);
+          })
+          .catch(err => {
+            return next(err);
+          });
+      })
+    .catch(err => {
+      return next(err);
     });
 });
 

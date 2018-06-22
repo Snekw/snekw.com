@@ -34,7 +34,7 @@ const uploadSchema = new Schema({
     alt: {type: String},
     description: {type: String}
   },
-  articles: [{type: String, ref: 'article'}]
+  articles: [{type: String, ref: 'article', index: true}]
 });
 
 mongoose.model('upload', uploadSchema);
