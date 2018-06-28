@@ -108,9 +108,9 @@ function onDragStart (ev) {
 
 function onUploadDelete (ev) {
   ev.preventDefault();
-  const id = ev.target.dataset.id;
+  const {id, name, title} = ev.target.dataset;
   let confirmation = confirm('Are you sure you want to delete upload: ' +
-    id + '?');
+    name + ' - ' + title + '?');
   if (!confirmation) {
     return;
   }

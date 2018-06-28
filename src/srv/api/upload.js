@@ -24,6 +24,8 @@ const upload = require('../../lib/api/upload');
 const image = require('../../lib/api/image');
 const errors = require('../ErrorJSONAPI');
 const models = require('../../db/models');
+const fs = require('fs');
+const path = require('path');
 
 function fixPath (path) {
   return '/' + path.replace(/\\/g, '/');
@@ -97,7 +99,7 @@ router.delete('/delete', ensureAdmin, function (req, res, next) {
     return next(new errors.ErrorMissingParameters(['id']));
   }
 
-  models.upload.findByIdAndRemove(req.body.id).lean().exec()
+  models.upload.findByIdAndRemove(req.body.id).exec()
     .then(deleted => {
       if (!deleted) {
         return res.status(400).json({
@@ -108,8 +110,15 @@ router.delete('/delete', ensureAdmin, function (req, res, next) {
         });
       }
 
-      return res.status(200).json({
-        data: req.body.id
+      const deletionPath = path.resolve(deleted.path);
+      fs.unlink(deletionPath, (err) => {
+        if (err) {
+          return next(err);
+        }
+
+        return res.status(200).json({
+          data: deleted.name
+        });
       });
     })
     .catch(err => {
