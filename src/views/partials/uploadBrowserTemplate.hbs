@@ -26,6 +26,20 @@
   <img class="flex-left upl-browser-img" src="/{{path}}">
   <p class="flex">
     Title: <span data-title>{{info.title}}</span> Size: <span data-size>{{size}}</span> B
-    <button data-title="{{info.title}}" data-name="{{name}}" data-id="{{_id}}" onclick="onUploadDelete(event)">Delete</button>
   </p>
+  <div class="flex-wrapper flex-center">
+    <input class="flex-0" type="text"/>
+    <button class="flex"
+            data-alt="{{info.alt}}"
+            data-name="{{name}}"
+            data-path="{{path}}"
+            onclick="copyLink(event)">Copy link
+    </button>
+    <button class="flex"
+            data-title="{{info.title}}"
+            data-name="{{name}}"
+            data-id="{{_id}}"
+            onclick="onUploadDelete(event)">Delete
+    </button>
+  </div>
 </div>

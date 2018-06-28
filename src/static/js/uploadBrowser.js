@@ -131,6 +131,16 @@ function onUploadDelete (ev) {
     });
 }
 
+function copyLink (event) {
+  event.preventDefault();
+  const {path, alt} = event.target.dataset;
+  const inputField = event.target.parentElement.querySelector('input[type="text"]');
+  inputField.value = '![' + alt + '](/' + path.replace(/\\/g, '/') + ')';
+  inputField.select();
+  document.execCommand('copy');
+  console.log(inputField);
+}
+
 attachedUploads.addEventListener('drop', onDrop);
 attachedUploads.addEventListener('dragover', allowDrop);
 availableUploads.addEventListener('drop', onDrop);
