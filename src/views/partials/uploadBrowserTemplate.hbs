@@ -23,7 +23,7 @@
   {{#if attached}}
     <input type="hidden" name="attachedUploads[]" value="{{_id}}">
   {{/if}}
-  <img class="flex-left upl-browser-img" src="/{{path}}">
+  <img class="flex-left upl-browser-img" src="{{getImgThumbnail path}}">
   <p class="flex">
     Title: <span data-title>{{info.title}}</span> Size: <span data-size>{{size}}</span> B
   </p>

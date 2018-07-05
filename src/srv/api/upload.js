@@ -27,13 +27,9 @@ const models = require('../../db/models');
 const fs = require('fs');
 const path = require('path');
 
-function fixPath (path) {
-  return '/' + path.replace(/\\/g, '/');
-}
-
 function createUploadReturnData (upload) {
   let data = {
-    path: fixPath(upload.path),
+    path: image.fixPath(upload.path),
     size: upload.size,
     type: upload.type,
     id: upload._id
@@ -102,7 +98,7 @@ router.delete('/delete', ensureAdmin, function (req, res, next) {
   if (!req.body.id) {
     return next(new errors.ErrorMissingParameters(['id']));
   }
-
+  let name = '';
   models.upload.findByIdAndRemove(req.body.id).exec()
     .then(deleted => {
       if (!deleted) {
@@ -113,16 +109,32 @@ router.delete('/delete', ensureAdmin, function (req, res, next) {
           }
         });
       }
+      name = deleted.name;
+      // Base image path
+      let deletionPaths = [path.resolve(deleted.path)];
+      // SrcSet image paths
+      deletionPaths = deletionPaths.concat(
+        image.getAltImageNames(deleted.path).map(p => path.resolve(p))
+      );
+      // Thumbnail path
+      deletionPaths = deletionPaths.concat(
+        path.resolve(image.getThumbnailPath(deleted.path))
+      );
+      const promises = deletionPaths.map(p => {
+        return new Promise((resolve, reject) => {
+          if (!fs.existsSync(p)) return resolve();
 
-      const deletionPath = path.resolve(deleted.path);
-      fs.unlink(deletionPath, (err) => {
-        if (err) {
-          return next(err);
-        }
-
-        return res.status(200).json({
-          data: deleted.name
+          fs.unlink(p, (err) => {
+            if (err) return reject(err);
+            return resolve();
+          });
         });
+      });
+      return Promise.all(promises);
+    })
+    .then(() => {
+      return res.status(200).json({
+        data: name
       });
     })
     .catch(err => {

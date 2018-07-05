@@ -23,6 +23,8 @@ const fs = require('fs');
 const moment = require('moment');
 let HbsViews = require('./hbsViews');
 const config = require('../helpers/configStub')('main');
+const image = require('../lib/api/image');
+const path = require('path');
 
 function getHbs (path) {
   let pathStart = './views/';
@@ -110,6 +112,31 @@ hbs.registerHelper('getDateString', function (mongooseDate) {
 
 hbs.registerHelper('getTimeString', function (mongooseDate) {
   return moment(mongooseDate).format('hh:mm');
+});
+
+hbs.registerHelper('fixImagePath', function (path) {
+  if (!path) return '';
+  return image.fixPath(path);
+});
+
+hbs.registerHelper('imageSrcSet', function (imagePath) {
+  if (!imagePath) return '';
+  const images = image.getAltImageNames(imagePath);
+  if (!images || images.length === 0) return '';
+  let result = '';
+  images.forEach((img) => {
+    const match = /(?:_w)(\d+)\.\w+$/gi.exec(img);
+    if (!match || match.length !== 2) return;
+    const size = match[1];
+    result = `${result}/${img} ${size}w,`;
+  });
+  return result.slice(0, -1);
+});
+
+hbs.registerHelper('getImgThumbnail', function (imagePath) {
+  if (!imagePath) return '';
+  const thumbPath = image.getThumbnailPath(imagePath);
+  return image.fixPath(fs.existsSync(thumbPath) ? thumbPath : imagePath);
 });
 
 hbs.registerPartial(partials);

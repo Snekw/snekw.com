@@ -37,7 +37,7 @@ function createAltImages (imagePath) {
       const extension = path.extname(imagePath);
       return Promise.all(sizesToGenerate.map(size => {
         return sharp(inputBuffer)
-          .resize(size, size / aspectRatio)
+          .resize(size, Math.trunc(size / aspectRatio + 0.5))
           .toFile(`${imagePath.replace(extension, '')}_w${size}${extension}`);
       }));
     });
@@ -55,7 +55,20 @@ function optimizeSrcImage (imagePath) {
     });
 }
 
+function generateThumbnail (imagePath) {
+  if (!imagePath) return;
+  sizeOfImage(imagePath)
+    .then(dimensions => {
+      const inputBuffer = fs.readFileSync(imagePath);
+      const aspectRatio = dimensions.width / dimensions.height;
+      return sharp(inputBuffer)
+        .resize(40, Math.trunc(40 / aspectRatio + 0.5))
+        .toFile(getThumbnailPath(imagePath));
+    });
+}
+
 function getAltImageNames (imagePath) {
+  if (!imagePath) return [];
   const extension = path.extname(imagePath);
   return generatedSizes
     .map(size => `${imagePath.replace(extension, '')}_w${size}${extension}`)
@@ -68,14 +81,27 @@ function processImagesMD (req, res, next) {
   }
   const tasks = req.files.map((file) => createAltImages(file.path));
   tasks.concat(req.files.map((file) => optimizeSrcImage(file.path)));
+  tasks.concat(req.files.map((file) => generateThumbnail(file.path)));
   Promise.all(tasks)
     .then(() => next())
     .catch((err) => next(err));
+}
+
+function fixPath (path) {
+  return '/' + path.replace(/\\/g, '/');
+}
+
+function getThumbnailPath (imagePath) {
+  const ext = path.extname(imagePath);
+  return `${imagePath.replace(ext, '')}_thumb${ext}`;
 }
 
 module.exports = {
   createAltImages,
   getAltImageNames,
   optimizeSrcImage,
-  processImagesMD
+  processImagesMD,
+  fixPath,
+  generateThumbnail,
+  getThumbnailPath
 };
