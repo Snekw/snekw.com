@@ -20,7 +20,62 @@
 'use strict';
 const fs = require('fs');
 const path = require('path');
+const {promisify} = require('util');
+const sizeOfImage = promisify(require('image-size'));
+const sharp = require('sharp');
+const errors = require('../../srv/ErrorJSONAPI');
+
+const generatedSizes = [2560, 1920, 1680, 1280, 720, 480];
+
+function createAltImages (imagePath) {
+  if (!imagePath) return;
+  sizeOfImage(imagePath)
+    .then(dimensions => {
+      const sizesToGenerate = generatedSizes.filter(w => dimensions.width > w);
+      const aspectRatio = dimensions.width / dimensions.height;
+      const inputBuffer = fs.readFileSync(imagePath);
+      const extension = path.extname(imagePath);
+      return Promise.all(sizesToGenerate.map(size => {
+        return sharp(inputBuffer)
+          .resize(size, size / aspectRatio)
+          .toFile(`${imagePath.replace(extension, '')}_w${size}${extension}`);
+      }));
+    });
+}
+
+function optimizeSrcImage (imagePath) {
+  if (!imagePath) return;
+  if (path.extname(imagePath) === '.png') return;
+  sizeOfImage(imagePath)
+    .then(dimensions => {
+      const inputBuffer = fs.readFileSync(imagePath);
+      return sharp(inputBuffer)
+        .resize(dimensions.width, dimensions.height)
+        .toFile(imagePath);
+    });
+}
+
+function getAltImageNames (imagePath) {
+  const extension = path.extname(imagePath);
+  return generatedSizes
+    .map(size => `${imagePath.replace(extension, '')}_w${size}${extension}`)
+    .filter((p) => fs.existsSync(p));
+}
+
+function processImagesMD (req, res, next) {
+  if (!req.files) {
+    return next(new errors.ErrorMissing('file'));
+  }
+  const tasks = req.files.map((file) => createAltImages(file.path));
+  tasks.concat(req.files.map((file) => optimizeSrcImage(file.path)));
+  Promise.all(tasks)
+    .then(() => next())
+    .catch((err) => next(err));
+}
 
 module.exports = {
-
+  createAltImages,
+  getAltImageNames,
+  optimizeSrcImage,
+  processImagesMD
 };

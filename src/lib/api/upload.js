@@ -24,6 +24,7 @@ const path = require('path');
 const utility = require('../../helpers/fs-utility');
 const models = require('../../db/models');
 const errors = require('../../srv/ErrorJSONAPI');
+const imageLib = require('../../lib/api/image');
 
 const imageMimes = [
   'image/jpeg',

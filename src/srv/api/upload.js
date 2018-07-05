@@ -78,9 +78,13 @@ function uploadResponse (req, res, next) {
   }
 }
 
-router.post('/image', ensureAdmin, upload.image('upload'), function (req, res, next) {
-  return uploadResponse(req, res, next);
-});
+router.post('/image',
+  ensureAdmin,
+  upload.image('upload'),
+  image.processImagesMD,
+  function (req, res, next) {
+    return uploadResponse(req, res, next);
+  });
 
 router.post('/zip', ensureAdmin, upload.zip('upload'), function (req, res, next) {
   return uploadResponse(req, res, next);
