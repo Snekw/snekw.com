@@ -21,6 +21,8 @@
 const commonmark = require('commonmark');
 const cmReader = new commonmark.Parser();
 const cmRenderer = new commonmark.HtmlRenderer({softbreak: ' ', safe: false});
+const getSrcSet = require('./hbsSystem').getSrcSet;
+const path = require('path');
 const Prism = require('prismjs');
 require('prismjs/components/prism-javascript');
 require('prismjs/components/prism-markdown');
@@ -51,9 +53,12 @@ function processCodeBlock (node) {
 
 function processImage (node, event) {
   let newNode = new commonmark.Node('html_block');
-  newNode.literal = '<a href="' + node.destination + '"><img src="' + node.destination + '" alt="' +
-    node.firstChild.literal +
-    '"><img></a>';
+  newNode.literal =
+    `<a href="${node.destination}">
+<img src"${node.destination}"
+alt="${node.firstChild.literal}" 
+srcset="${getSrcSet(node.destination.replace('/', ''))}">
+</img></a>`;
   node.insertBefore(newNode);
   node.unlink();
 }

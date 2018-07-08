@@ -120,7 +120,7 @@ hbs.registerHelper('fixImagePath', function (path) {
   return image.fixPath(path);
 });
 
-hbs.registerHelper('imageSrcSet', function (imagePath) {
+function getSrcSet (imagePath) {
   if (!imagePath) return '';
   if (imagePath.startsWith('http')) return '';
   const images = image.getAltImageNames(imagePath);
@@ -132,6 +132,10 @@ hbs.registerHelper('imageSrcSet', function (imagePath) {
     result = `${result}/${img} ${match}w,`;
   });
   return result.slice(0, -1);
+}
+
+hbs.registerHelper('imageSrcSet', function (imagePath) {
+  return getSrcSet(imagePath);
 });
 
 hbs.registerHelper('getImgThumbnail', function (imagePath) {
@@ -159,7 +163,8 @@ function middleware (req, res, next) {
 
 module.exports = {
   views: HbsViews,
-  recompileAll: recompileAll,
-  reloadPartials: reloadPartials,
-  middleware: middleware
+  recompileAll,
+  reloadPartials,
+  middleware,
+  getSrcSet
 };
