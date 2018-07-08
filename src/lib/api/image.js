@@ -75,14 +75,18 @@ function getAltImageNames (imagePath) {
     .filter((p) => fs.existsSync(p));
 }
 
+function processFileList (files) {
+  const tasks = files.map((file) => createAltImages(file.path || file));
+  tasks.concat(files.map((file) => optimizeSrcImage(file.path || file)));
+  tasks.concat(files.map((file) => generateThumbnail(file.path || file)));
+  return Promise.all(tasks);
+}
+
 function processImagesMD (req, res, next) {
   if (!req.files) {
     return next(new errors.ErrorMissing('file'));
   }
-  const tasks = req.files.map((file) => createAltImages(file.path));
-  tasks.concat(req.files.map((file) => optimizeSrcImage(file.path)));
-  tasks.concat(req.files.map((file) => generateThumbnail(file.path)));
-  Promise.all(tasks)
+  processFileList(req.files)
     .then(() => next())
     .catch((err) => next(err));
 }
@@ -96,6 +100,12 @@ function getThumbnailPath (imagePath) {
   return `${imagePath.replace(ext, '')}_thumb${ext}`;
 }
 
+function isGenerated (img) {
+  const match = /(?:_w)(\d+)\.\w+$/gi.exec(img);
+  if (!match || match.length !== 2) return false;
+  return match[1];
+}
+
 module.exports = {
   createAltImages,
   getAltImageNames,
@@ -103,5 +113,7 @@ module.exports = {
   processImagesMD,
   fixPath,
   generateThumbnail,
-  getThumbnailPath
+  getThumbnailPath,
+  processFileList,
+  isGenerated
 };

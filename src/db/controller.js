@@ -26,20 +26,27 @@ const cachedData = require('./CachedData');
 mongoose.Promise = global.Promise;
 
 function connect () {
-  mongoose.connect(config.db.mongo.connectionString).then(() => {
-    console.log('Connected to database: ' + mongoose.connection.db.s.databaseName);
-    debug('Connected to database');
-    cachedData.setupCache();
-  }).catch((err) => {
-    console.error('Failed to connect to database: ' + config.db.mongo.connectionString);
-    console.error(err);
+  return new Promise((resolve, reject) => {
+    mongoose.connect(config.db.mongo.connectionString).then(() => {
+      console.log('Connected to database: ' + mongoose.connection.db.s.databaseName);
+      debug('Connected to database');
+      cachedData.setupCache();
+      resolve();
+    }).catch((err) => {
+      console.error('Failed to connect to database: ' + config.db.mongo.connectionString);
+      console.error(err);
+      reject(err);
+    });
   });
 }
 
 function disconnect () {
-  debug('Disconnecting from database.');
-  mongoose.disconnect(() => {
-    console.log('Disconnected from database.');
+  return new Promise((resolve) => {
+    debug('Disconnecting from database.');
+    mongoose.disconnect(() => {
+      console.log('Disconnected from database.');
+      resolve();
+    });
   });
 }
 

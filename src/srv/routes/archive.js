@@ -116,7 +116,7 @@ function getArchive (req, res, next) {
         .limit(req.params.count)
         .sort('-postedAt')
         .lean()
-        .select('postedAt updatedAt author brief title indexImageUrl public')
+        .select('postedAt updatedAt author brief title indexImagePath public')
         .exec();
     })
     .then(data => {

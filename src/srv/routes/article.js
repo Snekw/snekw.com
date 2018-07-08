@@ -147,7 +147,7 @@ router.post('/edit', ensureAdmin, function (req, res, next) {
       rawBody: req.body.body || '',
       title: req.body.title || '',
       brief: req.body.brief || '',
-      indexImageUrl: req.body.indexImg || '',
+      indexImagePath: req.body.indexImg || '',
       indexImageAlt: req.body.indexImgAlt || '',
       public: req.body.public || 0,
       _id: req.body.articleId
@@ -168,7 +168,7 @@ router.post('/edit', ensureAdmin, function (req, res, next) {
     update.title = req.body.title;
   }
   if (req.body.indexImg) {
-    update.indexImageUrl = req.body.indexImg;
+    update.indexImagePath = req.body.indexImg;
   }
   if (req.body.brief) {
     update.brief = req.body.brief;
@@ -243,7 +243,7 @@ router.post('/new', ensureAdmin, function (req, res, next) {
       rawBody: req.body.body || '',
       title: req.body.title || '',
       brief: req.body.brief || '',
-      indexImageUrl: req.body.indexImg || '',
+      indexImagePath: req.body.indexImg || '',
       indexImageAlt: req.body.indexImgAlt || ''
     };
     req.template = HbsViews.article.new;
@@ -256,7 +256,7 @@ router.post('/new', ensureAdmin, function (req, res, next) {
     title: req.body.title,
     body: rendered,
     rawBody: req.body.body,
-    indexImageUrl: req.body.indexImg,
+    indexImagePath: req.body.indexImg,
     author: {
       id: req.body.postedById,
       username: req.body.postedByName

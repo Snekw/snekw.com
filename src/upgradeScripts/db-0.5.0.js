@@ -1,7 +1,6 @@
-{{!
 /**
  *  snekw.com,
- *  Copyright (C) 2017 Ilkka Kuosmanen
+ *  Copyright (C) 2018 Ilkka Kuosmanen
  *
  *  This file is part of snekw.com.
  *
@@ -18,16 +17,23 @@
  *  You should have received a copy of the GNU General Public License
  *  along with snekw.com.  If not, see <http://www.gnu.org/licenses/>.
  */
-}}
-<div class="container {{#if_eq public 2}}link-only{{/if_eq}}">
-  <br/>
-  <img src="{{fixImagePath indexImagePath}}" srcset="{{imageSrcSet indexImagePath}}" width="550" height="250"/><br/>
-  <div class="articleContainer indexarticleClickArea">
-    <h1>{{title}}</h1>
-    {{brief}}<br/>
-    <p>Published: {{formatTime this.postedAt 'LLLL'}}</p>
-    <p>By: {{author.username}}</p>
-    <a href="/article/id/{{_id}}">Read more...</a>
-    {{>editControls}}
-  </div>
-</div>
+'use strict';
+const dbController = require('../db/controller');
+const models = require('../db/models');
+
+dbController.connect()
+  .then(() => models.article.find({}).exec())
+  .then(articles => {
+    return Promise.all(articles.map(article => {
+      if (!article.indexImageUrl) {
+        article.indexImagePath = 'static/images/missing-image.png';
+        article.indexImageUrl = undefined;
+      }
+      return article.save();
+    }));
+  })
+  .then(() => dbController.disconnect())
+  .then(() => process.exit())
+  .catch(err => {
+    console.error(err);
+  });

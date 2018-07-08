@@ -21,8 +21,8 @@
 }}
 {{#> header}}
   {{#each articles}}
-    {{#if indexImageUrl}}
-      <link rel="preload" as="image" href="{{indexImageUrl}}"/>
+    {{#if indexImagePath}}
+      <link rel="preload" as="image" href="{{indexImagePath}}"/>
     {{/if}}
   {{/each}}
 {{/header}}

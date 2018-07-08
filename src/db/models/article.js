@@ -30,7 +30,7 @@ const articleSchema = new Schema({
   brief: {type: String, required: true},
   postedAt: {type: Date, default: null},
   updatedAt: {type: Date, default: null},
-  indexImageUrl: {type: String, default: 'https://i.imgur.com/5Dmkrgz.png'},
+  indexImagePath: {type: String, default: '/static/images/missing-image.png'},
   author: {
     id: {type: String, required: true},
     username: {type: String, required: false}

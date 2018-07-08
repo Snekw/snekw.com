@@ -116,25 +116,27 @@ hbs.registerHelper('getTimeString', function (mongooseDate) {
 
 hbs.registerHelper('fixImagePath', function (path) {
   if (!path) return '';
+  if (path.startsWith('http')) return path;
   return image.fixPath(path);
 });
 
 hbs.registerHelper('imageSrcSet', function (imagePath) {
   if (!imagePath) return '';
+  if (imagePath.startsWith('http')) return '';
   const images = image.getAltImageNames(imagePath);
   if (!images || images.length === 0) return '';
   let result = '';
   images.forEach((img) => {
-    const match = /(?:_w)(\d+)\.\w+$/gi.exec(img);
-    if (!match || match.length !== 2) return;
-    const size = match[1];
-    result = `${result}/${img} ${size}w,`;
+    const match = image.isGenerated(img);
+    if (!match) return;
+    result = `${result}/${img} ${match}w,`;
   });
   return result.slice(0, -1);
 });
 
 hbs.registerHelper('getImgThumbnail', function (imagePath) {
   if (!imagePath) return '';
+  if (imagePath.startsWith('http')) return imagePath;
   const thumbPath = image.getThumbnailPath(imagePath);
   return image.fixPath(fs.existsSync(thumbPath) ? thumbPath : imagePath);
 });

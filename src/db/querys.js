@@ -21,7 +21,7 @@
 const models = require('./models.js');
 
 const indexArticlesQuery = models.article.find({public: 1})
-  .select('author brief title indexImageUrl updatedAt postedAt public')
+  .select('author brief title indexImagePath updatedAt postedAt public')
   .sort('-postedAt')
   .limit(10)
   .lean();
@@ -31,7 +31,7 @@ const aboutGetQuery = models.about.findOne({active: true})
   .select('body postedAt');
 
 const getLatestArticles = models.article.find({public: 1})
-  .select('author brief body title indexImageUrl updatedAt postedAt public')
+  .select('author brief body title indexImagePath updatedAt postedAt public')
   .sort('-postedAt')
   .limit(10)
   .lean();
