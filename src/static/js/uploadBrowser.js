@@ -59,7 +59,11 @@ function addToAttached (image) {
 }
 
 function addToAvailable (image) {
-  availableUploads.appendChild(fillTemplate(image));
+  if (image && image.data ) {
+    image.data.map(img => availableUploads.appendChild(fillTemplate(img)));
+  } else {
+    availableUploads.appendChild(fillTemplate(image));
+  }
 }
 
 function isDescendant (parent, child) {
