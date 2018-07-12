@@ -179,7 +179,6 @@ const files = [
   utility.copyFile('./src/package-lock.json', './dist/package-lock.json'),
   utility.copyFile('./src/config-example/mainConfig.js', './dist/config/mainConfig.js'),
   utility.copyFile('./src/static/favicon.ico', './dist/static/favicon.ico'),
-  utility.copyFile('./src/static/favicon.png', './dist/static/favicon.png'),
   utility.copyFile('./node_modules/commonmark/dist/commonmark.min.js',
     './dist/static/js/third-party/commonmark.min.js')
 ];
@@ -256,5 +255,6 @@ Promise.all(all)
 uglify('./node_modules/prismjs/prism.js', './dist/static/js/third-party/prism.min.js');
 uglify('./src/static/js/mdEditor.js', './dist/static/js/mdEditor.js');
 uglify('./src/static/js/admin.js', './dist/static/js/admin.js');
+uglify('./src/static/js/request.js', './dist/static/js/request.js');
 uglify('./src/static/js/upload.js', './dist/static/js/upload.js');
 uglify('./src/static/js/uploadBrowser.js', './dist/static/js/uploadBrowser.js');
