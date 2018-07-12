@@ -102,6 +102,14 @@ hbs.registerHelper('if_neq', function (a, b, opts) {
   }
 });
 
+hbs.registerHelper('if_less', function (a, b, opts) {
+  if (a < b) {
+    return opts.fn(this);
+  } else {
+    return opts.inverse(this);
+  }
+});
+
 hbs.registerHelper('timeFromNow', function (time) {
   return moment(time).fromNow();
 });

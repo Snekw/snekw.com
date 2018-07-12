@@ -34,9 +34,9 @@
     <div>
       <p>Written by: {{article.author.username}}</p>
       <p>Published: {{formatTime article.postedAt 'DD.MM.YYYY HH:mm'}}</p>
-      {{#if_neq article.postedAt article.updatedAt}}
+      {{#if_less article.postedAt article.updatedAt}}
         <p>Edited: {{formatTime article.updatedAt 'DD.MM.YYYY HH:mm - '}} {{timeFromNow article.updatedAt}}</p>
-      {{/if_neq}}
+      {{/if_less}}
     </div>
     {{>editControls article}}
   </div>
