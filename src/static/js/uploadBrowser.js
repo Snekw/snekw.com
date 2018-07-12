@@ -46,6 +46,11 @@ function fillTemplate (image) {
   template.content.querySelector('img').src = imgPath;
   template.content.querySelector('span[data-title]').innerText = image.info.title;
   template.content.querySelector('span[data-size]').innerText = image.size;
+  template.content.querySelector('.cpy').dataset.alt = image.info.alt;
+  template.content.querySelector('.cpy').dataset.path = imgPath.replace(/^\//, '');
+  template.content.querySelector('.del').dataset.title = image.info.title;
+  template.content.querySelector('.del').dataset.id = image.id;
+  template.content.querySelector('.del').dataset.name = imgPath;
   return document.importNode(template.content, true);
 }
 
@@ -138,7 +143,6 @@ function copyLink (event) {
   inputField.value = '![' + alt + '](/' + path.replace(/\\/g, '/') + ')';
   inputField.select();
   document.execCommand('copy');
-  console.log(inputField);
 }
 
 attachedUploads.addEventListener('drop', onDrop);
