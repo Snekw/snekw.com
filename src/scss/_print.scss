@@ -15,21 +15,21 @@
  *  along with snekw.com.  If not, see <http://www.gnu.org/licenses/>.
  */
 @media print {
-  nav{
+  nav {
     display: none;
   }
 
-  .container{
+  .container {
     margin: 0;
     width: 95%;
   }
 
-  body{
+  body {
     font: 12pt Georgia, "Times New Roman", Times, serif;
     line-height: 1.3;
   }
 
-  a{
+  a {
     text-decoration: none;
   }
 }

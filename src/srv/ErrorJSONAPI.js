@@ -35,20 +35,20 @@ class ErrorSNW extends Error {
 }
 
 class ErrorMissingParameters extends ErrorSNW {
-  _getParamsString (parameters) {
-    let s = '';
-    parameters.map(p => {
-      s += p + ' ';
-    });
-    return s;
-  }
-
   constructor (parameters) {
     super();
     this.message = 'Missing parameters: ' + this._getParamsString(parameters);
     this.id = 'ERR_MISSING_PARAMETER';
     this.data = parameters;
     this.status = 400;
+  }
+
+  _getParamsString (parameters) {
+    let s = '';
+    parameters.map(p => {
+      s += p + ' ';
+    });
+    return s;
   }
 }
 
