@@ -21,12 +21,12 @@
 }}
 {{#> header}}
   {{#if article.indexImageUrl}}
-    <link rel="preload" as="image" href="{{article.indexImageUrl}}"/>
+    <link rel="preload" as="image" href="{{fixImagePath article.indexImagePath}}"/>
   {{/if}}
 {{/header}}
 {{#> layout}}
   <div class="container">
-    <img id="titleImg" src="{{article.indexImageUrl}}"/>
+    <img id="titleImg" src="{{fixImagePath article.indexImagePath}}"/>
     <h1 id="articleTitle">{{article.title}}</h1>
     <hr/>
     <div class="article">{{{article.body}}}</div>
@@ -39,4 +39,5 @@
       {{/if_neq}}
     </div>
     {{>editControls article}}
-  </div>{{/layout}}
+  </div>
+{{/layout}}
