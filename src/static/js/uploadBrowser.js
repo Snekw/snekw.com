@@ -47,6 +47,7 @@ function fillTemplate (image) {
   template.content.querySelector('span[data-title]').innerText = image.info.title;
   template.content.querySelector('span[data-size]').innerText = image.size;
   template.content.querySelector('.cpy').dataset.alt = image.info.alt;
+  template.content.querySelector('.cpy').dataset.alt = image.type;
   template.content.querySelector('.cpy').dataset.path = imgPath.replace(/^\//, '');
   template.content.querySelector('.del').dataset.title = image.info.title;
   template.content.querySelector('.del').dataset.id = image.id;
@@ -59,7 +60,7 @@ function addToAttached (image) {
 }
 
 function addToAvailable (image) {
-  if (image && image.data ) {
+  if (image && image.data) {
     image.data.map(img => availableUploads.appendChild(fillTemplate(img)));
   } else {
     availableUploads.appendChild(fillTemplate(image));
@@ -142,9 +143,10 @@ function onUploadDelete (ev) {
 
 function copyLink (event) {
   event.preventDefault();
-  const {path, alt} = event.target.dataset;
+  const {path, alt, type} = event.target.dataset;
   const inputField = event.target.parentElement.querySelector('input[type="text"]');
-  inputField.value = '![' + alt + '](/' + path.replace(/\\/g, '/') + ')';
+  inputField.value = type === 'img' ? '!' : '';
+  inputField.value += '[' + alt + '](/' + path.replace(/\\/g, '/') + ')';
   inputField.select();
   document.execCommand('copy');
 }
