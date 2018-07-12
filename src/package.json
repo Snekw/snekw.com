@@ -42,7 +42,6 @@
     "serve-favicon": "^2.5.0",
     "sharp": "^0.20.5",
     "shortid": "^2.2.8",
-    "uglify-es": "^3.3.9",
     "validator": "^9.4.1"
   }
 }

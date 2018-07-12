@@ -25,7 +25,7 @@ const fs = require('fs');
 const CleanCss = require('clean-css');
 const path = require('path');
 const css = require('css');
-const uglifyJS = require('uglify-es');
+// const uglifyJS = require('uglify-es');
 const utility = require('../src/helpers/fs-utility');
 
 // Build functions
@@ -145,20 +145,21 @@ function getFoldCss (input) {
 
 function uglify (filePath, destPath) {
   let code = fs.readFileSync(filePath).toString();
-  let result = uglifyJS.minify(code, {
-    compress: {
-      drop_console: true
-    },
-    output: {
-      comments: 'some'
-    }
-  });
-  if (result.error) throw result.error;
+  // let result = uglifyJS.minify(code, {
+  //   compress: {
+  //     drop_console: true
+  //   },
+  //   output: {
+  //     comments: 'some'
+  //   }
+  // });
+  // if (result.error) throw result.error;
   utility.ensureDir(path.dirname(destPath), err => {
     if (err) {
       throw err;
     }
-    fs.writeFileSync(destPath, result.code);
+    // fs.writeFileSync(destPath, result.code);
+    fs.writeFileSync(destPath, code);
   });
 }
 
