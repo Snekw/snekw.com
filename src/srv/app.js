@@ -29,7 +29,7 @@ const RedisSessionStore = require('connect-redis')(session);
 const favicon = require('serve-favicon');
 const passport = require('passport');
 const auth = require('../lib/auth');
-const normalizeError = require('./Error').normalizeError;
+const normalizeError = require('./ErrorJSONAPI').normalizeError;
 const HbsViews = require('./hbsViews');
 const hbsSystem = require('./hbsSystem');
 const helmet = require('helmet');
@@ -103,14 +103,17 @@ if (process.env.NODE_ENV !== 'test') {
   }
 }
 
-// API routes
+// API routes - NO CSRF
 app.use('/api/article', require('./api/article'));
+app.use('/api/upload', require('./api/upload'));
 
 // Recompile handlebars on each request on developer mode if enabled on devSettings
 if (config.DEV === true && config.devSettings) {
   if (config.devSettings.recompileHBS === true) {
     app.use(function (req, res, next) {
-      if (req.originalUrl.indexOf('.css') > -1 || req.originalUrl.indexOf('.ico') > -1) {
+      if (req.originalUrl.indexOf('.css') > -1 ||
+        req.originalUrl.indexOf('.ico') > -1 ||
+        req.originalUrl.indexOf('/static/') > -1) {
         return next();
       }
       hbsSystem.reloadPartials();
@@ -158,7 +161,7 @@ app.use(favicon(path.join(__dirname, '../static/favicon.ico')));
 
 app.use(hbsSystem.middleware);
 
-// Routing
+// Routing - WITH CSRF
 debug('Routing');
 app.use('', require('./routes/base'));
 app.use('', auth.getRoutes());
@@ -190,6 +193,11 @@ function error404 (req, res, next) {
   if (process.env.NODE_ENV === 'test') {
     return res.json({context: req.context, user: req.user});
   }
+  if (req.originalUrl.startsWith('/api/')) {
+    return res.status(err.status).json({
+      error: req.context.error
+    });
+  }
   req.context.meta = Object.assign({}, HbsViews.error404.get.meta, req.context.meta);
   res.send(HbsViews.error404.get.hbs(req.context));
 }
@@ -203,6 +211,11 @@ function errorHandler (err, req, res, next) {
 
   if (process.env.NODE_ENV === 'test') {
     return res.json({context: req.context, user: req.user});
+  }
+  if (req.originalUrl.startsWith('/api/')) {
+    return res.status(status).json({
+      error: req.context.error
+    });
   }
   req.context.meta = Object.assign({}, HbsViews.error.get.meta, req.context.meta);
   res.send(HbsViews.error.get.hbs(req.context));

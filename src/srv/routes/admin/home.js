@@ -74,8 +74,8 @@ router.get('/managearticles', ensureAdmin, function (req, res, next) {
       }
       // Add default image if there is no image set
       data.map(d => {
-        d.indexImageUrl = (d.indexImageUrl)
-          ? d.indexImageUrl
+        d.indexImagePath = (d.indexImagePath)
+          ? d.indexImagePath
           : 'https://i.imgur.com/5Dmkrgz.png';
       });
       req.context.articles = data;

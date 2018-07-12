@@ -23,6 +23,7 @@ const ensureAdmin = require('../../lib/ensureAdmin');
 const models = require('../../db/models');
 const cachedData = require('../../db/CachedData');
 const querys = require('../../db/querys');
+const errors = require('../ErrorJSONAPI');
 
 let timeStampLastFrontPageUpdate = 0;
 
@@ -35,9 +36,20 @@ function updateFrontPage () {
 }
 
 router.post('/public-state', ensureAdmin, function (req, res, next) {
-  if (!req.body || !req.body.id || !req.body.state) {
-    return next(new Error('Missing parameters'));
+  let paramsMissing = [];
+  if (!req.body) {
+    paramsMissing.push('body');
   }
+  if (!req.body.id) {
+    paramsMissing.push('id');
+  }
+  if (!req.body.state) {
+    paramsMissing.push('state');
+  }
+  if (paramsMissing.length > 0) {
+    return next(new errors.ErrorMissingParameters(paramsMissing));
+  }
+
   let update = {public: req.body.state};
   if (req.body.state === '1' && req.body.updatePostedAt) {
     update.postedAt = Date.now();

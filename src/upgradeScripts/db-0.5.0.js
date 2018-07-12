@@ -1,6 +1,6 @@
 /**
  *  snekw.com,
- *  Copyright (C) 2017 Ilkka Kuosmanen
+ *  Copyright (C) 2018 Ilkka Kuosmanen
  *
  *  This file is part of snekw.com.
  *
@@ -18,22 +18,22 @@
  *  along with snekw.com.  If not, see <http://www.gnu.org/licenses/>.
  */
 'use strict';
-const config = require('../helpers/configStub')('main');
+const dbController = require('../db/controller');
+const models = require('../db/models');
 
-function normalizeError (err) {
-  let ret = {
-    status: err.status || 500,
-    message: err.message
-  };
-  // Return stack and full error object if in developer mode
-  if (config.DEV === true && process.env.NODE_ENV !== 'production') {
-    ret.stack = err.stack;
-    ret.full = err;
-  }
-
-  return ret;
-}
-
-module.exports = {
-  normalizeError: normalizeError
-};
+dbController.connect()
+  .then(() => models.article.find({}).exec())
+  .then(articles => {
+    return Promise.all(articles.map(article => {
+      if (!article.indexImageUrl) {
+        article.indexImagePath = 'static/images/missing-image.png';
+        article.indexImageUrl = undefined;
+      }
+      return article.save();
+    }));
+  })
+  .then(() => dbController.disconnect())
+  .then(() => process.exit())
+  .catch(err => {
+    console.error(err);
+  });

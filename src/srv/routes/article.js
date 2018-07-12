@@ -29,6 +29,7 @@ const querys = require('../../db/querys');
 const validator = require('validator');
 const moment = require('moment');
 const articleLib = require('../../lib/articleLib');
+const ObjectId = require('mongoose').Types.ObjectId;
 
 router.param('article', function (req, res, next, article) {
   if (!validator.matches(article, /^[a-zA-Z0-9_-]+$/g)) {
@@ -102,144 +103,215 @@ router.get('/new', ensureAdmin, function (req, res, next) {
   res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
   req.context.csrfToken = req.csrfToken();
   req.template = HbsViews.article.new;
-  next();
+  models.upload.find({'articles.0': {$exists: false}}).lean().exec()
+    .then(data => {
+      req.context.availableUploads = data;
+      return next();
+    });
 });
 
 router.get('/edit/:article', ensureAdmin, function (req, res, next) {
   res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
 
-  // Load the article from the database ignoring the cached version
-  models.article.findById(req.params.article).lean().exec((err, data) => {
-    if (err) {
+  Promise.all([
+    models.article.findById(req.params.article).lean().exec(),
+    models.upload.find({'articles.0': {$exists: false}}).lean().exec(),
+    models.upload.find({articles: req.params.article}).lean().exec()
+  ])
+    .then(data => {
+      const article = data[0];
+      const availableUploads = data[1];
+      const attachedUploads = data[2];
+      req.context.article = article;
+      req.context.article.uploads = attachedUploads;
+      req.context.csrfToken = req.csrfToken();
+      req.context.isEdit = true;
+
+      req.context.availableUploads = availableUploads;
+
+      req.template = HbsViews.article.edit;
+      return next();
+    })
+    .catch(err => {
       return next(err);
-    }
-
-    req.context.article = data;
-    req.context.csrfToken = req.csrfToken();
-    req.context.isEdit = true;
-
-    req.template = HbsViews.article.edit;
-    next();
-  });
+    });
 });
 
 router.post('/edit', ensureAdmin, function (req, res, next) {
   if (!req.body.title || !req.body.body || !req.body.articleId) {
     res.status(400);
-    req.context.csrfToken = req.csrfToken();
-    req.context.bad = 'Title, body or brief is missing!';
-    req.context.isEdit = true;
-    req.context.article = {
-      rawBody: req.body.body || '',
-      title: req.body.title || '',
-      brief: req.body.brief || '',
-      indexImageUrl: req.body.indexImg || '',
-      indexImageAlt: req.body.indexImgAlt || '',
-      public: req.body.public || 0,
-      _id: req.body.articleId
-    };
-    req.template = HbsViews.article.edit;
-    return next();
-  }
-
-  let rendered = processMarkdown(req.body.body);
-
-  let update = {
-    rawBody: req.body.body,
-    body: rendered,
-    updatedAt: Date.now()
-  };
-
-  if (req.body.title) {
-    update.title = req.body.title;
-  }
-  if (req.body.indexImg) {
-    update.indexImageUrl = req.body.indexImg;
-  }
-  if (req.body.brief) {
-    update.brief = req.body.brief;
-  }
-  if (req.body.public) {
-    update.public = req.body.public;
-  }
-  if (req.body.editUpdatedAt && req.body.setPublicationTimeToNow) {
-    update.postedAt = Date.now();
-    update.updatedAt = update.postedAt;
-  }
-  if (req.body.editUpdatedAt && update.public > 0 && !req.body.setPublicationTimeToNow &&
-    req.body.postedAtHours && req.body.postedAtDate && req.body.timeZone) {
-    let postedAt = moment.utc(req.body.postedAtDate + 'T' + req.body.postedAtHours + 'Z');
-    postedAt.utcOffset(-1 * Number(req.body.timeZone), true);
-    update.postedAt = postedAt.toISOString();
-    // Set the editedAt time to equal the postedAt time so that the edited on time is
-    // not shown on the article page
-    update.updatedAt = postedAt.toISOString();
-  }
-
-  models.article.findByIdAndUpdate(req.body.articleId, {$set: update}, (err, data) => {
-    if (err) {
-      return next(err);
-    }
-    cachedData.updateCache(data._id, models.article.findById(data._id).lean())
-      .then(() => {
-        return cachedData.updateCache(cachedData.keys.indexArticles, querys.indexArticlesQuery);
-      })
-      .then(() => {
-        return res.redirect('/article/id/' + req.body.articleId);
+    Promise.all([
+      models.upload.find({'articles.0': {$exists: false}}).lean().exec(),
+      models.upload.find({articles: req.params.article}).lean().exec()
+    ])
+      .then(data => {
+        req.context.csrfToken = req.csrfToken();
+        req.context.bad = 'Title, body or brief is missing!';
+        req.context.isEdit = true;
+        req.context.availableUploads = data[0] || [];
+        req.context.article = {
+          rawBody: req.body.body || '',
+          title: req.body.title || '',
+          brief: req.body.brief || '',
+          indexImagePath: req.body.indexImg || '',
+          indexImageAlt: req.body.indexImgAlt || '',
+          public: req.body.public || 0,
+          _id: req.body.articleId,
+          uploads: data[1] || []
+        };
+        req.template = HbsViews.article.edit;
+        return next();
       })
       .catch(err => {
         return next(err);
       });
-  });
+  } else {
+    const rendered = processMarkdown(req.body.body);
+
+    const update = {
+      rawBody: req.body.body,
+      body: rendered,
+      updatedAt: Date.now()
+    };
+
+    if (req.body.title) {
+      update.title = req.body.title;
+    }
+    if (req.body.indexImg) {
+      update.indexImagePath = req.body.indexImg.replace(/^\//g, '');
+    }
+    if (req.body.brief) {
+      update.brief = req.body.brief;
+    }
+    if (req.body.public) {
+      update.public = req.body.public;
+    }
+    if (req.body.editUpdatedAt && req.body.setPublicationTimeToNow) {
+      update.postedAt = Date.now();
+      update.updatedAt = update.postedAt;
+    }
+    if (req.body.editUpdatedAt && update.public > 0 && !req.body.setPublicationTimeToNow &&
+      req.body.postedAtHours && req.body.postedAtDate && req.body.timeZone) {
+      let postedAt = moment.utc(req.body.postedAtDate + 'T' + req.body.postedAtHours + 'Z');
+      postedAt.utcOffset(-1 * Number(req.body.timeZone), true);
+      update.postedAt = postedAt.toISOString();
+      // Set the editedAt time to equal the postedAt time so that the edited on time is
+      // not shown on the article page
+      update.updatedAt = postedAt.toISOString();
+    }
+
+    const attached = req.body.attachedUploads || [];
+    Promise.all(attached.map((attach) => models.upload.findById(new ObjectId(attach)).exec()))
+      .then((uploads) => {
+        // Attach articles
+        for (const upload of uploads) {
+          upload.attachArticle(req.body.articleId);
+        }
+        return Promise.all(uploads.map((upload) => upload.save()));
+      })
+      .then(() => {
+        // Find all uploads that are attached to the article
+        return models.upload.find({articles: req.body.articleId}).exec();
+      })
+      .then((articles) => {
+        // Detach articles that aren't attached anymore
+        for (const article of articles) {
+          if (!attached.includes(article._id.toString())) {
+            article.detachArticle(req.body.articleId);
+          }
+        }
+        return Promise.all(articles.map((article) => article.save()));
+      })
+      // Update the article
+      .then(() => models.article.findByIdAndUpdate(req.body.articleId, update).lean().exec())
+      .then(
+        (data) => {
+          // Update caches and return the response.
+          cachedData.updateCache(data._id, models.article.findById(data._id).lean())
+            .then(() => {
+              return cachedData.updateCache(cachedData.keys.indexArticles,
+                querys.indexArticlesQuery);
+            })
+            .then(() => {
+              return res.redirect('/article/id/' + req.body.articleId);
+            })
+            .catch(err => {
+              return next(err);
+            });
+        })
+      .catch(err => {
+        return next(err);
+      });
+  }
 });
 
 router.post('/new', ensureAdmin, function (req, res, next) {
   res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
   if (!req.body.title || !req.body.body || !req.body.brief) {
     res.status(400);
-    req.context.csrfToken = req.csrfToken();
-    req.context.bad = 'Title, body or brief is missing!';
-    req.context.article = {
-      rawBody: req.body.body || '',
-      title: req.body.title || '',
-      brief: req.body.brief || '',
-      indexImageUrl: req.body.indexImg || '',
-      indexImageAlt: req.body.indexImgAlt || ''
-    };
-    req.template = HbsViews.article.new;
-    return next();
-  }
-  let rendered = processMarkdown(req.body.body);
-  let p = (req.body.public === 'true');
-  // eslint-disable-next-line
-  let newarticle = new models.article({
-    title: req.body.title,
-    body: rendered,
-    rawBody: req.body.body,
-    indexImageUrl: req.body.indexImg,
-    author: {
-      id: req.body.postedById,
-      username: req.body.postedByName
-    },
-    brief: req.body.brief,
-    public: p
-  });
 
-  if (newarticle.public !== 0) {
-    newarticle.postedAt = Date.now();
-    // Set the editedAt time to equal the postedAt time so that the edited on time is
-    // not shown on the article page
-    newarticle.updatedAt = newarticle.postedAt;
-  }
+    models.upload.find({'articles.0': {$exists: false}}).lean().exec()
+      .then(availableUploads => {
+        req.context.csrfToken = req.csrfToken();
+        req.context.bad = 'Title, body or brief is missing!';
+        req.context.availableUploads = availableUploads;
+        req.context.article = {
+          rawBody: req.body.body || '',
+          title: req.body.title || '',
+          brief: req.body.brief || '',
+          indexImagePath: req.body.indexImg || '',
+          indexImageAlt: req.body.indexImgAlt || ''
+        };
+        req.template = HbsViews.article.new;
+        return next();
+      })
+      .catch(err => {
+        return next(err);
+      });
+  } else {
+    let rendered = processMarkdown(req.body.body);
+    let p = (req.body.public === 'true');
+    // eslint-disable-next-line
+    let newarticle = new models.article({
+      title: req.body.title,
+      body: rendered,
+      rawBody: req.body.body,
+      indexImagePath: req.body.indexImg,
+      author: {
+        id: req.body.postedById,
+        username: req.body.postedByName
+      },
+      brief: req.body.brief,
+      public: p
+    });
 
-  newarticle.save((err, data) => {
-    if (err) {
-      res.status(500);
-      return next(err);
+    if (newarticle.public !== 0) {
+      newarticle.postedAt = Date.now();
+      // Set the editedAt time to equal the postedAt time so that the edited on time is
+      // not shown on the article page
+      newarticle.updatedAt = newarticle.postedAt;
     }
-    cachedData.setupCache();
-    return res.redirect('/article/id/' + data._id);
-  });
+
+    const attached = req.body.attachedUploads || [];
+
+    newarticle.save((err, data) => {
+      if (err) {
+        res.status(500);
+        return next(err);
+      }
+      models.upload.find({_id: {$in: attached.map((a) => new ObjectId(a))}}).exec()
+        .then((uploads) => {
+          return uploads.map((upload) => upload.attachArticle(data._id, true));
+        })
+        .then(() => {
+          cachedData.setupCache();
+          return res.redirect('/article/id/' + data._id);
+        })
+        .catch((err) => {
+          return next(err);
+        });
+    });
+  }
 });
 
 router.get('/delete/:article', ensureAdmin, function (req, res, next) {
@@ -256,12 +328,21 @@ router.post('/delete', ensureAdmin, function (req, res, next) {
     return res.redirect('/');
   }
 
-  models.article.findByIdAndRemove(req.body.id).exec((err) => {
+  models.article.findByIdAndRemove(req.body.id).exec((err, old) => {
     if (err) {
       return next(err);
     }
-    cachedData.setupCache();
-    return res.redirect('/');
+    models.upload.find({articles: old._id}).exec()
+      .then((data) => {
+        return Promise.all(data.map((d) => d.detachArticle(old._id, true)));
+      })
+      .then(() => {
+        cachedData.setupCache();
+        return res.redirect('/');
+      })
+      .catch((err) => {
+        return next(err);
+      });
   });
 });
 

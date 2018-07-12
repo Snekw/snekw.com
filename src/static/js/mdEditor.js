@@ -19,30 +19,30 @@
  *  along with snekw.com.  If not, see <http://www.gnu.org/licenses/>.
  */
 'use strict';
-var editor = document.getElementById('editor');
-var editorOut = document.getElementById('editorOut');
-var cmReader = new commonmark.Parser();
-var cmRenderer = new commonmark.HtmlRenderer();
+const editor = document.getElementById('editor');
+const editorOut = document.getElementById('editorOut');
+const cmReader = new commonmark.Parser();
+const cmRenderer = new commonmark.HtmlRenderer();
 
 editor.addEventListener('keyup', onEdit);
 
 function processMarkdown (input) {
-  var parsed = cmReader.parse(input);
+  const parsed = cmReader.parse(input);
 
-  var walker = parsed.walker();
-  var event, node;
+  const walker = parsed.walker();
+  let event, node;
 
   while ((event = walker.next())) {
     node = event.node;
     if (event.entering && node.type === 'code_block') {
-      var lang = Prism.languages[node.info];
-      var langName = node.info;
+      let lang = Prism.languages[node.info];
+      let langName = node.info;
       if (!lang) {
         langName = 'bash';
         lang = Prism.languages.bash;
       }
-      var newNode = new commonmark.Node('html_block');
-      var className = 'language-' + langName;
+      let newNode = new commonmark.Node('html_block');
+      const className = 'language-' + langName;
       newNode.literal = '<pre class="' + className + '"><code class="' +
         className + '">' +
         Prism.highlight(node.literal, lang) + '</code></pre>';
@@ -59,7 +59,7 @@ function onEdit () {
   editorOut.innerHTML = processMarkdown(editor.value);
 }
 
-var changesMade = false;
+let changesMade = false;
 onEdit();
 // Set the changes made flag back to false after running the "onEdit" function once to require the
 // user to make changes to trigger the confirmation.
@@ -86,20 +86,23 @@ window.onbeforeunload = function () {
 };
 
 window.onload = function () {
-  var elements = document.getElementsByTagName('form');
-  for (var i = 0; i < elements.length; i++) {
+  let elements = document.getElementsByTagName('form');
+  for (let i = 0; i < elements.length; i++) {
     elements[i].addEventListener('submit', processSubmit);
   }
 
-  document.getElementById('editUpdatedAt').addEventListener('click', updatedTimeControl);
-  updatedTimeControl(document.getElementById('editUpdatedAt'));
+  const updateTimeControl = document.getElementById('editUpdatedAt');
+  if (updateTimeControl) {
+    updateTimeControl.addEventListener('click', updatedTimeControl);
+    updatedTimeControl(document.getElementById('editUpdatedAt'));
+  }
 
-  var offset = new Date().getTimezoneOffset();
-  var postedAtHours = document.getElementById('postedAtHours');
+  const offset = new Date().getTimezoneOffset();
+  const postedAtHours = document.getElementById('postedAtHours');
   if (!postedAtHours) {
     return;
   }
-  var time = new Date('1970-01-01T' + postedAtHours.value + 'Z');
+  let time = new Date('1970-01-01T' + postedAtHours.value + 'Z');
   time = new Date(time.getTime() + offset * 60000);
   postedAtHours.value = (time.getHours().toString().length === 1
     ? '0' + time.getHours()

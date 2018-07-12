@@ -14,6 +14,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with snekw.com.  If not, see <http://www.gnu.org/licenses/>.
  */
+@import "vars";
 
 .md {
   width: 50%;
@@ -22,11 +23,10 @@
 
   &.md-left {
     float: left;
-    background-color: #66d9ef;
   }
   &.md-right {
     float: right;
-    background-color: #999999;
+    background-color: $secondary-color;
   }
 
   textarea {
@@ -55,7 +55,7 @@
   height: calc(100% - 1em);
   padding: 0.5em;
   overflow-y: scroll;
-  background-color: whitesmoke;
+  background-color: $text-color-secondary;
   direction: ltr;
 }
 
@@ -63,4 +63,23 @@
   width: calc(100% - 2vw - 2em);
   height: 90vh;
   margin: 2em;
+}
+
+.upl-browser-img {
+  width: 40px;
+  max-height: 40px;
+}
+
+#attached-uploads-target, #available-uploads-target {
+  min-height: 40px;
+  max-height: 60vh;
+  overflow-y: scroll;
+  border: solid $background-color;
+  :hover {
+    background-color: $accent-color;
+  }
+}
+
+#available-uploads-target .cpy {
+  display: none;
 }

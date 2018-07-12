@@ -1,7 +1,7 @@
 {{!
 /**
  *  snekw.com,
- *  Copyright (C) 2017 Ilkka Kuosmanen
+ *  Copyright (C) 2018 Ilkka Kuosmanen
  *
  *  This file is part of snekw.com.
  *
@@ -19,15 +19,24 @@
  *  along with snekw.com.  If not, see <http://www.gnu.org/licenses/>.
  */
 }}
-<div class="container {{#if_eq public 2}}link-only{{/if_eq}}">
-  <br/>
-  <img src="{{fixImagePath indexImagePath}}" srcset="{{imageSrcSet indexImagePath}}" width="550" height="250"/><br/>
-  <div class="articleContainer indexarticleClickArea">
-    <h1>{{title}}</h1>
-    {{brief}}<br/>
-    <p>Published: {{formatTime this.postedAt 'LLLL'}}</p>
-    <p>By: {{author.username}}</p>
-    <a href="/article/id/{{_id}}">Read more...</a>
-    {{>editControls}}
+<div class="container">
+  <p>Attached uploads</p>
+  <div id="attached-uploads-target">
+    {{#each article.uploads}}
+      {{>uploadBrowserTemplate attached=true}}
+    {{/each}}
   </div>
 </div>
+<div class="container">
+  <p>Available uploads</p>
+  <div id="available-uploads-target">
+    {{#each availableUploads}}
+      {{>uploadBrowserTemplate}}
+    {{/each}}
+  </div>
+</div>
+<template id="upload-template">
+  {{>uploadBrowserTemplate}}
+</template>
+<script src="/static/js/request.js"></script>
+<script src="/static/js/uploadBrowser.js"></script>

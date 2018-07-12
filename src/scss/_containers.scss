@@ -167,6 +167,16 @@
   flex: 1;
 }
 
+.flex-0 {
+  align-self: center;
+  flex: 0 0 0;
+}
+
+.flex-center {
+  justify-content: flex-start;
+  align-items: stretch;
+}
+
 .flex-left {
   flex: 0;
   align-self: flex-start;
@@ -178,3 +188,4 @@
   align-self: flex-end;
   margin-right: 10px;
 }
+

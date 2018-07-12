@@ -23,6 +23,8 @@ const fs = require('fs');
 const moment = require('moment');
 let HbsViews = require('./hbsViews');
 const config = require('../helpers/configStub')('main');
+const image = require('../lib/api/image');
+const path = require('path');
 
 function getHbs (path) {
   let pathStart = './views/';
@@ -30,7 +32,7 @@ function getHbs (path) {
 }
 
 function getPartialHbs (partial) {
-  return getHbs('partials/' + partial);
+  return getHbs('./partials/' + partial);
 }
 
 function recompileAll () {
@@ -67,7 +69,10 @@ const partials = {
   adminLayout: getPartialHbs('adminLayout.hbs'),
   adminNav: getPartialHbs('adminNav.hbs'),
   adminNavItem: getPartialHbs('adminNavItem.hbs'),
-  adminArticle: getPartialHbs('adminArticle.hbs')
+  adminArticle: getPartialHbs('adminArticle.hbs'),
+  upload: getPartialHbs('upload.hbs'),
+  uploadBrowser: getPartialHbs('uploadBrowser.hbs'),
+  uploadBrowserTemplate: getPartialHbs('uploadBrowserTemplate.hbs')
 };
 
 function reloadPartials () {
@@ -109,6 +114,37 @@ hbs.registerHelper('getTimeString', function (mongooseDate) {
   return moment(mongooseDate).format('hh:mm');
 });
 
+hbs.registerHelper('fixImagePath', function (path) {
+  if (!path) return '';
+  if (path.startsWith('http')) return path;
+  return image.fixPath(path);
+});
+
+function getSrcSet (imagePath) {
+  if (!imagePath) return '';
+  if (imagePath.startsWith('http')) return '';
+  const images = image.getAltImageNames(imagePath);
+  if (!images || images.length === 0) return '';
+  let result = '';
+  images.forEach((img) => {
+    const match = image.isGenerated(img);
+    if (!match) return;
+    result = `${result}/${img} ${match}w,`;
+  });
+  return result.slice(0, -1);
+}
+
+hbs.registerHelper('imageSrcSet', function (imagePath) {
+  return getSrcSet(imagePath);
+});
+
+hbs.registerHelper('getImgThumbnail', function (imagePath) {
+  if (!imagePath) return '';
+  if (imagePath.startsWith('http')) return imagePath;
+  const thumbPath = image.getThumbnailPath(imagePath);
+  return image.fixPath(fs.existsSync(thumbPath) ? thumbPath : imagePath);
+});
+
 hbs.registerPartial(partials);
 
 recompileAll();
@@ -127,7 +163,8 @@ function middleware (req, res, next) {
 
 module.exports = {
   views: HbsViews,
-  recompileAll: recompileAll,
-  reloadPartials: reloadPartials,
-  middleware: middleware
+  recompileAll,
+  reloadPartials,
+  middleware,
+  getSrcSet
 };

@@ -23,7 +23,7 @@ const ensureLoggedIn = require('../../lib/ensureLoggedIn');
 const HbsViews = require('../hbsSystem').views;
 const auth = require('../../lib/auth');
 const cache = require('../../db/CachedData');
-const normalizeError = require('../Error').normalizeError;
+const normalizeError = require('../ErrorJSONAPI').normalizeError;
 const config = require('../../helpers/configStub')('main');
 const querys = require('../../db/querys');
 auth.setErrorPageFunc(HbsViews.error.get.hbs);

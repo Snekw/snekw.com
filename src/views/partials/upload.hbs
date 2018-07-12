@@ -1,0 +1,46 @@
+{{!
+/**
+ *  snekw.com,
+ *  Copyright (C) 2018 Ilkka Kuosmanen
+ *
+ *  This file is part of snekw.com.
+ *
+ *  snekw.com is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  snekw.com is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with snekw.com.  If not, see <http://www.gnu.org/licenses/>.
+ */
+}}
+<div class="container">
+  <p>Upload new item</p>
+  <form id="upload">
+    <label for="upload-type">Type:</label>
+    <select id="upload-type" name="type">
+      <option value="img">Image</option>
+      <option value="zip">Zip</option>
+      <option value="code">Code file</option>
+      <option value="audio">Audio file</option>
+    </select><br>
+
+    <label for="upload-title">Title:</label>
+    <input id="upload-title" type="text" name="title"><br>
+    <label for="upload-alt">Alt:</label>
+    <input id="upload-alt" type="text" name="alt"><br>
+    <label for="upload-desc">Description:</label>
+    <input id="upload-desc" type="text" name="description"><br>
+    <input type="hidden" name="_csrf" value="{{csrfToken}}">
+    <input id="upl_image" type="file" name="upload" multiple><br>
+    <button id="upl_submit" type="submit">Submit</button>
+  </form>
+  <progress id="upl_progress" value="0" max="1"></progress>
+</div>
+
+<script src="/static/js/upload.js"></script>

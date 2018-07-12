@@ -23,7 +23,7 @@ const passport = require('passport');
 const Auth0Strategy = require('passport-auth0');
 const router = require('express').Router();
 const config = require('../helpers/configStub')('main');
-const normalizeError = require('../srv/Error').normalizeError;
+const normalizeError = require('../srv/ErrorJSONAPI').normalizeError;
 const request = require('request');
 
 const env = {
