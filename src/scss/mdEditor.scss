@@ -70,16 +70,16 @@
   max-height: 40px;
 }
 
-#attached-uploads-target, #available-uploads-target{
+#attached-uploads-target, #available-uploads-target {
   min-height: 40px;
   max-height: 60vh;
   overflow-y: scroll;
   border: solid $background-color;
-  :hover{
+  :hover {
     background-color: $accent-color;
   }
 }
 
-#attached-uploads-target{
-
+#available-uploads-target .cpy {
+  display: none;
 }
