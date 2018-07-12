@@ -55,10 +55,10 @@ function processImage (node, event) {
   let newNode = new commonmark.Node('html_block');
   newNode.literal =
     `<a href="${node.destination}">
-<img src"${node.destination}"
-alt="${node.firstChild.literal}" 
-srcset="${getSrcSet(node.destination.replace('/', ''))}">
-</img></a>`;
+<img src="${node.destination}" 
+alt="${node.firstChild.literal}"
+srcset="${getSrcSet(node.destination.replace(/^\//, ''))}">
+</img></a>`.replace(/\n/g, '');
   node.insertBefore(newNode);
   node.unlink();
 }

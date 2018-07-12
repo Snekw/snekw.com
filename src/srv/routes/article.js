@@ -168,7 +168,7 @@ router.post('/edit', ensureAdmin, function (req, res, next) {
     update.title = req.body.title;
   }
   if (req.body.indexImg) {
-    update.indexImagePath = req.body.indexImg;
+    update.indexImagePath = req.body.indexImg.replace(/^\//g, '');
   }
   if (req.body.brief) {
     update.brief = req.body.brief;
