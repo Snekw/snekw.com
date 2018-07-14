@@ -85,9 +85,6 @@ img {
   width: auto;
   height: auto;
   border-radius: $general-border-radius-alt;
-  @media screen and (max-width: $break-small) {
-    margin: 0;
-  }
   &[src = ""] {
     display: none;
   }
