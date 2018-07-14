@@ -55,5 +55,4 @@ nogit
 /src/static/**/*.js
 **/config
 !/src/static/css/third-party/**.*
-!/src/static/js/third-party/**.*
 /src/static/uploads
