@@ -20,10 +20,14 @@
 'use strict';
 const fs = require('fs');
 const path = require('path');
-const cssInternal = require('./internal/css');
 // const css = require('css');
 // const uglifyJS = require('uglify-es');
 const utility = require('../src/helpers/fs-utility');
+const cssBuilder = require('./internal/cssBuild');
+const copier = require('./internal/copier');
+const configHandler = require('./internal/configHandler');
+const logger = require('./internal/logger');
+const {performance} = require('perf_hooks');
 
 // Build functions
 
@@ -86,103 +90,98 @@ const utility = require('../src/helpers/fs-utility');
 //   });
 // }
 
-function uglify (filePath, destPath) {
-  let code = fs.readFileSync(filePath).toString();
-  // let result = uglifyJS.minify(code, {
-  //   compress: {
-  //     drop_console: true
-  //   },
-  //   output: {
-  //     comments: 'some'
-  //   }
-  // });
-  // if (result.error) throw result.error;
-  utility.ensureDir(path.dirname(destPath), err => {
-    if (err) {
-      throw err;
-    }
-    // fs.writeFileSync(destPath, result.code);
-    fs.writeFileSync(destPath, code);
-  });
-}
+// function uglify (filePath, destPath) {
+//   let code = fs.readFileSync(filePath).toString();
+//   // let result = uglifyJS.minify(code, {
+//   //   compress: {
+//   //     drop_console: true
+//   //   },
+//   //   output: {
+//   //     comments: 'some'
+//   //   }
+//   // });
+//   // if (result.error) throw result.error;
+//   utility.ensureDir(path.dirname(destPath), err => {
+//     if (err) {
+//       throw err;
+//     }
+//     // fs.writeFileSync(destPath, result.code);
+//     fs.writeFileSync(destPath, code);
+//   });
+// }
+//
+// // Start of actual build
+//
+// // Save the previously used config file
+// // let previousConfig;
+// // let prevConfigPath = './dist/config/mainConfig.js';
+// // if (fs.existsSync(prevConfigPath)) {
+// //   previousConfig = fs.readFileSync(prevConfigPath);
+// // }
+//
+// utility.clean('./dist');
+//
+// const files = [
+//   utility.copyFile('./src/package.json', './dist/package.json'),
+//   utility.copyFile('./src/package-lock.json', './dist/package-lock.json'),
+//   utility.copyFile('./src/config-example/mainConfig.js', './dist/config/mainConfig.js'),
+//   utility.copyFile('./src/static/favicon.ico', './dist/static/favicon.ico'),
+//   utility.copyFile('./node_modules/commonmark/dist/commonmark.min.js',
+//     './dist/static/js/third-party/commonmark.min.js')
+// ];
+//
+// const dirs = [
+//   utility.copyDir('./src/db', './dist/db'),
+//   utility.copyDir('./src/helpers', './dist/helpers'),
+//   utility.copyDir('./src/lib', './dist/lib'),
+//   utility.copyDir('./src/helpers', './dist/helpers'),
+//   utility.copyDir('./src/srv', './dist/srv'),
+//   utility.copyDir('./src/views', './dist/views'),
+//   utility.copyDir('./src/static/images', './dist/static/images'),
+//   utility.copyDir('./src/upgradeScripts', './dist/upgradeScripts')
+// ];
+//
+// let all = files.concat(dirs);
+// Promise.all(all)
+//   .then(() => {
+//     console.log('Files copied');
+//
+//     if (previousConfig) {
+//       fs.writeFileSync(prevConfigPath, previousConfig);
+//       console.log('Config file restored.');
+//     }
+//   })
+//   .catch(err => {
+//     console.log(err);
+//   });
 
-// Start of actual build
+// uglify('./node_modules/prismjs/prism.js', './dist/static/js/third-party/prism.min.js');
+// uglify('./src/static/js/mdEditor.js', './dist/static/js/mdEditor.js');
+// uglify('./src/static/js/admin.js', './dist/static/js/admin.js');
+// uglify('./src/static/js/request.js', './dist/static/js/request.js');
+// uglify('./src/static/js/upload.js', './dist/static/js/upload.js');
+// uglify('./src/static/js/uploadBrowser.js', './dist/static/js/uploadBrowser.js');
 
-// Save the previously used config file
-let previousConfig;
-let prevConfigPath = './dist/config/mainConfig.js';
-if (fs.existsSync(prevConfigPath)) {
-  previousConfig = fs.readFileSync(prevConfigPath);
-}
+/* -------- New Build --------- */
 
-utility.clean('./dist');
+const buildStartTime = performance.now();
+logger('Build started.');
+utility.setupLogger(logger);
 
-const files = [
-  utility.copyFile('./src/package.json', './dist/package.json'),
-  utility.copyFile('./src/package-lock.json', './dist/package-lock.json'),
-  utility.copyFile('./src/config-example/mainConfig.js', './dist/config/mainConfig.js'),
-  utility.copyFile('./src/static/favicon.ico', './dist/static/favicon.ico'),
-  utility.copyFile('./node_modules/commonmark/dist/commonmark.min.js',
-    './dist/static/js/third-party/commonmark.min.js')
-];
-
-const dirs = [
-  utility.copyDir('./src/db', './dist/db'),
-  utility.copyDir('./src/helpers', './dist/helpers'),
-  utility.copyDir('./src/lib', './dist/lib'),
-  utility.copyDir('./src/helpers', './dist/helpers'),
-  utility.copyDir('./src/srv', './dist/srv'),
-  utility.copyDir('./src/views', './dist/views'),
-  utility.copyDir('./src/static/images', './dist/static/images'),
-  utility.copyDir('./src/upgradeScripts', './dist/upgradeScripts')
-];
-
-const scssReader = utility.readFileGenerator('./src/scss', '.scss');
-const thirdPartyCssReader = utility.readFileGenerator('./src/static/css/third-party', '.css');
-const compileScss = cssInternal.compileScssGenerator('expanded', ['./src/scss']);
-const saveCss = utility.saveFileGenerator('./dist/static/css', '.min.css');
-
-function processScssFile (fileName) {
-  return scssReader(fileName)
-    .then(compileScss)
-    .then(cssInternal.prefixCss)
-    .then(cssInternal.cleanCss)
-    .then(saveCss(fileName));
-}
-
-Promise.all([
-  processScssFile('mdEditor'),
-  processScssFile('admin'),
-  processScssFile('main'),
-  thirdPartyCssReader('prism')
-    .then(cssInternal.prefixCss)
-    .then(cssInternal.cleanCss)
-    .then(saveCss('prism', 'third-party'))
-])
-  .then(out => {
-    console.log(out);
-  })
-  .catch(err => {
-    console.log(err);
-  });
-
-let all = files.concat(dirs);
-Promise.all(all)
+configHandler.saveOldConfig('mainConfig')
+  .then(() => utility.clean('./dist'))
+  .then(() => Promise.all([
+    cssBuilder(),
+    copier()
+  ]))
+  .then(() => configHandler.restoreConfig('mainConfig'))
   .then(() => {
-    console.log('Files copied');
+    const buildEndTime = performance.now();
 
-    if (previousConfig) {
-      fs.writeFileSync(prevConfigPath, previousConfig);
-      console.log('Config file restored.');
-    }
+    logger('Build ended.');
+    logger(`Time taken: ${buildEndTime - buildStartTime} ms`);
   })
   .catch(err => {
-    console.log(err);
+    logger('Build failed.');
+    console.error(err);
   });
-
-uglify('./node_modules/prismjs/prism.js', './dist/static/js/third-party/prism.min.js');
-uglify('./src/static/js/mdEditor.js', './dist/static/js/mdEditor.js');
-uglify('./src/static/js/admin.js', './dist/static/js/admin.js');
-uglify('./src/static/js/request.js', './dist/static/js/request.js');
-uglify('./src/static/js/upload.js', './dist/static/js/upload.js');
-uglify('./src/static/js/uploadBrowser.js', './dist/static/js/uploadBrowser.js');

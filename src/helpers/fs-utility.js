@@ -21,6 +21,12 @@
 const fs = require('fs');
 const path = require('path');
 
+let logger = (msg) => console.log(msg);
+
+function setupLogger (loggingFunc) {
+  logger = loggingFunc;
+}
+
 /**
  * Ensure that a directory exists
  * @param dir Path to a directory
@@ -70,6 +76,7 @@ function clean (dir) {
       if (fs.lstatSync(entryPath).isDirectory()) {
         clean(entryPath);
       } else {
+        logger(`Deleted: ${entryPath}`);
         fs.unlinkSync(entryPath);
       }
     });
@@ -87,18 +94,22 @@ function copyFile (source, target) {
   return new Promise((resolve, reject) => {
     ensureDir(path.dirname(target), err => {
       if (err && err.code !== 'EEXIST') {
+        logger(`File doesn't exist. Can't copy.`);
         return reject(err);
       }
 
       let rd = fs.createReadStream(source);
       rd.on('error', function (err) {
+        logger(`Failed to read file for copying`);
         return reject(err);
       });
       let wr = fs.createWriteStream(target);
       wr.on('error', function (err) {
+        logger(`Failed to copy file`);
         return reject(err);
       });
       wr.on('close', function (ex) {
+        logger(`Copied file from '${source}' to '${target}'`);
         return resolve();
       });
       rd.pipe(wr);
@@ -117,6 +128,7 @@ function copyDir (source, target) {
     let promises = [];
     fs.readdir(source, (err, items) => {
       if (err) {
+        logger(`Failed to read directory for copying`);
         return reject(err);
       }
       for (let i = 0; i < items.length; i++) {
@@ -128,8 +140,10 @@ function copyDir (source, target) {
         }
       }
       Promise.all(promises).then(() => {
+        logger(`Copied directory from '${source}' to '${target}'`);
         return resolve();
       }).catch(err => {
+        logger(`Failed to copy directory`);
         return reject(err);
       });
     });
@@ -150,14 +164,17 @@ function saveFile (folder, fileName, extension, data) {
       if (err) {
         return reject(err);
       }
+      const filePath = path.resolve(path.join(folder, fileName + extension));
       fs.writeFile(
-        path.resolve(path.join(folder, fileName + extension)),
+        filePath,
         data,
         err => {
           if (err) {
+            logger(`Failed to save file: ${filePath}`);
             return reject(err);
           } else {
-            return resolve(folder + '/' + fileName + extension + ' written.');
+            logger(`Saved file: ${filePath}`);
+            return resolve();
           }
         }
       );
@@ -198,8 +215,10 @@ function readFile (folder, fileName, extension) {
     }
     fs.readFile(filePath, (err, data) => {
       if (err) {
+        logger(`Failed to read file: ${filePath}`);
         return reject(err);
       }
+      logger(`Read file: ${filePath}`);
       return resolve(data.toString());
     });
   });
@@ -219,5 +238,6 @@ module.exports = {
   saveFile,
   saveFileGenerator,
   readFile,
-  readFileGenerator
+  readFileGenerator,
+  setupLogger
 };
