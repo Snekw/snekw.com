@@ -31,6 +31,9 @@
   },
   "dependencies": {
     "autoprefixer": "^8.4.1",
+    "babel-core": "^6.26.3",
+    "babel-polyfill": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
     "clean-css": "^4.1.11",
     "commonmark": "^0.28.1",
     "css": "^2.2.3",

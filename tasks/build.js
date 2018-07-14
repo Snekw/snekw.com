@@ -18,130 +18,73 @@
  *  along with snekw.com.  If not, see <http://www.gnu.org/licenses/>.
  */
 'use strict';
-const autoprefixer = require('autoprefixer');
-const postcss = require('postcss');
-const sass = require('node-sass');
 const fs = require('fs');
-const CleanCss = require('clean-css');
 const path = require('path');
-const css = require('css');
+const cssInternal = require('./internal/css');
+// const css = require('css');
 // const uglifyJS = require('uglify-es');
 const utility = require('../src/helpers/fs-utility');
 
 // Build functions
 
-function compileScss (file, style) {
-  return new Promise((resolve, reject) => {
-    sass.render({
-      style: style || 'expanded',
-      file: './src/scss/' + file + '.scss'
-    }, (err, out) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve({file: file, out: out});
-      }
-    });
-  });
-}
-
-function prefixCss (input) {
-  return new Promise((resolve, reject) => {
-    postcss([autoprefixer]).process(input.out.css).then((out) => {
-      input.out = out;
-      return resolve(input);
-    }).catch(err => {
-      return reject(err);
-    });
-  });
-}
-
-function cleanCss (input) {
-  return new Promise((resolve, reject) => {
-    new CleanCss({returnPromise: true}).minify(input.out.css).then(out => {
-      input.out = out;
-      return resolve(input);
-    }).catch(err => {
-      return reject(err);
-    });
-  });
-}
-
-function saveCssMin (input) {
-  return new Promise((resolve, reject) => {
-    utility.ensureDir('./dist/static/css/third-party', err => {
-      if (err) {
-        return reject(err);
-      }
-      fs.writeFile('./dist/static/css/' + input.file + '.css', input.out.styles, err => {
-        if (err) {
-          return reject(err);
-        } else {
-          return resolve('./dist/static/css/' + input.file + '.css written.');
-        }
-      });
-    });
-  });
-}
-
-function getFoldCss (input) {
-  return new Promise((resolve, reject) => {
-    fs.readFile('./src/views/partials/layout.hbs', 'utf8', (err, data) => {
-      if (err) {
-        return reject(err);
-      }
-      let cssContent = css.parse(input.out.css.toString());
-      let start = data.indexOf('{{!@#') + 7; // Trim the comment syntax out
-      let end = data.indexOf('#@}}');
-      let content = data.substr(start, end - start).split(/[\n]|,/);
-      content = content.map((val) => {
-        return val.trim();
-      });
-
-      let foldCssAST = {
-        parent: null,
-        stylesheet: {
-          rules: [],
-          parsingErrors: []
-        },
-        type: 'stylesheet'
-      };
-      let addedRuleIndices = [];
-      for (let i = 0; i < content.length; i++) {
-        for (let d = 0; d < cssContent.stylesheet.rules.length; d++) {
-          let rule = cssContent.stylesheet.rules[d];
-          if (rule.type !== 'rule') {
-            continue;
-          }
-          for (let x = 0; x < rule.selectors.length; x++) {
-            if (content[i] === rule.selectors[x]) {
-              if (addedRuleIndices.indexOf(d) > -1) {
-                continue;
-              }
-              addedRuleIndices.push(d);
-              foldCssAST.stylesheet.rules.push(rule);
-            }
-          }
-        }
-      }
-
-      let foldCss = css.stringify(foldCssAST);
-      new CleanCss({returnPromise: true}).minify(foldCss).then(out => {
-        let newData = data.slice(0, start - 7);
-        newData += '<style>' + out.styles + '</style>';
-        newData += data.slice(end + 4, data.length);
-        fs.writeFile('./dist/views/partials/layout.hbs', newData, {}, (err) => {
-          if (err) {
-            return reject(err);
-          }
-          return resolve(input);
-        });
-      }).catch(err => {
-        return reject(err);
-      });
-    });
-  });
-}
+// function getFoldCss (input) {
+//   return new Promise((resolve, reject) => {
+//     fs.readFile('./src/views/partials/layout.hbs', 'utf8', (err, data) => {
+//       if (err) {
+//         return reject(err);
+//       }
+//       let cssContent = css.parse(input.out.css.toString());
+//       let start = data.indexOf('{{!@#') + 7; // Trim the comment syntax out
+//       let end = data.indexOf('#@}}');
+//       let content = data.substr(start, end - start).split(/[\n]|,/);
+//       content = content.map((val) => {
+//         return val.trim();
+//       });
+//
+//       let foldCssAST = {
+//         parent: null,
+//         stylesheet: {
+//           rules: [],
+//           parsingErrors: []
+//         },
+//         type: 'stylesheet'
+//       };
+//       let addedRuleIndices = [];
+//       for (let i = 0; i < content.length; i++) {
+//         for (let d = 0; d < cssContent.stylesheet.rules.length; d++) {
+//           let rule = cssContent.stylesheet.rules[d];
+//           if (rule.type !== 'rule') {
+//             continue;
+//           }
+//           for (let x = 0; x < rule.selectors.length; x++) {
+//             if (content[i] === rule.selectors[x]) {
+//               if (addedRuleIndices.indexOf(d) > -1) {
+//                 continue;
+//               }
+//               addedRuleIndices.push(d);
+//               foldCssAST.stylesheet.rules.push(rule);
+//             }
+//           }
+//         }
+//       }
+//
+//       let foldCss = css.stringify(foldCssAST);
+//       new CleanCss({returnPromise: true}).minify(foldCss).then(out => {
+//         let newData = data.slice(0, start - 7);
+//         newData += '<style>' + out.styles + '</style>';
+//         newData += data.slice(end + 4, data.length);
+//         fs.writeFile('./dist/views/partials/layout.hbs', newData, {}, (err) => {
+//           if (err) {
+//             return reject(err);
+//           }
+//           return resolve(input);
+//         });
+//       }).catch(err => {
+//         return reject(err);
+//       });
+//     });
+//   });
+// }
 
 function uglify (filePath, destPath) {
   let code = fs.readFileSync(filePath).toString();
@@ -190,52 +133,37 @@ const dirs = [
   utility.copyDir('./src/helpers', './dist/helpers'),
   utility.copyDir('./src/srv', './dist/srv'),
   utility.copyDir('./src/views', './dist/views'),
-  utility.copyDir('./src/static/images', './dist/static/images')
+  utility.copyDir('./src/static/images', './dist/static/images'),
+  utility.copyDir('./src/upgradeScripts', './dist/upgradeScripts')
 ];
 
-compileScss('main')
-  .then(prefixCss)
-  .then(cleanCss)
-  .then(saveCssMin)
+const scssReader = utility.readFileGenerator('./src/scss', '.scss');
+const thirdPartyCssReader = utility.readFileGenerator('./src/static/css/third-party', '.css');
+const compileScss = cssInternal.compileScssGenerator('expanded', ['./src/scss']);
+const saveCss = utility.saveFileGenerator('./dist/static/css', '.min.css');
+
+function processScssFile (fileName) {
+  return scssReader(fileName)
+    .then(compileScss)
+    .then(cssInternal.prefixCss)
+    .then(cssInternal.cleanCss)
+    .then(saveCss(fileName));
+}
+
+Promise.all([
+  processScssFile('mdEditor'),
+  processScssFile('admin'),
+  processScssFile('main'),
+  thirdPartyCssReader('prism')
+    .then(cssInternal.prefixCss)
+    .then(cssInternal.cleanCss)
+    .then(saveCss('prism', 'third-party'))
+])
   .then(out => {
     console.log(out);
   })
   .catch(err => {
     console.log(err);
-  });
-
-compileScss('mdEditor')
-  .then(prefixCss)
-  .then(cleanCss)
-  .then(saveCssMin)
-  .then(out => {
-    console.log(out);
-  })
-  .catch(err => {
-    console.log(err);
-  });
-
-compileScss('admin')
-  .then(prefixCss)
-  .then(cleanCss)
-  .then(saveCssMin)
-  .then(out => {
-    console.log(out);
-  })
-  .catch(err => {
-    console.log(err);
-  });
-
-prefixCss({
-  file: 'third-party/prism',
-  out: {
-    css: fs.readFileSync('./src/static/css/third-party/prism.css')
-  }
-})
-  .then(cleanCss)
-  .then(saveCssMin)
-  .then(out => {
-    console.log(out);
   });
 
 let all = files.concat(dirs);
