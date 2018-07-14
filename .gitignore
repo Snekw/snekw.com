@@ -48,11 +48,12 @@ typings/
 nogit
 /src/GENERATED/
 .idea
-**/*ConfigDev.js
 .sass-cache
 *.map
 /dist
 /src/static/**/*.css
+/src/static/**/*.js
 **/config
-!/src/static/css/third-party/prism.css
+!/src/static/css/third-party/**.*
+!/src/static/js/third-party/**.*
 /src/static/uploads

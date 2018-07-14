@@ -19,4 +19,5 @@
  *  along with snekw.com.  If not, see <http://www.gnu.org/licenses/>.
  */
 'use strict';
-import './admin/admin';
+import './common/request';
+import './common/upload';

@@ -19,7 +19,6 @@
  *  along with snekw.com.  If not, see <http://www.gnu.org/licenses/>.
  */
 'use strict';
-
 document.getElementById('admin-nav-toggle').addEventListener('click', doAdminNavToggle);
 
 const nav = document.getElementById('admin-nav-container');
@@ -156,4 +155,11 @@ function doAdminNavToggle (e) {
   }
 }
 
+function test () {
+  if ('asd'.includes('d')) {
+    console.log('yes');
+  }
+}
+
+test();
 updateNavState();

@@ -18,14 +18,15 @@
  *  along with snekw.com.  If not, see <http://www.gnu.org/licenses/>.
  */
 'use strict';
+const {performance} = require('perf_hooks');
 
-let lastLogTime = new Date();
+let lastLogTime = performance.now();
 
 function log (message) {
-  const timeNow = new Date();
+  const timeNow = performance.now();
   const timeSinceLast = timeNow - lastLogTime;
   lastLogTime = timeNow;
-  console.log(`${timeNow.toLocaleString()} | ${timeSinceLast} ms | ${message}`);
+  console.log(`${new Date().toLocaleString()} | ${timeSinceLast.toFixed(3)} ms | ${message}`);
 }
 
 module.exports = log;

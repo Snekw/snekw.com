@@ -1,5 +1,9 @@
 {
-  "env":{
+  "env": {
     "browser": true
+  },
+  "globals": {
+    "commonmark": true,
+    "Prism": true
   }
 }

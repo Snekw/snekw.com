@@ -25,6 +25,7 @@ const path = require('path');
 const utility = require('../src/helpers/fs-utility');
 const cssBuilder = require('./internal/cssBuild');
 const copier = require('./internal/copier');
+const jsBuild = require('./internal/jsBuild');
 const configHandler = require('./internal/configHandler');
 const logger = require('./internal/logger');
 const {performance} = require('perf_hooks');
@@ -172,14 +173,15 @@ configHandler.saveOldConfig('mainConfig')
   .then(() => utility.clean('./dist'))
   .then(() => Promise.all([
     cssBuilder(),
-    copier()
+    copier(),
+    jsBuild('dist')
   ]))
   .then(() => configHandler.restoreConfig('mainConfig'))
   .then(() => {
     const buildEndTime = performance.now();
 
     logger('Build ended.');
-    logger(`Time taken: ${buildEndTime - buildStartTime} ms`);
+    logger(`Time taken: ${(buildEndTime - buildStartTime).toFixed(3)} ms`);
   })
   .catch(err => {
     logger('Build failed.');

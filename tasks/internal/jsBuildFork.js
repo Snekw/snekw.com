@@ -1,5 +1,4 @@
-/** @preserve
- *  @licence
+/**
  *  snekw.com,
  *  Copyright (C) 2018 Ilkka Kuosmanen
  *
@@ -19,4 +18,6 @@
  *  along with snekw.com.  If not, see <http://www.gnu.org/licenses/>.
  */
 'use strict';
-import './admin/admin';
+const jsBuild = require('./jsBuild');
+
+jsBuild('src');
