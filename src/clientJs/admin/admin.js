@@ -19,21 +19,15 @@
  *  along with snekw.com.  If not, see <http://www.gnu.org/licenses/>.
  */
 'use strict';
-document.getElementById('admin-nav-toggle').addEventListener('click', doAdminNavToggle);
-
-const nav = document.getElementById('admin-nav-container');
+let nav;
 const adminNavKey = 'admin-nav';
 const toggleClass = 'toggle-hide';
-
 // Multi-edit
-const articles = document.getElementsByClassName('admin-article');
-const multiEdit = document.getElementById('multi-edit');
-const nSelected = document.getElementById('nSelected');
-const selectAll = document.getElementById('selectAll');
-const deselectAll = document.getElementById('deselectAll');
-document.getElementById('apply-public-state').addEventListener('click', applyPublicState);
-selectAll.addEventListener('click', selectAllF);
-deselectAll.addEventListener('click', deselectAllF);
+let articles;
+let multiEdit;
+let nSelected;
+let selectAll;
+let deselectAll;
 
 function toggleSelectArticle (e) {
   e.target.classList.toggle('admin-article-selected');
@@ -133,10 +127,6 @@ function deselectAllF () {
   nSelected.innerText = selected.length.toString();
 }
 
-for (let i = 0; i < articles.length; i++) {
-  articles[i].addEventListener('click', toggleSelectArticle);
-}
-
 // Admin navigation
 
 function updateNavState () {
@@ -155,11 +145,24 @@ function doAdminNavToggle (e) {
   }
 }
 
-function test () {
-  if ('asd'.includes('d')) {
-    console.log('yes');
-  }
-}
 
-test();
-updateNavState();
+window.addEventListener('load', () => {
+  nav = document.getElementById('admin-nav-container');
+  articles = document.getElementsByClassName('admin-article');
+  multiEdit = document.getElementById('multi-edit');
+  nSelected = document.getElementById('nSelected');
+  selectAll = document.getElementById('selectAll');
+  deselectAll = document.getElementById('deselectAll');
+
+  document.getElementById('admin-nav-toggle').addEventListener('click', doAdminNavToggle);
+  document.getElementById('apply-public-state').addEventListener('click', applyPublicState);
+  selectAll.addEventListener('click', selectAllF);
+  deselectAll.addEventListener('click', deselectAllF);
+
+  // Setup select events
+  for (let i = 0; i < articles.length; i++) {
+    articles[i].addEventListener('click', toggleSelectArticle);
+  }
+
+  updateNavState();
+});

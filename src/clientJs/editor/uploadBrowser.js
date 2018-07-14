@@ -19,9 +19,9 @@
  */
 'use strict';
 
-let attachedUploads = document.getElementById('attached-uploads-target');
-let availableUploads = document.getElementById('available-uploads-target');
-let template = document.getElementById('upload-template');
+let attachedUploads;
+let availableUploads;
+let template;
 
 function fillTemplate (image) {
   let imgPath;
@@ -151,7 +151,13 @@ function copyLink (event) {
   document.execCommand('copy');
 }
 
-attachedUploads.addEventListener('drop', onDrop);
-attachedUploads.addEventListener('dragover', allowDrop);
-availableUploads.addEventListener('drop', onDrop);
-availableUploads.addEventListener('dragover', allowDrop);
+window.addEventListener('load', () => {
+  attachedUploads = document.getElementById('attached-uploads-target');
+  availableUploads = document.getElementById('available-uploads-target');
+  template = document.getElementById('upload-template');
+
+  attachedUploads.addEventListener('drop', onDrop);
+  attachedUploads.addEventListener('dragover', allowDrop);
+  availableUploads.addEventListener('drop', onDrop);
+  availableUploads.addEventListener('dragover', allowDrop);
+});

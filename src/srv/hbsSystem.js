@@ -128,6 +128,12 @@ hbs.registerHelper('fixImagePath', function (path) {
   return image.fixPath(path);
 });
 
+hbs.registerHelper('scriptBundles', function (bundles) {
+  bundles = bundles.split(' ');
+  return new hbs.SafeString(bundles.map(b => `/static/js/${b}Bundle.min.js`)
+    .reduce((acc, val) => acc + `<script src="${val}"></script>`, ''));
+});
+
 function getSrcSet (imagePath) {
   if (!imagePath) return '';
   if (imagePath.startsWith('http')) return '';
