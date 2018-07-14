@@ -20,4 +20,6 @@
 'use strict';
 const jsBuild = require('./jsBuild');
 
-jsBuild('src');
+jsBuild('src')
+  .then(() => console.log('done'))
+  .catch(err => console.error(err));

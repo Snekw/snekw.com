@@ -28,7 +28,7 @@ const rollupResolve = require('rollup-plugin-node-resolve');
 const rollupCommonjs = require('rollup-plugin-commonjs');
 const UglifyJs = require('uglify-js');
 
-const jsLoc = './src/clientJs';
+const jsSourceLocation = './src/clientJs';
 let bundleSaver;
 
 function rollupBundle (input) {
@@ -77,9 +77,12 @@ function uglify (input) {
   return result.code;
 }
 
-const jsBundles = fs.readdirSync(jsLoc)
+const jsBundles = fs.readdirSync(jsSourceLocation)
   .filter(item => item.includes('Bundle.js'))
-  .map(item => ([path.resolve(path.join(jsLoc, item)), item.replace(path.extname(item), '')]));
+  .map(item => ([
+    path.resolve(path.join(jsSourceLocation, item)),
+    item.replace(path.extname(item), '')
+  ]));
 
 const thirdParty = [
   ['./node_modules/prismjs', 'prism', '.js']

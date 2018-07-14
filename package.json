@@ -8,6 +8,7 @@
     "scss": "scss src/scss/main.scss src/static/css/main.css --style expanded",
     "scss:w": "scss --watch src/scss:src/static/css --style expanded",
     "build": "node tasks/build.js",
+    "watch": "node tasks/watch.js ./src/clientJs",
     "copyDevConfig": "node tasks/copyDevConfigToDist.js",
     "test": "cross-env NODE_ENV=test mocha --recursive ./test/spec --exit",
     "check-coverage": "nyc --reporter=html --all npm test",

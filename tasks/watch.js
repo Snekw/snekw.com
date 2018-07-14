@@ -33,9 +33,8 @@ let waitRun = 0;
 let runnerRequested = false;
 
 function runner () {
-
   buildInProgress = true;
-  child = childProcess.fork('./internal/jsBuildFork');
+  child = childProcess.fork('./tasks/internal/jsBuildFork');
   child.on('close', () => {
     console.log('Runner closed.');
     buildInProgress = false;
@@ -60,7 +59,6 @@ function setupWatches (item) {
     watches.push(fs.watch(item,
       {persistent: true, recursive: false, encoding: 'utf8'},
       (eType, file) => {
-        console.log(`Change detected in: ${file}`);
         if (buildInProgress) {
           child.kill();
         } else {
@@ -72,15 +70,20 @@ function setupWatches (item) {
   }
 }
 
+console.log('Watcher started');
 setupWatches(path.resolve(baseFolder));
 
 setInterval(runnerWaiter, 500);
 
 const onExit = () => {
+  console.log('Watcher closed');
   watches.forEach(watch => {
     watch.close();
   });
-  child.kill();
+  if (child) {
+    child.kill();
+  }
+  return 0;
 };
 
 process.on('exit', onExit);
