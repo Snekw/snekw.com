@@ -19,11 +19,6 @@
  *  along with snekw.com.  If not, see <http://www.gnu.org/licenses/>.
  */
 }}
-{{#> header}}
-  {{#if article.indexImageUrl}}
-    <link rel="preload" as="image" href="{{fixImagePath article.indexImagePath}}"/>
-  {{/if}}
-{{/header}}
 {{#> layout}}
   <div class="container">
     <img id="titleImg" src="{{fixImagePath article.indexImagePath}}"/>
