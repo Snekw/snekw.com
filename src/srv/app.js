@@ -131,9 +131,9 @@ if (config.DEV === true && config.devSettings) {
   }
 }
 
-// Serve static files with express only in testing environment
-// NGINX handles serving static files in production
-if (config.DEV === true) {
+// Serve static files with express
+// NGINX recommended to handle serving static files in production
+if (config.server.serveStatic === true) {
   app.use('/static', express.static('./static'));
 }
 
