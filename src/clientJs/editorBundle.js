@@ -20,4 +20,5 @@
  */
 'use strict';
 import './editor/uploadBrowser';
+import './common/upload';
 import './editor/mdEditor';
