@@ -138,7 +138,7 @@ hbs.registerHelper('css', function (cssFiles) {
 
 function getScriptBundle (bundles, ext, template) {
   bundles = bundles.split(' ');
-  let extension = config.DEV && config.devSettings.useMinified ? `.min.${ext}` : `.${ext}`;
+  let extension = !config.DEV && !config.devSettings.useMinified ? `.min.${ext}` : `.${ext}`;
   return new hbs.SafeString(bundles.map(b => {
     let tp = '';
     const prefix = '!min!';
