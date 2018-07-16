@@ -19,7 +19,10 @@
  */
 'use strict';
 const jsBuild = require('./jsBuild');
+const logger = require('./logger');
+const utility = require('../../src/helpers/fs-utility');
 
+utility.setupLogger(logger);
 jsBuild('src')
   .then(() => console.log('done'))
   .catch(err => console.error(err));

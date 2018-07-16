@@ -129,10 +129,32 @@ hbs.registerHelper('fixImagePath', function (path) {
 });
 
 hbs.registerHelper('scriptBundles', function (bundles) {
-  bundles = bundles.split(' ');
-  return new hbs.SafeString(bundles.map(b => `/static/js/${b}Bundle.min.js`)
-    .reduce((acc, val) => acc + `<script src="${val}"></script>`, ''));
+  return getScriptBundle(bundles, false);
 });
+
+hbs.registerHelper('scriptBundlesTP', function (bundles) {
+  return getScriptBundle(bundles, true);
+});
+
+function getScriptBundle (bundles, min) {
+  bundles = bundles.split(' ');
+  let extension = config.DEV ? '.js' : '.min.js';
+  return new hbs.SafeString(bundles.map(b => {
+    let tp = '';
+    let bundle = 'Bundle';
+    const prefix = '!min!';
+    if (b.startsWith(prefix)) {
+      b = b.slice(prefix.length, b.length);
+      extension = '.min.js';
+    }
+    if (min) {
+      tp = '/third-party';
+      bundle = '';
+    }
+    return `/static/js${tp}/${b}${bundle}${extension}`;
+  })
+    .reduce((acc, val) => acc + `<script src="${val}"></script>`, ''));
+}
 
 function getSrcSet (imagePath) {
   if (!imagePath) return '';

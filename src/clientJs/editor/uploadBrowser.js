@@ -18,6 +18,7 @@
  *  along with snekw.com.  If not, see <http://www.gnu.org/licenses/>.
  */
 'use strict';
+import {ajaxRequest} from '../common/request';
 
 let attachedUploads;
 let availableUploads;
@@ -55,11 +56,11 @@ function fillTemplate (image) {
   return document.importNode(template.content, true);
 }
 
-function addToAttached (image) {
+export function addToAttached (image) {
   attachedUploads.appendChild(fillTemplate(image));
 }
 
-function addToAvailable (image) {
+export function addToAvailable (image) {
   if (image && image.data) {
     image.data.map(img => availableUploads.appendChild(fillTemplate(img)));
   } else {
@@ -161,3 +162,8 @@ window.addEventListener('load', () => {
   availableUploads.addEventListener('drop', onDrop);
   availableUploads.addEventListener('dragover', allowDrop);
 });
+
+window.snw = window.snw || {};
+window.snw.onDragStart = onDragStart;
+window.snw.copyLink = copyLink;
+window.snw.onUploadDelete = onUploadDelete;

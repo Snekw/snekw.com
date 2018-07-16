@@ -18,9 +18,14 @@
  *  You should have received a copy of the GNU General Public License
  *  along with snekw.com.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 'use strict';
 
 let changesMade = false;
+let editor;
+let editorOut;
+let cmReader;
+let cmRenderer;
 
 window.onbeforeunload = function () {
   if (changesMade) {
@@ -28,64 +33,64 @@ window.onbeforeunload = function () {
   }
 };
 
+function processMarkdown (input) {
+  const parsed = cmReader.parse(input);
+
+  const walker = parsed.walker();
+  let event, node;
+
+  while ((event = walker.next())) {
+    node = event.node;
+    if (event.entering && node.type === 'code_block') {
+      let lang = Prism.languages[node.info];
+      let langName = node.info;
+      if (!lang) {
+        langName = 'bash';
+        lang = Prism.languages.bash;
+      }
+      let newNode = new commonmark.Node('html_block');
+      const className = 'language-' + langName;
+      newNode.literal = '<pre class="' + className + '"><code class="' +
+        className + '">' +
+        Prism.highlight(node.literal, lang) + '</code></pre>';
+      node.insertBefore(newNode);
+      node.unlink();
+    }
+  }
+
+  return cmRenderer.render(parsed);
+}
+
+function onEdit () {
+  changesMade = true;
+  editorOut.innerHTML = processMarkdown(editor.value);
+}
+
+// Set the changes made flag back to false after running the "onEdit" function once to require the
+// user to make changes to trigger the confirmation.
+
+function processSubmit () {
+  changesMade = false;
+}
+
+function updatedTimeControl (e) {
+  if (e.target) {
+    e = e.target;
+  }
+  document.getElementById('postedAt').disabled = !e.checked;
+  document.getElementById('postedAtHours').disabled = !e.checked;
+  document.getElementById('timeZone').disabled = !e.checked;
+  document.getElementById('setPublicationTime').disabled = !e.checked;
+}
+
 window.onload = function () {
-  const editor = document.getElementById('editor');
-  const editorOut = document.getElementById('editorOut');
-  const cmReader = new commonmark.Parser();
-  const cmRenderer = new commonmark.HtmlRenderer();
+  editor = document.getElementById('editor');
+  editorOut = document.getElementById('editorOut');
+  cmReader = new commonmark.Parser();
+  cmRenderer = new commonmark.HtmlRenderer();
 
   editor.addEventListener('keyup', onEdit);
-
-  function processMarkdown (input) {
-    const parsed = cmReader.parse(input);
-
-    const walker = parsed.walker();
-    let event, node;
-
-    while ((event = walker.next())) {
-      node = event.node;
-      if (event.entering && node.type === 'code_block') {
-        let lang = Prism.languages[node.info];
-        let langName = node.info;
-        if (!lang) {
-          langName = 'bash';
-          lang = Prism.languages.bash;
-        }
-        let newNode = new commonmark.Node('html_block');
-        const className = 'language-' + langName;
-        newNode.literal = '<pre class="' + className + '"><code class="' +
-          className + '">' +
-          Prism.highlight(node.literal, lang) + '</code></pre>';
-        node.insertBefore(newNode);
-        node.unlink();
-      }
-    }
-
-    return cmRenderer.render(parsed);
-  }
-
-  function onEdit () {
-    changesMade = true;
-    editorOut.innerHTML = processMarkdown(editor.value);
-  }
-
   onEdit();
-  // Set the changes made flag back to false after running the "onEdit" function once to require the
-  // user to make changes to trigger the confirmation.
-
-  function processSubmit () {
-    changesMade = false;
-  }
-
-  function updatedTimeControl (e) {
-    if (e.target) {
-      e = e.target;
-    }
-    document.getElementById('postedAt').disabled = !e.checked;
-    document.getElementById('postedAtHours').disabled = !e.checked;
-    document.getElementById('timeZone').disabled = !e.checked;
-    document.getElementById('setPublicationTime').disabled = !e.checked;
-  }
 
   let elements = document.getElementsByTagName('form');
   for (let i = 0; i < elements.length; i++) {

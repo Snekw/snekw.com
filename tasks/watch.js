@@ -57,8 +57,12 @@ function setupWatches (item) {
       .map(dir => setupWatches(path.resolve(path.join(item, dir))));
 
     watches.push(fs.watch(item,
-      {persistent: true, recursive: false, encoding: 'utf8'},
-      (eType, file) => {
+      {
+        persistent: false,
+        recursive: false,
+        encoding: 'utf8'
+      },
+      function () {
         if (buildInProgress) {
           child.kill();
         } else {
@@ -74,19 +78,22 @@ console.log('Watcher started');
 setupWatches(path.resolve(baseFolder));
 
 setInterval(runnerWaiter, 500);
+runner();
 
 const onExit = () => {
   console.log('Watcher closed');
   watches.forEach(watch => {
+    console.log('Watch closed');
     watch.close();
   });
   if (child) {
     child.kill();
   }
-  return 0;
+  process.exit(0);
 };
 
-process.on('exit', onExit);
+// process.on('beforeExit', onExit);
+// process.on('exit', onExit);
 process.on('SIGINT', onExit);
-process.on('SIGUSR1', onExit);
-process.on('SIGUSR2', onExit);
+// process.on('SIGUSR1', onExit);
+// process.on('SIGUSR2', onExit);

@@ -90,14 +90,14 @@ const thirdParty = [
 
 module.exports = (mode) => {
   const bundleSaver = utility.saveFileGenerator(path.resolve(path.join(mode, 'static', 'js')),
-    '.min.js');
+    mode === 'dist' ? '.min.js' : '.js');
   const libSaver = utility.saveFileGenerator(
     path.resolve(path.join(mode, 'static', 'js', 'third-party')), '.min.js');
 
   const tasks = jsBundles.map(bundle =>
     rollupBundle(bundle[0])
       .then(transpile)
-      .then(uglify)
+      .then(result => mode === 'dist' ? uglify(result) : result)
       .then(bundleSaver(bundle[1]))
   );
   tasks.push(thirdParty.map(lib =>

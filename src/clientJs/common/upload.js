@@ -17,63 +17,71 @@
  *  You should have received a copy of the GNU General Public License
  *  along with snekw.com.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 'use strict';
+import { ajaxRequest } from './request';
+import {addToAvailable} from '../editor/uploadBrowser';
+
+let form;
+let submit;
+let progress;
+
+export function processForm (e) {
+  e.preventDefault();
+  const formData = new FormData(form);
+
+  if (document.getElementById('upl_image').files.length < 1) {
+    return;
+  }
+
+  submit.disabled = true;
+  let uploadEndPoint = 'image';
+
+  switch (formData.get('type')) {
+    case 'image':
+      uploadEndPoint = 'image';
+      break;
+    case 'zip':
+      uploadEndPoint = 'zip';
+      break;
+    case 'code':
+      uploadEndPoint = 'code';
+      break;
+    case 'audio':
+      uploadEndPoint = 'audio';
+      break;
+    default:
+      uploadEndPoint = 'image';
+  }
+
+  let fData = {};
+  formData.forEach(function (value, key) {
+    if (key !== '_csrf') {
+      fData[key] = value;
+    }
+  });
+  ajaxRequest('POST', '/api/upload/' + uploadEndPoint,
+    {
+      _csrf: formData.get('_csrf'),
+      progress: progress,
+      form: true
+    },
+    formData)
+    .then(function (resp) {
+      submit.disabled = false;
+      addToAvailable(resp.data);
+    })
+    .catch(function (err) {
+      submit.disabled = false;
+      console.log(err);
+    });
+  return false;
+}
 
 window.addEventListener('load', () => {
-  const form = document.getElementById('upload');
-  const submit = document.getElementById('upl_submit');
-  const progress = document.getElementById('upl_progress');
+  form = document.getElementById('upload');
+  submit = document.getElementById('upl_submit');
+  progress = document.getElementById('upl_progress');
 
-  function processForm (e) {
-    e.preventDefault();
-    const formData = new FormData(form);
-
-    if (document.getElementById('upl_image').files.length < 1) {
-      return;
-    }
-
-    submit.disabled = true;
-    let uploadEndPoint = 'image';
-
-    switch (formData.get('type')) {
-      case 'image':
-        uploadEndPoint = 'image';
-        break;
-      case 'zip':
-        uploadEndPoint = 'zip';
-        break;
-      case 'code':
-        uploadEndPoint = 'code';
-        break;
-      case 'audio':
-        uploadEndPoint = 'audio';
-        break;
-      default:
-        uploadEndPoint = 'image';
-    }
-
-    let fData = {};
-    formData.forEach(function (value, key) {
-      if (key !== '_csrf') {
-        fData[key] = value;
-      }
-    });
-    ajaxRequest('POST', '/api/upload/' + uploadEndPoint,
-      {
-        _csrf: formData.get('_csrf'),
-        progress: progress,
-        form: true
-      },
-      formData)
-      .then(function (resp) {
-        submit.disabled = false;
-        addToAvailable(resp.data);
-      })
-      .catch(function (err) {
-        submit.disabled = false;
-        console.log(err);
-      });
-    return false;
-  }
   form.addEventListener('submit', processForm);
 });

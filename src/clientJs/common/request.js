@@ -27,7 +27,7 @@
  * @param data Data to send
  * @returns {Promise<any>}
  */
-function ajaxRequest (method, url, options, data) {
+export function ajaxRequest (method, url, options, data) {
   return new Promise(function (resolve, reject) {
     let x = new XMLHttpRequest();
 

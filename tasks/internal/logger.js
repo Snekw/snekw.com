@@ -22,11 +22,25 @@ const {performance} = require('perf_hooks');
 
 let lastLogTime = performance.now();
 
+function toTime (ms) {
+  const lm = ~(0);
+  /* limit fraction */
+  const fmt = new Date(ms).toISOString().slice(11, lm);
+
+  if (ms >= 8.64e7) {  /* >= 24 hours */
+    let parts = fmt.split(/:(?=\d{2}:)/);
+    parts[0] -= -24 * (ms / 8.64e7 | 0);
+    return parts.join(':');
+  }
+
+  return fmt;
+}
+
 function log (message) {
   const timeNow = performance.now();
   const timeSinceLast = timeNow - lastLogTime;
   lastLogTime = timeNow;
-  console.log(`${new Date().toLocaleString()} | ${timeSinceLast.toFixed(3)} ms | ${message}`);
+  console.log(`${new Date().toLocaleString()} | ${toTime(timeSinceLast)} | ${message}`);
 }
 
 module.exports = log;
