@@ -21,7 +21,7 @@
 }}
 {{#>layout}}
   {{#> header}}
-    <link rel="stylesheet" href="/static/css/admin.css"/>
+    {{{css "admin"}}}
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
           rel="stylesheet">
   {{/header}}
@@ -33,5 +33,5 @@
       {{>admin}}
     </div>
   </div>
-  {{{scriptBundles "admin"}}}
+  {{{scriptBundles "adminBundle"}}}
 {{/layout}}

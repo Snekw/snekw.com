@@ -129,31 +129,26 @@ hbs.registerHelper('fixImagePath', function (path) {
 });
 
 hbs.registerHelper('scriptBundles', function (bundles) {
-  return getScriptBundle(bundles, false);
+  return getScriptBundle(bundles, 'js', '<script src="$val"></script>');
 });
 
-hbs.registerHelper('scriptBundlesTP', function (bundles) {
-  return getScriptBundle(bundles, true);
+hbs.registerHelper('css', function (cssFiles) {
+  return getScriptBundle(cssFiles, 'css', '<link rel="stylesheet" href="$val"/>');
 });
 
-function getScriptBundle (bundles, min) {
+function getScriptBundle (bundles, ext, template) {
   bundles = bundles.split(' ');
-  let extension = config.DEV ? '.js' : '.min.js';
+  let extension = config.DEV ? `.${ext}` : `.min.${ext}`;
   return new hbs.SafeString(bundles.map(b => {
     let tp = '';
-    let bundle = 'Bundle';
     const prefix = '!min!';
     if (b.startsWith(prefix)) {
       b = b.slice(prefix.length, b.length);
-      extension = '.min.js';
+      extension = `.min.${ext}`;
     }
-    if (min) {
-      tp = '/third-party';
-      bundle = '';
-    }
-    return `/static/js${tp}/${b}${bundle}${extension}`;
+    return `/static/${ext}${tp}/${b}${extension}`;
   })
-    .reduce((acc, val) => acc + `<script src="${val}"></script>`, ''));
+    .reduce((acc, val) => acc + template.replace(/\$val/g, val), ''));
 }
 
 function getSrcSet (imagePath) {

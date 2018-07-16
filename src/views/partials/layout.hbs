@@ -29,8 +29,7 @@
     <meta name="robots" content="{{@root.meta.robots}}">
   {{/if}}
   <title>{{@root.title}}</title>
-  <link rel="preload" href="/static/css/main.css" as="style"/>
-  <link rel="preload" href="/static/css/third-party/prism.css" as="style"/>
+  {{{css "main third-party/prism"}}}
   {{#>header}}{{/header}}
 </head>
 <body>
