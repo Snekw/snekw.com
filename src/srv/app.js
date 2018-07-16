@@ -157,6 +157,7 @@ app.use(function (req, res, next) {
   next();
 });
 
+app.use('/robots.txt', express.static('./static/robots.txt'));
 app.use(favicon(path.join(__dirname, '../static/favicon.ico')));
 
 app.use(hbsSystem.middleware);

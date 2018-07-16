@@ -31,6 +31,7 @@ const files = [
   './src/package.json',
   './src/package-lock.json',
   './src/config-example/mainConfig.js',
+  './src/static/robots.txt',
   './src/static/favicon.ico'
 ];
 
