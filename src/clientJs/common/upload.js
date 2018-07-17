@@ -17,15 +17,16 @@
  *  You should have received a copy of the GNU General Public License
  *  along with snekw.com.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 'use strict';
+import { ajaxRequest } from './request';
+import {addToAvailable} from '../editor/uploadBrowser';
 
-const form = document.getElementById('upload');
-const submit = document.getElementById('upl_submit');
-const progress = document.getElementById('upl_progress');
+let form;
+let submit;
+let progress;
 
-form.addEventListener('submit', processForm);
-
-function processForm (e) {
+export function processForm (e) {
   e.preventDefault();
   const formData = new FormData(form);
 
@@ -76,3 +77,11 @@ function processForm (e) {
     });
   return false;
 }
+
+window.addEventListener('load', () => {
+  form = document.getElementById('upload');
+  submit = document.getElementById('upl_submit');
+  progress = document.getElementById('upl_progress');
+
+  form.addEventListener('submit', processForm);
+});

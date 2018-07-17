@@ -18,10 +18,11 @@
  *  along with snekw.com.  If not, see <http://www.gnu.org/licenses/>.
  */
 'use strict';
+import {ajaxRequest} from '../common/request';
 
-let attachedUploads = document.getElementById('attached-uploads-target');
-let availableUploads = document.getElementById('available-uploads-target');
-let template = document.getElementById('upload-template');
+let attachedUploads;
+let availableUploads;
+let template;
 
 function fillTemplate (image) {
   let imgPath;
@@ -46,20 +47,20 @@ function fillTemplate (image) {
   template.content.querySelector('img').src = imgPath;
   template.content.querySelector('span[data-title]').innerText = image.info.title;
   template.content.querySelector('span[data-size]').innerText = image.size;
-  template.content.querySelector('.cpy').dataset.alt = image.info.alt;
-  template.content.querySelector('.cpy').dataset.alt = image.type;
-  template.content.querySelector('.cpy').dataset.path = imgPath.replace(/^\//, '');
-  template.content.querySelector('.del').dataset.title = image.info.title;
-  template.content.querySelector('.del').dataset.id = image.id;
-  template.content.querySelector('.del').dataset.name = imgPath;
+  template.content.querySelector('button.cpy').dataset.alt = image.info.alt;
+  template.content.querySelector('button.cpy').dataset.alt = image.type;
+  template.content.querySelector('button.cpy').dataset.path = imgPath.replace(/^\//, '');
+  template.content.querySelector('button.del').dataset.title = image.info.title;
+  template.content.querySelector('button.del').dataset.id = image.id;
+  template.content.querySelector('button.del').dataset.name = imgPath;
   return document.importNode(template.content, true);
 }
 
-function addToAttached (image) {
+export function addToAttached (image) {
   attachedUploads.appendChild(fillTemplate(image));
 }
 
-function addToAvailable (image) {
+export function addToAvailable (image) {
   if (image && image.data) {
     image.data.map(img => availableUploads.appendChild(fillTemplate(img)));
   } else {
@@ -151,7 +152,18 @@ function copyLink (event) {
   document.execCommand('copy');
 }
 
-attachedUploads.addEventListener('drop', onDrop);
-attachedUploads.addEventListener('dragover', allowDrop);
-availableUploads.addEventListener('drop', onDrop);
-availableUploads.addEventListener('dragover', allowDrop);
+window.addEventListener('load', () => {
+  attachedUploads = document.getElementById('attached-uploads-target');
+  availableUploads = document.getElementById('available-uploads-target');
+  template = document.getElementById('upload-template');
+
+  attachedUploads.addEventListener('drop', onDrop);
+  attachedUploads.addEventListener('dragover', allowDrop);
+  availableUploads.addEventListener('drop', onDrop);
+  availableUploads.addEventListener('dragover', allowDrop);
+});
+
+window.snw = window.snw || {};
+window.snw.onDragStart = onDragStart;
+window.snw.copyLink = copyLink;
+window.snw.onUploadDelete = onUploadDelete;

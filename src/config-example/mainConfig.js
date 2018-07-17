@@ -23,12 +23,14 @@ module.exports = {
   devSettings: {
     recompileHBS: true,
     invalidateCache: false,
-    useRedisSession: false
+    useRedisSession: false,
+    useMinified: false
   },
   server: {
     useHttps: false,
     port: 3000,
-    sessionSecret: 'Use your own'
+    sessionSecret: 'Use your own',
+    serveStatic: true
   },
   db: {
     mongo: {

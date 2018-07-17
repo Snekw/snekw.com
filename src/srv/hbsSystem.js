@@ -128,6 +128,29 @@ hbs.registerHelper('fixImagePath', function (path) {
   return image.fixPath(path);
 });
 
+hbs.registerHelper('scriptBundles', function (bundles) {
+  return getScriptBundle(bundles, 'js', '<script src="$val"></script>');
+});
+
+hbs.registerHelper('css', function (cssFiles) {
+  return getScriptBundle(cssFiles, 'css', '<link rel="stylesheet" href="$val"/>');
+});
+
+function getScriptBundle (bundles, ext, template) {
+  bundles = bundles.split(' ');
+  let extension = !config.DEV && !config.devSettings.useMinified ? `.min.${ext}` : `.${ext}`;
+  return new hbs.SafeString(bundles.map(b => {
+    let tp = '';
+    const prefix = '!min!';
+    if (b.startsWith(prefix)) {
+      b = b.slice(prefix.length, b.length);
+      extension = `.min.${ext}`;
+    }
+    return `/static/${ext}${tp}/${b}${extension}`;
+  })
+    .reduce((acc, val) => acc + template.replace(/\$val/g, val), ''));
+}
+
 function getSrcSet (imagePath) {
   if (!imagePath) return '';
   if (imagePath.startsWith('http')) return '';

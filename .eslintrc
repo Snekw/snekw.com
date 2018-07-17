@@ -1,0 +1,17 @@
+{
+  "extends": "semistandard",
+  "plugins": [
+    "standard",
+    "promise"
+  ],
+  "rules": {
+    "eol-last": 2
+  },
+  "globals": {
+    "commonmark": true,
+    "Prism": true
+  },
+  "env": {
+    "node": true
+  }
+}

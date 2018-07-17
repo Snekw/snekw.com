@@ -21,6 +21,12 @@
 const fs = require('fs');
 const path = require('path');
 
+let logger = (msg) => console.log(msg);
+
+function setupLogger (loggingFunc) {
+  logger = loggingFunc;
+}
+
 /**
  * Ensure that a directory exists
  * @param dir Path to a directory
@@ -70,6 +76,7 @@ function clean (dir) {
       if (fs.lstatSync(entryPath).isDirectory()) {
         clean(entryPath);
       } else {
+        logger(`Deleted: ${entryPath}`);
         fs.unlinkSync(entryPath);
       }
     });
@@ -87,18 +94,22 @@ function copyFile (source, target) {
   return new Promise((resolve, reject) => {
     ensureDir(path.dirname(target), err => {
       if (err && err.code !== 'EEXIST') {
+        logger(`File doesn't exist. Can't copy.`);
         return reject(err);
       }
 
       let rd = fs.createReadStream(source);
       rd.on('error', function (err) {
+        logger(`Failed to read file for copying`);
         return reject(err);
       });
       let wr = fs.createWriteStream(target);
       wr.on('error', function (err) {
+        logger(`Failed to copy file`);
         return reject(err);
       });
       wr.on('close', function (ex) {
+        logger(`Copied file from '${source}' to '${target}'`);
         return resolve();
       });
       rd.pipe(wr);
@@ -117,6 +128,7 @@ function copyDir (source, target) {
     let promises = [];
     fs.readdir(source, (err, items) => {
       if (err) {
+        logger(`Failed to read directory for copying`);
         return reject(err);
       }
       for (let i = 0; i < items.length; i++) {
@@ -128,17 +140,104 @@ function copyDir (source, target) {
         }
       }
       Promise.all(promises).then(() => {
+        logger(`Copied directory from '${source}' to '${target}'`);
         return resolve();
       }).catch(err => {
+        logger(`Failed to copy directory`);
         return reject(err);
       });
     });
   });
 }
 
+/**
+ * Save a file to specific folder
+ * @param folder Folder path
+ * @param fileName File name
+ * @param extension Extension for the file
+ * @param data Contents of the file
+ * @returns {Promise<any>}
+ */
+function saveFile (folder, fileName, extension, data) {
+  return new Promise((resolve, reject) => {
+    ensureDir(folder, err => {
+      if (err) {
+        return reject(err);
+      }
+      const filePath = path.resolve(path.join(folder, fileName + extension));
+      fs.writeFile(
+        filePath,
+        data,
+        err => {
+          if (err) {
+            logger(`Failed to save file: ${filePath}`);
+            return reject(err);
+          } else {
+            logger(`Saved file: ${filePath}`);
+            return resolve();
+          }
+        }
+      );
+    });
+  });
+}
+
+/**
+ * Save file function generator.
+ * Used for making nice and fluent chaining with promises.
+ * @param folder Path to the folder
+ * @param extension Extension of the file
+ * @returns {function(*=): function(*=): Promise<any>}
+ */
+function saveFileGenerator (folder, extension) {
+  return (fileName, subFolder) => {
+    return (data) => {
+      const saveFolder = subFolder ? path.join(folder, subFolder) : folder;
+      return saveFile(saveFolder, fileName, extension, data);
+    };
+  };
+}
+
+function readFile (folder, fileName, extension) {
+  return new Promise((resolve, reject) => {
+    if (!folder) {
+      return reject(new Error('Missing parameter: folder'));
+    }
+    if (!fileName) {
+      return reject(new Error('Missing parameter: fileName'));
+    }
+    if (!extension) {
+      return reject(new Error('Missing parameter: extension'));
+    }
+    const filePath = path.resolve(path.join(folder, fileName + extension));
+    if (!fs.existsSync(filePath)) {
+      return reject(new Error('File doesn\'t exist: ' + filePath));
+    }
+    fs.readFile(filePath, (err, data) => {
+      if (err) {
+        logger(`Failed to read file: ${filePath}`);
+        return reject(err);
+      }
+      logger(`Read file: ${filePath}`);
+      return resolve(data.toString());
+    });
+  });
+}
+
+function readFileGenerator (folder, extension) {
+  return (fileName) => {
+    return readFile(folder, fileName, extension);
+  };
+}
+
 module.exports = {
   ensureDir,
   clean,
   copyFile,
-  copyDir
+  copyDir,
+  saveFile,
+  saveFileGenerator,
+  readFile,
+  readFileGenerator,
+  setupLogger
 };

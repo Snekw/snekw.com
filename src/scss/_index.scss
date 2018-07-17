@@ -61,3 +61,11 @@
     }
   }
 }
+
+.indexImg {
+  max-width: 90%;
+  @media screen and (max-width: $break-small) {
+    max-width: 100%;
+  }
+}
+

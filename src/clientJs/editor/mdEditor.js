@@ -18,13 +18,20 @@
  *  You should have received a copy of the GNU General Public License
  *  along with snekw.com.  If not, see <http://www.gnu.org/licenses/>.
  */
-'use strict';
-const editor = document.getElementById('editor');
-const editorOut = document.getElementById('editorOut');
-const cmReader = new commonmark.Parser();
-const cmRenderer = new commonmark.HtmlRenderer();
 
-editor.addEventListener('keyup', onEdit);
+'use strict';
+
+let changesMade = false;
+let editor;
+let editorOut;
+let cmReader;
+let cmRenderer;
+
+window.onbeforeunload = function () {
+  if (changesMade) {
+    return 'Are you sure you want to leave?';
+  }
+};
 
 function processMarkdown (input) {
   const parsed = cmReader.parse(input);
@@ -59,11 +66,8 @@ function onEdit () {
   editorOut.innerHTML = processMarkdown(editor.value);
 }
 
-let changesMade = false;
-onEdit();
 // Set the changes made flag back to false after running the "onEdit" function once to require the
 // user to make changes to trigger the confirmation.
-changesMade = false;
 
 function processSubmit () {
   changesMade = false;
@@ -79,13 +83,15 @@ function updatedTimeControl (e) {
   document.getElementById('setPublicationTime').disabled = !e.checked;
 }
 
-window.onbeforeunload = function () {
-  if (changesMade) {
-    return 'Are you sure you want to leave?';
-  }
-};
-
 window.onload = function () {
+  editor = document.getElementById('editor');
+  editorOut = document.getElementById('editorOut');
+  cmReader = new commonmark.Parser();
+  cmRenderer = new commonmark.HtmlRenderer();
+
+  editor.addEventListener('keyup', onEdit);
+  onEdit();
+
   let elements = document.getElementsByTagName('form');
   for (let i = 0; i < elements.length; i++) {
     elements[i].addEventListener('submit', processSubmit);

@@ -29,8 +29,7 @@
     <meta name="robots" content="{{@root.meta.robots}}">
   {{/if}}
   <title>{{@root.title}}</title>
-  <link rel="preload" href="/static/css/main.css" as="style"/>
-  <link rel="preload" href="/static/css/third-party/prism.css" as="style"/>
+  {{{css "main third-party/prism"}}}
   {{#>header}}{{/header}}
 </head>
 <body>
@@ -42,12 +41,12 @@
       }
     </style>
     <div id="noscript">
-      Some of the features do not work with Javascript disabled. Most of them do work.
+      Some of the features do not work with Javascript disabled. Most of them do work. If you are just visiting the site
+      don't worry. All features will work just fine for you. Only administrative features need javascript enabled.
     </div>
   </noscript>
   <div id="content">{{> @partial-block}}</div>
 
-  <link rel="stylesheet" href="/static/css/main.css"/>
-  <link rel="stylesheet" href="/static/css/third-party/prism.css"/>
+  {{{css "main third-party/prism"}}}
 </body>
 </html>
