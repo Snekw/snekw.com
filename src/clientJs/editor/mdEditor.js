@@ -83,7 +83,7 @@ function updatedTimeControl (e) {
   document.getElementById('setPublicationTime').disabled = !e.checked;
 }
 
-window.onload = function () {
+window.addEventListener('load', function () {
   editor = document.getElementById('editor');
   editorOut = document.getElementById('editorOut');
   cmReader = new commonmark.Parser();
@@ -91,6 +91,7 @@ window.onload = function () {
 
   editor.addEventListener('keyup', onEdit);
   onEdit();
+  changesMade = false;
 
   let elements = document.getElementsByTagName('form');
   for (let i = 0; i < elements.length; i++) {
@@ -114,4 +115,4 @@ window.onload = function () {
     ? '0' + time.getHours()
     : time.getHours()) + ':' + time.getMinutes();
   document.getElementById('timeZone').value = offset;
-};
+});
