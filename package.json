@@ -5,8 +5,8 @@
   "license": "GPL-3.0",
   "scripts": {
     "bsync": "browser-sync start --proxy \"dev.local:3000\" --files \"src/static/css/*.css\"",
-    "scss": "scss src/scss/main.scss src/static/css/main.css --style expanded",
-    "scss:w": "scss --watch src/scss:src/static/css --style expanded",
+    "scss": "node-sass src/scss -o src/static/css --source-map true --output-style expanded",
+    "scss:w": "npm run scss && node-sass -r -w src/scss -o src/static/css --source-map true --output-style expanded",
     "build": "node tasks/build.js",
     "watch": "node tasks/watch.js ./src/clientJs",
     "copyDevConfig": "node tasks/copyDevConfigToDist.js",

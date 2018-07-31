@@ -30,7 +30,9 @@ let selectAll;
 let deselectAll;
 
 function toggleSelectArticle (e) {
-  e.target.classList.toggle('admin-article-selected');
+  let target = e.target;
+  if (!target.classList.contains('admin-article')) return;
+  target.classList.toggle('admin-article-selected');
   const _selected = document.getElementsByClassName('admin-article-selected').length;
   if (_selected > 0) {
     multiEdit.classList.remove('hide');
@@ -144,7 +146,6 @@ function doAdminNavToggle (e) {
     e.preventDefault();
   }
 }
-
 
 window.addEventListener('load', () => {
   nav = document.getElementById('admin-nav-container');

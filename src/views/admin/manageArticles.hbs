@@ -21,9 +21,11 @@
 }}
 {{#>adminLayout}}
   {{#*inline "admin"}}
-    {{#each articles}}
-      {{>adminArticle}}
-    {{/each}}
+    <div>
+      {{#each articles}}
+        {{>adminArticle}}
+      {{/each}}
+    </div>
     <div id="multi-edit" class="container border bottom-dock flex-wrapper hide">
       <div class="hide" id="_csrf">{{csrfToken}}</div>
       <div class="flex">Selected <span id="nSelected"></span> items.
