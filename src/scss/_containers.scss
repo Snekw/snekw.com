@@ -36,19 +36,20 @@
     padding-left: 0;
     padding-right: 0;
   }
+
   @media screen and (min-width: $break-large) {
     width: 960px;
     margin: 5vh auto 5vh auto;
     padding: 5vh 5vw 5vh 5vw;
   }
+
   h2 {
     word-wrap: break-word;
   }
 
   &.border {
-    border-style: solid;
-    border-color: $accent-color;
-    border-bottom: 0;
+    border: solid $accent-color;
+    border-bottom-width: 0;
   }
 }
 
@@ -150,8 +151,11 @@
 }
 
 .bottom-dock {
+  box-sizing: border-box;
+  margin: 1vh auto 0 auto;
   position: sticky;
   bottom: 0;
+  width: 90%;
 }
 
 .hide {

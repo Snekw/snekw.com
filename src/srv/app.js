@@ -137,6 +137,10 @@ if (config.server.serveStatic === true) {
   app.use('/static', express.static('./static'));
 }
 
+if (config.DEV === true) {
+  app.use('/scss', express.static('./scss'));
+}
+
 app.use(function (req, res, next) {
   if (req.user) {
     res.set('Cache-Control', 'private, must-revalidate');
