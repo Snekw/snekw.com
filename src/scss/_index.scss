@@ -64,6 +64,7 @@
 
 .indexImg {
   max-width: 90%;
+  max-height: 400px;
   @media screen and (max-width: $break-small) {
     max-width: 100%;
   }
