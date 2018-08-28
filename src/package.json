@@ -42,6 +42,7 @@
     "serve-favicon": "^2.5.0",
     "sharp": "^0.20.5",
     "shortid": "^2.2.12",
+    "sitemap": "^1.13.0",
     "validator": "^10.4.0"
   }
 }

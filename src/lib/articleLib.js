@@ -19,11 +19,39 @@
  */
 'use strict';
 const config = require('../helpers/configStub')('main');
+const models = require('../db/models');
+const imageLib = require('./api/image');
 
 function createTitle (title) {
   return !title ? config.siteName : title + ' - ' + config.siteName;
 }
 
+function getSiteMapInfo (articleId) {
+  return Promise.all([
+    models.article.findById(articleId).lean().exec(),
+    models.upload.find({articles: articleId}).exec()
+  ])
+    .then(data => {
+      const article = data[0];
+      const uploads = data[1];
+      if (!article) {
+        return Promise.reject(new Error('Missing article'));
+      }
+      const ret = {
+        url: `/article/id/${article._id}`
+      };
+      if (uploads.length > 0) {
+        ret.img = uploads.map(v => ({
+          url: imageLib.fixPath(v.path),
+          caption: v.info.alt,
+          title: v.info.title
+        }));
+      }
+      return Promise.resolve(ret);
+    });
+}
+
 module.exports = {
-  createTitle
+  createTitle,
+  getSiteMapInfo
 };
