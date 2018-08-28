@@ -36,11 +36,14 @@ const getLatestArticles = models.article.find({public: 1})
   .limit(10)
   .lean();
 
+const getArticleIds = models.article.find({}).select('_id').lean();
+
 const getArticleCount = models.article.count({public: 1});
 
 module.exports = {
   indexArticlesQuery,
   aboutGetQuery,
   getLatestArticles,
+  getArticleIds,
   getArticleCount
 };

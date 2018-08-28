@@ -25,6 +25,8 @@ const auth = require('../../lib/auth');
 const cache = require('../../db/CachedData');
 const normalizeError = require('../ErrorJSONAPI').normalizeError;
 const config = require('../../helpers/configStub')('main');
+const sm = require('sitemap');
+const articleLib = require('../../lib/articleLib');
 const querys = require('../../db/querys');
 auth.setErrorPageFunc(HbsViews.error.get.hbs);
 
@@ -43,6 +45,53 @@ router.get('/user', ensureLoggedIn, function (req, res, next) {
   res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
   req.template = HbsViews.user.get;
   next();
+});
+
+let siteMapGeneratedTimeStamp = 0;
+const siteMapValidFor = 60 * 60 * 1000;
+const sitemap = sm.createSitemap({
+  hostname: config.hostname,
+  cacheTime: 600000,
+  urls: [
+    {url: '/archive', changefreq: 'weekly'},
+    {url: '/about'}
+  ]
+});
+
+function sendSitemap (res, next) {
+  sitemap.toXML((err, xml) => {
+    if (err) {
+      return next(err);
+    } else {
+      res.header('Content-Type', 'application/xml');
+      res.send(xml);
+    }
+  });
+}
+
+router.get('/sitemap.xml', function (req, res, next) {
+  if (siteMapGeneratedTimeStamp + siteMapValidFor < Date.now()) {
+    querys.getArticleIds.exec()
+      .then(data => {
+        if (!data) {
+          return next('No data');
+        }
+        return Promise.all(data.map(article => articleLib.getSiteMapInfo(article._id)));
+      })
+      .then(articles => {
+        articles.forEach(article => {
+          sitemap.del(article);
+          sitemap.add(article);
+        });
+        siteMapGeneratedTimeStamp = Date.now();
+        return sendSitemap(res, next);
+      })
+      .catch(err => {
+        return next(err);
+      });
+  } else {
+    return sendSitemap(res, next);
+  }
 });
 
 // Used to test the Error page, only enabled in developer mode
