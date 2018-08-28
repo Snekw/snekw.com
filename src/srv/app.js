@@ -182,7 +182,7 @@ app.use(function (req, res, next) {
     return res.json({context: req.context, user: req.user});
   }
   if (!req.template) {
-    return next(new Error('Missing template for route: ' + res.originalUrl));
+    return next(new Error('Missing template for route: ' + req.originalUrl.toString()));
   }
   req.context.meta = Object.assign({}, req.template.meta, req.context.meta);
   return res.send(req.template.hbs(req.context));
