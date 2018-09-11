@@ -19,7 +19,6 @@
  */
 'use strict';
 const router = require('express').Router();
-const HbsViews = require('../hbsSystem').views;
 const models = require('../../db/models.js');
 const cachedData = require('../../db/CachedData');
 const querys = require('../../db/querys');
@@ -122,7 +121,6 @@ function getArchive (req, res, next) {
     .then(data => {
       if (data) {
         req.context.articles = data;
-        req.template = HbsViews.archive.get;
         req.context.title = articleLib.createTitle('Archive');
         req.context.meta.description = config.siteArchiveBrief || '';
         return next();

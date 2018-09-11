@@ -19,33 +19,25 @@
  */
 'use strict';
 const router = require('express').Router();
-const ensureLoggedIn = require('../../lib/ensureLoggedIn');
-const HbsViews = require('../hbsSystem').views;
-const auth = require('../../lib/auth');
 const cache = require('../../db/CachedData');
 const normalizeError = require('../ErrorJSONAPI').normalizeError;
 const config = require('../../helpers/configStub')('main');
 const sm = require('sitemap');
 const articleLib = require('../../lib/articleLib');
 const querys = require('../../db/querys');
-auth.setErrorPageFunc(HbsViews.error.get.hbs);
+// auth.setErrorPageFunc(HbsViews.error.get.hbs);
 
-router.get('/', function (req, res, next) {
+const out = {};
+
+out.index = (req, res, next) => {
   cache.getCachedOrDb(cache.keys.indexArticles, querys.indexArticlesQuery).then(data => {
     req.context.articles = data;
-    req.template = HbsViews.index.get;
     req.context.meta.description = config.siteBrief || '';
     next();
   }).catch(err => {
     return next(err);
   });
-});
-
-router.get('/user', ensureLoggedIn, function (req, res, next) {
-  res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
-  req.template = HbsViews.user.get;
-  next();
-});
+};
 
 let siteMapGeneratedTimeStamp = 0;
 const siteMapValidFor = 60 * 60 * 1000;
@@ -69,7 +61,7 @@ function sendSitemap (res, next) {
   });
 }
 
-router.get('/sitemap.xml', function (req, res, next) {
+out.sitemap = (req, res, next) => {
   if (siteMapGeneratedTimeStamp + siteMapValidFor < Date.now()) {
     querys.getArticleIds.exec()
       .then(data => {
@@ -92,15 +84,14 @@ router.get('/sitemap.xml', function (req, res, next) {
   } else {
     return sendSitemap(res, next);
   }
-});
+};
 
 // Used to test the Error page, only enabled in developer mode
 if (config.DEV === true) {
   router.get('/err', function (req, res, next) {
     req.context.error = normalizeError(new Error('Test'));
-    req.template = HbsViews.error.get;
     next();
   });
 }
 
-module.exports = router;
+module.exports = out;

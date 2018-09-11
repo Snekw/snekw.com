@@ -52,12 +52,10 @@ router.use(function (req, res, next) {
 
 router.get(['', '/dashboard'], ensureAdmin, function (req, res, next) {
   req.context.adminPages['dashboard'].active = true;
-  req.template = HbsViews.admin.dashboard;
   return next();
 });
 router.get('/statistics', ensureAdmin, function (req, res, next) {
   req.context.adminPages['statistics'].active = true;
-  req.template = HbsViews.admin.statistics;
   return next();
 });
 
@@ -85,7 +83,6 @@ router.get('/managearticles', ensureAdmin, function (req, res, next) {
     .catch(err => {
       return next(err);
     });
-
 });
 
 module.exports = router;

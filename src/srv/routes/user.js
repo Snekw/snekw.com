@@ -20,23 +20,22 @@
 'use strict';
 const auth0Api = require('../../lib/auth0Api');
 const ensureLoggedIn = require('../../lib/ensureLoggedIn');
-const HbsViews = require('../hbsSystem').views;
 const router = require('express').Router();
 const validator = require('validator');
 const normalizeError = require('../ErrorJSONAPI').normalizeError;
 
-router.get('/update', ensureLoggedIn, function (req, res, next) {
-  req.context.csrfToken = req.csrfToken();
-  req.template = HbsViews.user.manage;
-  return next();
-});
+const out = {};
 
-router.post('/update/username', ensureLoggedIn, function (req, res, next) {
+out.update = (req, res, next) => {
+  req.context.csrfToken = req.csrfToken();
+  return next();
+};
+
+out.updateUsername = (req, res, next) => {
   if (!validator.matches(req.body.username, /^[a-zA-Z0-9-_]+$/g)) {
     res.status(400);
     req.context.csrfToken = req.csrfToken();
     req.context.error = normalizeError(new Error('Bad username'));
-    req.template = HbsViews.user.manage;
     return next();
   }
 
@@ -57,14 +56,13 @@ router.post('/update/username', ensureLoggedIn, function (req, res, next) {
     req.user.app_metadata = body.app_metadata;
     return res.redirect('/user');
   });
-});
+};
 
-router.post('/update/picture', ensureLoggedIn, function (req, res, next) {
+out.updatePicture = (req, res, next) => {
   if (!validator.isURL(req.body.imgUrl) && !validator.isDataURI(req.body.imgUrl)) {
     res.status(400);
     req.context.csrfToken = req.csrfToken();
     req.context.error = normalizeError(new Error('Bad url'));
-    req.template = HbsViews.user.manage;
     return next();
   }
 
@@ -85,6 +83,6 @@ router.post('/update/picture', ensureLoggedIn, function (req, res, next) {
     req.user.user_metadata = body.user_metadata;
     return res.redirect('/user');
   });
-});
+};
 
 module.exports = router;

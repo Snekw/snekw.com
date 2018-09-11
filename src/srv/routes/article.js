@@ -19,7 +19,6 @@
  */
 'use strict';
 const router = require('express').Router();
-const HbsViews = require('../hbsSystem').views;
 const models = require('../../db/models.js');
 const ensureAdmin = require('../../lib/ensureAdmin');
 const cachedData = require('../../db/CachedData');
@@ -31,7 +30,9 @@ const moment = require('moment');
 const articleLib = require('../../lib/articleLib');
 const ObjectId = require('mongoose').Types.ObjectId;
 
-router.param('article', function (req, res, next, article) {
+const out = {};
+
+out.articleParam = (req, res, next, article) => {
   if (!validator.matches(article, /^[a-zA-Z0-9_-]+$/g)) {
     let err = new Error('Invalid article id');
     return next(err);
@@ -81,9 +82,9 @@ router.param('article', function (req, res, next, article) {
     .catch(err => {
       return next(err);
     });
-});
+};
 
-router.get('/id/:article', function (req, res, next) {
+out.article = (req, res, next) => {
   if (!req.context.article) {
     res.status(404);
     let err = new Error(404);
@@ -95,22 +96,20 @@ router.get('/id/:article', function (req, res, next) {
     return res.redirect('/');
   }
   req.context.meta.description = req.context.article.brief;
-  req.template = HbsViews.article.get;
   next();
-});
+};
 
-router.get('/new', ensureAdmin, function (req, res, next) {
+out.newGet = (req, res, next) => {
   res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
   req.context.csrfToken = req.csrfToken();
-  req.template = HbsViews.article.new;
   models.upload.find({'articles.0': {$exists: false}}).lean().exec()
     .then(data => {
       req.context.availableUploads = data;
       return next();
     });
-});
+};
 
-router.get('/edit/:article', ensureAdmin, function (req, res, next) {
+out.editGet = (req, res, next) => {
   res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
 
   Promise.all([
@@ -129,15 +128,14 @@ router.get('/edit/:article', ensureAdmin, function (req, res, next) {
 
       req.context.availableUploads = availableUploads;
 
-      req.template = HbsViews.article.edit;
       return next();
     })
     .catch(err => {
       return next(err);
     });
-});
+};
 
-router.post('/edit', ensureAdmin, function (req, res, next) {
+out.editPost = (req, res, next) => {
   if (!req.body.title || !req.body.body || !req.body.articleId) {
     res.status(400);
     Promise.all([
@@ -159,7 +157,6 @@ router.post('/edit', ensureAdmin, function (req, res, next) {
           _id: req.body.articleId,
           uploads: data[1] || []
         };
-        req.template = HbsViews.article.edit;
         return next();
       })
       .catch(err => {
@@ -243,9 +240,9 @@ router.post('/edit', ensureAdmin, function (req, res, next) {
         return next(err);
       });
   }
-});
+};
 
-router.post('/new', ensureAdmin, function (req, res, next) {
+out.newPost = (req, res, next) => {
   res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
   if (!req.body.title || !req.body.body || !req.body.brief) {
     res.status(400);
@@ -262,7 +259,6 @@ router.post('/new', ensureAdmin, function (req, res, next) {
           indexImagePath: req.body.indexImg || '',
           indexImageAlt: req.body.indexImgAlt || ''
         };
-        req.template = HbsViews.article.new;
         return next();
       })
       .catch(err => {
@@ -312,18 +308,15 @@ router.post('/new', ensureAdmin, function (req, res, next) {
         });
     });
   }
-});
+};
 
-router.get('/delete/:article', ensureAdmin, function (req, res, next) {
-  res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
-
+out.deleteGet = (req, res, next) => {
   req.context.csrfToken = req.csrfToken();
 
-  req.template = HbsViews.article.delete;
   next();
-});
+};
 
-router.post('/delete', ensureAdmin, function (req, res, next) {
+out.deletePost = (req, res, next) => {
   if (!req.body.delete || req.body.delete !== 'on') {
     return res.redirect('/');
   }
@@ -344,6 +337,6 @@ router.post('/delete', ensureAdmin, function (req, res, next) {
         return next(err);
       });
   });
-});
+};
 
-module.exports = router;
+module.exports = out;

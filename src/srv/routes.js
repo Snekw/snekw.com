@@ -1,0 +1,189 @@
+/**
+ *  snekw.com,
+ *  Copyright (C) 2018 Ilkka Kuosmanen
+ *
+ *  This file is part of snekw.com.
+ *
+ *  snekw.com is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  snekw.com is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with snekw.com.  If not, see <http://www.gnu.org/licenses/>.
+ */
+'use strict';
+const router = require('express').Router();
+const ensureLoggedIn = require('../lib/ensureLoggedIn');
+const ensureAdmin = require('../lib/ensureAdmin');
+const hbsSystem = require('./hbsSystem');
+
+const base = require('./routes/base');
+const user = require('./routes/user');
+const article = require('./routes/article');
+
+const routeDefinitions = [
+  {
+    url: '/',
+    sitemap: true,
+    get: {
+      view: 'index',
+      handler: base.index
+    }
+  }, {
+    url: '/sitemap.xml',
+    sitemap: true,
+    get: {
+      handler: base.sitemap
+    }
+  }, {
+    url: '/user',
+    get: {
+      cache: 'no-cache, no-store, must-revalidate',
+      view: 'user',
+      middleware: ensureLoggedIn
+    }
+  }, {
+    url: '/user/update',
+    post: {
+      middleware: ensureLoggedIn,
+      handler: user.update
+    }
+  }, {
+    url: '/user/update/username',
+    post: {
+      middleware: ensureLoggedIn,
+      handler: user.updateUsername
+    }
+  }, {
+    url: '/user/update/picture',
+    post: {
+      middleware: ensureLoggedIn,
+      handler: user.updatePicture
+    }
+  }, {
+    param: 'article',
+    handler: article.articleParam
+  }, {
+    url: '/article/id/:article',
+    get: {
+      view: 'article/article',
+      handler: article.article
+    }
+  }, {
+    url: '/article/newGet',
+    get: {
+      view: 'article/edit',
+      middleware: ensureAdmin,
+      handler: article.newGet
+    }
+  }, {
+    url: '/article/edit/:article',
+    get: {
+      view: 'article/edit',
+      middleware: ensureAdmin,
+      handler: article.editGet
+    }
+  }, {
+    url: '/article/edit',
+    post: {
+      middleware: ensureAdmin,
+      handler: article.editPost
+    }
+  }, {
+    url: '/article/newGet',
+    post: {
+      middleware: ensureAdmin,
+      handler: article.newPost
+    }
+  }, {
+    url: '/article/delete/:article',
+    get: {
+      view: 'article/delete',
+      middleware: ensureAdmin,
+      cache: 'no-cache, no-store, must-revalidate',
+      handler: article.deleteGet
+    }
+  }, {
+    url: '/article/delete',
+    post: {
+      middleware: ensureAdmin,
+      handler: article.deletePost
+    }
+  }
+];
+
+const viewCache = {};
+
+function recompileView (view) {
+  viewCache[view] = hbsSystem.compile(view);
+}
+
+function _compileFromObj (obj) {
+  for (const key in obj) {
+    if (obj.hasOwnProperty(key)) {
+      if (typeof obj[key] === 'object') {
+        _compileFromObj(obj[key]);
+      } else if (key === 'view') {
+        recompileView(obj[key]);
+      }
+    }
+  }
+}
+
+function recompileAll () {
+  routeDefinitions.forEach(_compileFromObj);
+}
+
+function createViewMw (routeDef) {
+  const view = routeDef.view;
+  if (!viewCache[view]) {
+    viewCache[view] = hbsSystem.compile(view);
+  }
+  return function (req, res, next) {
+    if (routeDef.cache) {
+      res.set('Cache-Control', routeDef.cache);
+    }
+    req.template = viewCache[view];
+    next();
+  };
+}
+
+for (const def of routeDefinitions) {
+  for (const key in def) {
+    if (def.hasOwnProperty(key) && router[key] && def.url) {
+      const mw = [];
+      if (def[key].middleware) {
+        if (Array.isArray(def[key].middleware)) {
+          for (const func of def[key].middleware) {
+            mw.push(func);
+          }
+        } else {
+          mw.push(def[key].middleware);
+        }
+      }
+      if (def[key].view) {
+        mw.push(createViewMw(def[key]));
+      }
+      if (def[key].handler) {
+        router[key](def.url, mw, def[key].handler);
+      } else {
+        router[key](def.url, mw, (req, res, next) => next());
+      }
+    } else if (def.param && key === 'param') {
+      router.param(def.param, def.handler);
+    }
+  }
+}
+
+module.exports = {
+  router,
+  recompileView,
+  recompileAll,
+  routeDefinitions
+};

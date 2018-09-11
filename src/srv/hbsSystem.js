@@ -24,7 +24,6 @@ const moment = require('moment');
 let HbsViews = require('./hbsViews');
 const config = require('../helpers/configStub')('main');
 const image = require('../lib/api/image');
-const path = require('path');
 
 function getHbs (path) {
   let pathStart = './views/';
@@ -35,29 +34,9 @@ function getPartialHbs (partial) {
   return getHbs('./partials/' + partial);
 }
 
-function recompileAll () {
-  for (let view in HbsViews) {
-    if (view === 'base') {
-      continue;
-    }
-    if (HbsViews.hasOwnProperty(view)) {
-      for (let inner in HbsViews[view]) {
-        if (inner === 'base' || inner === 'meta') {
-          continue;
-        }
-        if (HbsViews[view].hasOwnProperty(inner)) {
-          HbsViews[view].base = HbsViews[view].base || '';
-          HbsViews[view][inner].hbs = hbs.compile(
-            getHbs(HbsViews[view].base + HbsViews[view][inner].path)
-          );
-          HbsViews[view].meta = HbsViews[view].meta || {};
-          HbsViews[view][inner].meta = HbsViews[view][inner].meta || {};
-          HbsViews[view][inner].meta = Object.assign({}, HbsViews[view].meta,
-            HbsViews[view][inner].meta);
-        }
-      }
-    }
-  }
+function compile (view) {
+  let hbsTemplatePath = `./views/${view}.hbs`;
+  return hbs.compile(fs.readFileSync(hbsTemplatePath).toString());
 }
 
 const partials = {
@@ -178,8 +157,6 @@ hbs.registerHelper('getImgThumbnail', function (imagePath) {
 
 hbs.registerPartial(partials);
 
-recompileAll();
-
 function middleware (req, res, next) {
   req.context = {
     user: req.user,
@@ -194,7 +171,7 @@ function middleware (req, res, next) {
 
 module.exports = {
   views: HbsViews,
-  recompileAll,
+  compile,
   reloadPartials,
   middleware,
   getSrcSet

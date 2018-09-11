@@ -106,7 +106,7 @@ if (process.env.NODE_ENV !== 'test') {
 // API routes - NO CSRF
 app.use('/api/article', require('./api/article'));
 app.use('/api/upload', require('./api/upload'));
-
+const router = require('./routes');
 // Recompile handlebars on each request on developer mode if enabled on devSettings
 if (config.DEV === true && config.devSettings) {
   if (config.devSettings.recompileHBS === true) {
@@ -117,7 +117,8 @@ if (config.DEV === true && config.devSettings) {
         return next();
       }
       hbsSystem.reloadPartials();
-      hbsSystem.recompileAll();
+      // hbsSystem.recompileAll();
+      router.recompileAll();
       debug('HbsViews recompiled!');
       next();
     });
@@ -168,13 +169,14 @@ app.use(hbsSystem.middleware);
 
 // Routing - WITH CSRF
 debug('Routing');
-app.use('', require('./routes/base'));
-app.use('', auth.getRoutes());
-app.use('/article', require('./routes/article'));
-app.use('/user', require('./routes/user'));
-app.use('/archive', require('./routes/archive'));
-app.use('/about', require('./routes/about'));
-app.use('/admin', require('./routes/admin/home'));
+app.use('', router.router);
+// app.use('', require('./routes/base'));
+// app.use('', auth.getRoutes());
+// app.use('/article', require('./routes/article'));
+// app.use('/user', require('./routes/user'));
+// app.use('/archive', require('./routes/archive'));
+// app.use('/about', require('./routes/about'));
+// app.use('/admin', require('./routes/admin/home'));
 
 // The final middleware to do the rendering of the templates
 app.use(function (req, res, next) {
@@ -185,7 +187,7 @@ app.use(function (req, res, next) {
     return next(new Error('Missing template for route: ' + req.originalUrl.toString()));
   }
   req.context.meta = Object.assign({}, req.template.meta, req.context.meta);
-  return res.send(req.template.hbs(req.context));
+  return res.send(req.template(req.context));
 });
 
 function error404 (req, res, next) {
