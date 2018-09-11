@@ -38,7 +38,7 @@ const getLatestArticles = models.article.find({public: 1})
 
 const getArticleIds = models.article.find({}).select('_id').lean();
 
-const getArticleCount = models.article.count({public: 1});
+const getArticleCount = models.article.estimatedDocumentCount({public: 1});
 
 module.exports = {
   indexArticlesQuery,

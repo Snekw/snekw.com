@@ -27,7 +27,7 @@ mongoose.Promise = global.Promise;
 
 function connect () {
   return new Promise((resolve, reject) => {
-    mongoose.connect(config.db.mongo.connectionString).then(() => {
+    mongoose.connect(config.db.mongo.connectionString, {useNewUrlParser: true}).then(() => {
       console.log('Connected to database: ' + mongoose.connection.db.s.databaseName);
       debug('Connected to database');
       cachedData.setupCache();
