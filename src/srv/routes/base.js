@@ -41,16 +41,9 @@ out.index = (req, res, next) => {
 
 let siteMapGeneratedTimeStamp = 0;
 const siteMapValidFor = 60 * 60 * 1000;
-const sitemap = sm.createSitemap({
-  hostname: config.hostname,
-  cacheTime: 600000,
-  urls: [
-    {url: '/archive', changefreq: 'weekly'},
-    {url: '/about'}
-  ]
-});
+let cachedSitemap = {};
 
-function sendSitemap (res, next) {
+function sendSitemap (sitemap, res, next) {
   sitemap.toXML((err, xml) => {
     if (err) {
       return next(err);
@@ -71,18 +64,24 @@ out.sitemap = (req, res, next) => {
         return Promise.all(data.map(article => articleLib.getSiteMapInfo(article._id)));
       })
       .then(articles => {
-        articles.forEach(article => {
-          sitemap.del(article);
-          sitemap.add(article);
+        const sitemap = sm.createSitemap({
+          hostname: config.hostname,
+          cacheTime: 600000,
+          urls: [
+            {url: '/archive'},
+            {url: '/about'}
+          ]
         });
+        articles.forEach(article => sitemap.add(article));
+        cachedSitemap = sitemap;
         siteMapGeneratedTimeStamp = Date.now();
-        return sendSitemap(res, next);
+        return sendSitemap(sitemap, res, next);
       })
       .catch(err => {
         return next(err);
       });
   } else {
-    return sendSitemap(res, next);
+    return sendSitemap(cachedSitemap, res, next);
   }
 };
 
