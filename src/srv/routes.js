@@ -54,6 +54,9 @@ const routeDefinitions = [
     url: '/user',
     get: {
       cache: 'no-cache, no-store, must-revalidate',
+      meta: {
+        robots: 'noindex, nofollow, nosnippet, noarchive, noimageindex'
+      },
       view: 'user',
       middleware: ensureLoggedIn
     }
@@ -196,6 +199,9 @@ const routeDefinitions = [
   {
     url: '/admin(/dashboard)?',
     get: {
+      meta: {
+        robots: 'noindex, nofollow, nosnippet, noarchive, noimageindex'
+      },
       view: 'admin/dashboard',
       middleware: admin.adminAreaMiddleware
     }
@@ -203,6 +209,9 @@ const routeDefinitions = [
   {
     url: '/admin/statistics',
     get: {
+      meta: {
+        robots: 'noindex, nofollow, nosnippet, noarchive, noimageindex'
+      },
       view: 'admin/statistics',
       middleware: admin.adminAreaMiddleware
     }
@@ -210,6 +219,9 @@ const routeDefinitions = [
   {
     url: '/admin/managearticles',
     get: {
+      meta: {
+        robots: 'noindex, nofollow, nosnippet, noarchive, noimageindex'
+      },
       view: 'admin/manageArticles',
       middleware: admin.adminAreaMiddleware,
       handler: admin.manageArticlesGet
@@ -290,6 +302,7 @@ function createViewMw (routeDef) {
     if (routeDef.cache) {
       res.set('Cache-Control', routeDef.cache);
     }
+    req.meta = Object.assign({}, routeDef.meta);
     req.template = viewCache[view];
     next();
   };
@@ -329,7 +342,6 @@ for (const def of routeDefinitions) {
 
 module.exports = {
   router,
-  recompileView,
   recompileAll,
   routeDefinitions
 };

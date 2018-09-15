@@ -21,7 +21,6 @@
 const hbs = require('hbs');
 const fs = require('fs');
 const moment = require('moment');
-let HbsViews = require('./hbsViews');
 const config = require('../helpers/configStub')('main');
 const image = require('../lib/api/image');
 
@@ -170,7 +169,6 @@ function middleware (req, res, next) {
 }
 
 module.exports = {
-  views: HbsViews,
   compile,
   reloadPartials,
   middleware,

@@ -30,7 +30,6 @@ const favicon = require('serve-favicon');
 const passport = require('passport');
 const auth = require('../lib/auth');
 const normalizeError = require('./ErrorJSONAPI').normalizeError;
-const HbsViews = require('./hbsViews');
 const hbsSystem = require('./hbsSystem');
 const helmet = require('helmet');
 const csrf = require('csurf');
@@ -176,7 +175,7 @@ app.use(function (req, res, next) {
   if (!req.template) {
     return next();
   }
-  req.context.meta = Object.assign({}, req.template.meta, req.context.meta);
+  req.context.meta = Object.assign({}, req.meta, req.context.meta);
   return res.send(req.template(req.context));
 });
 

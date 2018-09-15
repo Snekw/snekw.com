@@ -18,25 +18,30 @@
  *  along with snekw.com.  If not, see <http://www.gnu.org/licenses/>.
  */
 'use strict';
-const HbsViews = require('../../hbsSystem').views;
 const models = require('../../../db/models.js');
 const ensureAdmin = require('../../../lib/ensureAdmin');
 
-let adminPages = {};
+const adminPages = {
+  dashboard: {
+    active: false,
+    url: 'dashboard',
+    name: 'Dashboard',
+    icon: 'dashboard'
+  },
+  statistics: {
+    active: false,
+    url: 'statistics',
+    name: 'Statistics',
+    icon: 'poll'
+  },
+  managearticles: {
+    active: false,
+    url: 'managearticles',
+    name: 'Manage Articles',
+    icon: 'list'
+  }
+};
 const out = {};
-
-for (let item in HbsViews.admin) {
-  if (item === 'base' || item === 'meta') {
-    continue;
-  }
-  if (HbsViews.admin.hasOwnProperty(item)) {
-    adminPages[item] = {};
-    adminPages[item].active = false;
-    adminPages[item].name = item.toLowerCase();
-    adminPages[item].longName = HbsViews.admin[item].name || 'ERR! NO NAME';
-    adminPages[item].icon = HbsViews.admin[item].icon || 'face';
-  }
-}
 
 out.adminAreaMiddleware = [
   ensureAdmin,
