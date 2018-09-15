@@ -18,14 +18,13 @@
  *  along with snekw.com.  If not, see <http://www.gnu.org/licenses/>.
  */
 'use strict';
-const router = require('express').Router();
-const ensureAdmin = require('../../lib/ensureAdmin');
 const models = require('../../db/models');
 const cachedData = require('../../db/CachedData');
 const querys = require('../../db/querys');
 const errors = require('../ErrorJSONAPI');
 
 let timeStampLastFrontPageUpdate = 0;
+const out = {};
 
 function updateFrontPage () {
   if (timeStampLastFrontPageUpdate > Date.now() - 4000) {
@@ -35,7 +34,7 @@ function updateFrontPage () {
   cachedData.updateCache(cachedData.keys.indexArticles, querys.indexArticlesQuery);
 }
 
-router.post('/public-state', ensureAdmin, function (req, res, next) {
+out.publicStatePost = (req, res, next) => {
   let paramsMissing = [];
   if (!req.body) {
     paramsMissing.push('body');
@@ -63,6 +62,6 @@ router.post('/public-state', ensureAdmin, function (req, res, next) {
       return res.status(200).json({id: req.body.id, state: req.body.state});
     });
   setTimeout(updateFrontPage, 5000);
-});
+};
 
-module.exports = router;
+module.exports = out;

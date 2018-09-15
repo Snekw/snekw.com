@@ -30,6 +30,9 @@ const archive = require('./routes/archive');
 const about = require('./routes/about');
 const admin = require('./routes/admin/home');
 
+const apiArticle = require('./api/article');
+const apiUpload = require('./api/upload');
+
 const routeDefinitions = [
   {
     url: '/',
@@ -211,6 +214,48 @@ const routeDefinitions = [
       middleware: admin.adminAreaMiddleware,
       handler: admin.manageArticlesGet
     }
+  },
+  // API
+  {
+    url: '/api/public-state',
+    post: {
+      middleware: ensureAdmin,
+      handler: apiArticle.publicStatePost
+    }
+  },
+  {
+    url: '/api/upload/image',
+    post: {
+      middleware: ensureAdmin,
+      handler: apiUpload.imagePost
+    }
+  },
+  {
+    url: '/api/upload/zip',
+    post: {
+      middleware: ensureAdmin,
+      handler: apiUpload.zipPost
+    }
+  },
+  {
+    url: '/api/upload/code',
+    post: {
+      middleware: ensureAdmin,
+      handler: apiUpload.codePost
+    }
+  },
+  {
+    url: '/api/upload/audio',
+    post: {
+      middleware: ensureAdmin,
+      handler: apiUpload.audioPost
+    }
+  }, {
+    url: '/api/upload/delete',
+    delete: {
+      middleware: ensureAdmin,
+      handler: apiUpload.deleteDelete
+    }
   }
 ];
 
@@ -267,7 +312,12 @@ for (const def of routeDefinitions) {
         mw.push(createViewMw(def[key]));
       }
       if (def[key].handler) {
-        router[key](def.url, mw, def[key].handler);
+        if (Array.isArray(def[key].handler)) {
+          // In case the handler is an array of functions
+          router[key](def.url, mw.concat(def[key].handler), (req, res, next) => next());
+        } else {
+          router[key](def.url, mw, def[key].handler);
+        }
       } else {
         router[key](def.url, mw, (req, res, next) => next());
       }

@@ -18,14 +18,14 @@
  *  along with snekw.com.  If not, see <http://www.gnu.org/licenses/>.
  */
 'use strict';
-const router = require('express').Router();
-const ensureAdmin = require('../../lib/ensureAdmin');
 const upload = require('../../lib/api/upload');
 const image = require('../../lib/api/image');
 const errors = require('../ErrorJSONAPI');
 const models = require('../../db/models');
 const fs = require('fs');
 const path = require('path');
+
+const out = {};
 
 function createUploadReturnData (upload) {
   let data = {
@@ -74,27 +74,28 @@ function uploadResponse (req, res, next) {
   }
 }
 
-router.post('/image',
-  ensureAdmin,
+out.imagePost = [
   upload.image('upload'),
   image.processImagesMD,
-  function (req, res, next) {
-    return uploadResponse(req, res, next);
-  });
+  uploadResponse
+];
 
-router.post('/zip', ensureAdmin, upload.zip('upload'), function (req, res, next) {
-  return uploadResponse(req, res, next);
-});
+out.zipPost = [
+  upload.zip('upload'),
+  uploadResponse
+];
 
-router.post('/code', ensureAdmin, upload.code('upload'), function (req, res, next) {
-  return uploadResponse(req, res, next);
-});
+out.codePost = [
+  upload.code('upload'),
+  uploadResponse
+];
 
-router.post('/audio', ensureAdmin, upload.audio('upload'), function (req, res, next) {
-  return uploadResponse(req, res, next);
-});
+out.audioPost = [
+  upload.audio('upload'),
+  uploadResponse
+];
 
-router.delete('/delete', ensureAdmin, function (req, res, next) {
+out.deleteDelete = (req, res, next) => {
   if (!req.body.id) {
     return next(new errors.ErrorMissingParameters(['id']));
   }
@@ -140,6 +141,6 @@ router.delete('/delete', ensureAdmin, function (req, res, next) {
     .catch(err => {
       return next(new errors.ErrorDatabaseError(err));
     });
-});
+};
 
-module.exports = router;
+module.exports = out;
