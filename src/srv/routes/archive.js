@@ -18,7 +18,6 @@
  *  along with snekw.com.  If not, see <http://www.gnu.org/licenses/>.
  */
 'use strict';
-const router = require('express').Router();
 const models = require('../../db/models.js');
 const cachedData = require('../../db/CachedData');
 const querys = require('../../db/querys');
@@ -28,9 +27,11 @@ const config = require('../../helpers/configStub')('main');
 const defaultPage = 0;
 const defaultCount = 10;
 
+const out = {};
+
 // TODO: Seriously this needs to be refactored. This is awful.
 // Still needs some more work 1.12.2017
-function getArchive (req, res, next) {
+out.getArchive = (req, res, next) => {
   if (!req.params.page) {
     req.params.page = defaultPage;
   } else {
@@ -131,10 +132,6 @@ function getArchive (req, res, next) {
     .catch(err => {
       return next(err);
     });
-}
+};
 
-router.get('/', getArchive);
-
-router.get('/:page-:count', getArchive);
-
-module.exports = router;
+module.exports = out;

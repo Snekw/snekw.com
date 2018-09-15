@@ -26,6 +26,9 @@ const hbsSystem = require('./hbsSystem');
 const base = require('./routes/base');
 const user = require('./routes/user');
 const article = require('./routes/article');
+const archive = require('./routes/archive');
+const about = require('./routes/about');
+const admin = require('./routes/admin/home');
 
 const routeDefinitions = [
   {
@@ -35,73 +38,84 @@ const routeDefinitions = [
       view: 'index',
       handler: base.index
     }
-  }, {
+  },
+  {
     url: '/sitemap.xml',
     sitemap: true,
     get: {
       handler: base.sitemap
     }
-  }, {
+  },
+  // User
+  {
     url: '/user',
     get: {
       cache: 'no-cache, no-store, must-revalidate',
       view: 'user',
       middleware: ensureLoggedIn
     }
-  }, {
+  },
+  {
     url: '/user/update',
     post: {
       middleware: ensureLoggedIn,
       handler: user.update
     }
-  }, {
+  },
+  {
     url: '/user/update/username',
     post: {
       middleware: ensureLoggedIn,
       handler: user.updateUsername
     }
-  }, {
+  },
+  {
     url: '/user/update/picture',
     post: {
       middleware: ensureLoggedIn,
       handler: user.updatePicture
     }
-  }, {
+  },
+  // Article
+  {
     param: 'article',
     handler: article.articleParam
-  }, {
+  },
+  {
     url: '/article/id/:article',
     get: {
       view: 'article/article',
       handler: article.article
     }
-  }, {
-    url: '/article/newGet',
+  },
+  {
+    url: '/article/new',
     get: {
       view: 'article/edit',
       middleware: ensureAdmin,
       handler: article.newGet
+    },
+    post: {
+      middleware: ensureAdmin,
+      handler: article.newPost
     }
-  }, {
+  },
+  {
     url: '/article/edit/:article',
     get: {
       view: 'article/edit',
       middleware: ensureAdmin,
       handler: article.editGet
     }
-  }, {
+  },
+  {
     url: '/article/edit',
     post: {
       middleware: ensureAdmin,
       handler: article.editPost
     }
-  }, {
-    url: '/article/newGet',
-    post: {
-      middleware: ensureAdmin,
-      handler: article.newPost
-    }
-  }, {
+  },
+  {
     url: '/article/delete/:article',
     get: {
       view: 'article/delete',
@@ -109,11 +123,93 @@ const routeDefinitions = [
       cache: 'no-cache, no-store, must-revalidate',
       handler: article.deleteGet
     }
-  }, {
+  },
+  {
     url: '/article/delete',
     post: {
       middleware: ensureAdmin,
       handler: article.deletePost
+    }
+  },
+  // Archive
+  {
+    url: '/archive(/:page-:count)?',
+    get: {
+      view: 'archive',
+      handler: archive.getArchive
+    }
+  },
+  // About
+  {
+    url: '/about',
+    get: {
+      view: 'about/about',
+      handler: about.get
+    }
+  },
+  {
+    url: '/about/new',
+    get: {
+      view: 'about/edit',
+      middleware: ensureAdmin,
+      handler: about.newGet
+    },
+    post: {
+      middleware: ensureAdmin,
+      handler: about.newPost
+    }
+  },
+  {
+    url: '/about/edit/:id',
+    get: {
+      view: 'about/edit',
+      middleware: ensureAdmin,
+      handler: about.editGet
+    }
+  },
+  {
+    url: '/about/edit',
+    post: {
+      middleware: ensureAdmin,
+      handler: about.editPost
+    }
+  },
+  {
+    url: '/about/delete/:id',
+    get: {
+      view: 'about/delete',
+      middleware: ensureAdmin,
+      handler: about.deleteGet
+    }
+  },
+  {
+    url: '/about/delete',
+    post: {
+      middleware: ensureAdmin,
+      handler: about.deletePost
+    }
+  },
+  // Admin
+  {
+    url: '/admin(/dashboard)?',
+    get: {
+      view: 'admin/dashboard',
+      middleware: admin.adminAreaMiddleware
+    }
+  },
+  {
+    url: '/admin/statistics',
+    get: {
+      view: 'admin/statistics',
+      middleware: admin.adminAreaMiddleware
+    }
+  },
+  {
+    url: '/admin/managearticles',
+    get: {
+      view: 'admin/manageArticles',
+      middleware: admin.adminAreaMiddleware,
+      handler: admin.manageArticlesGet
     }
   }
 ];

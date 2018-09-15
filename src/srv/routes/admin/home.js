@@ -18,14 +18,12 @@
  *  along with snekw.com.  If not, see <http://www.gnu.org/licenses/>.
  */
 'use strict';
-const router = require('express').Router();
 const HbsViews = require('../../hbsSystem').views;
 const models = require('../../../db/models.js');
 const ensureAdmin = require('../../../lib/ensureAdmin');
-const cachedData = require('../../../db/CachedData');
-const auth0Api = require('../../../lib/auth0Api');
 
 let adminPages = {};
+const out = {};
 
 for (let item in HbsViews.admin) {
   if (item === 'base' || item === 'meta') {
@@ -40,27 +38,23 @@ for (let item in HbsViews.admin) {
   }
 }
 
-router.use(function (req, res, next) {
-  req.context.adminPages = {};
-  for (let key in adminPages) {
-    if (adminPages.hasOwnProperty(key)) {
-      req.context.adminPages[key] = Object.assign({}, adminPages[key]);
+out.adminAreaMiddleware = [
+  ensureAdmin,
+  (req, res, next) => {
+    req.context.adminPages = {};
+    for (let key in adminPages) {
+      if (adminPages.hasOwnProperty(key)) {
+        req.context.adminPages[key] = Object.assign({}, adminPages[key]);
+        if (req.route.path.indexOf(key) > -1) {
+          req.context.adminPages[key].active = true;
+        }
+      }
     }
+    next();
   }
-  next();
-});
+];
 
-router.get(['', '/dashboard'], ensureAdmin, function (req, res, next) {
-  req.context.adminPages['dashboard'].active = true;
-  return next();
-});
-router.get('/statistics', ensureAdmin, function (req, res, next) {
-  req.context.adminPages['statistics'].active = true;
-  return next();
-});
-
-router.get('/managearticles', ensureAdmin, function (req, res, next) {
-  req.context.adminPages['managearticles'].active = true;
+out.manageArticlesGet = (req, res, next) => {
   req.context.csrfToken = req.csrfToken();
 
   models.article.find()
@@ -77,12 +71,11 @@ router.get('/managearticles', ensureAdmin, function (req, res, next) {
           : 'https://i.imgur.com/5Dmkrgz.png';
       });
       req.context.articles = data;
-      req.template = HbsViews.admin.managearticles;
       return next();
     })
     .catch(err => {
       return next(err);
     });
-});
+};
 
-module.exports = router;
+module.exports = out;

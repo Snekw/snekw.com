@@ -26,7 +26,9 @@ const processMarkdown = require('../processMarkdown');
 const cachedData = require('../../db/CachedData');
 const articleLib = require('../../lib/articleLib');
 
-router.get('/', function (req, res, next) {
+const out = {};
+
+out.get = (req, res, next) => {
   cachedData.getCachedOrDb('about', querys.aboutGetQuery).then(data => {
     req.context.isAbout = true;
     req.context.about = data;
@@ -35,15 +37,15 @@ router.get('/', function (req, res, next) {
   }).catch(err => {
     return next(err);
   });
-});
+};
 
-router.get('/new', ensureAdmin, function (req, res, next) {
+out.newGet = (req, res, next) => {
   res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
   req.context.csrfToken = req.csrfToken();
   return next();
-});
+};
 
-router.get('/edit/:id', ensureAdmin, function (req, res, next) {
+out.editGet = (req, res, next) => {
   models.about.findById(req.params.id).lean().exec((err, about) => {
     if (err) {
       return next(err);
@@ -53,9 +55,9 @@ router.get('/edit/:id', ensureAdmin, function (req, res, next) {
     req.context.isEdit = true;
     return next();
   });
-});
+};
 
-router.post('/edit', ensureAdmin, function (req, res, next) {
+out.editPost = (req, res, next) => {
   if (!req.body.body || !req.body.aboutId) {
     return next(new Error('Body and aboutId are required'));
   }
@@ -84,9 +86,9 @@ router.post('/edit', ensureAdmin, function (req, res, next) {
         console.log(err);
       });
   });
-});
+};
 
-router.post('/newGet', ensureAdmin, function (req, res, next) {
+out.newPost = (req, res, next) => {
   res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
   if (!req.body.author || !req.body.body) {
     req.context.error = new Error('Bad arguments');
@@ -117,9 +119,9 @@ router.post('/newGet', ensureAdmin, function (req, res, next) {
       return next(err);
     });
   });
-});
+};
 
-router.get('/delete/:id', ensureAdmin, function (req, res, next) {
+out.deleteGet = (req, res, next) => {
   models.about.findById(req.params.id).lean().exec((err, data) => {
     if (err) {
       return next(err);
@@ -133,9 +135,9 @@ router.get('/delete/:id', ensureAdmin, function (req, res, next) {
     req.context.csrfToken = req.csrfToken();
     return next();
   });
-});
+};
 
-router.post('/delete', ensureAdmin, function (req, res, next) {
+out.deletePost = (req, res, next) => {
   if (!req.body.delete || req.body.delete !== 'on') {
     return res.redirect('/');
   }
@@ -150,6 +152,6 @@ router.post('/delete', ensureAdmin, function (req, res, next) {
       return res.redirect('/about');
     });
   });
-});
+};
 
-module.exports = router;
+module.exports = out;
